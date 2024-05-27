@@ -15,6 +15,7 @@ const witnessSchema = new Schema<WitnessDocument>(
     name: {
       type: String,
       required: true,
+      unique: true,
     },
     description: {
       type: String,
