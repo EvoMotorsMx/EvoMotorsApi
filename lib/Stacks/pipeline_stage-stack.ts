@@ -45,9 +45,15 @@ export class PipelineStage extends Stage {
       envVariables: lambdaVariables,
     });
 
-    // Product Lambda
-    const productLambdaIntegration = new LambdaStack(this, "carModelLambda", {
+    //Product Lambda
+    const productLambdaIntegration = new LambdaStack(this, "ProductLambda", {
       lambdaDirectory: "Product",
+      envVariables: lambdaVariables,
+    });
+
+    //Witness Lambda
+    const witnessLambdaIntegration = new LambdaStack(this, "WitnessLambda", {
+      lambdaDirectory: "Witness",
       envVariables: lambdaVariables,
     });
 
@@ -58,6 +64,7 @@ export class PipelineStage extends Stage {
       brandLambdaIntegration: brandLambdaIntegration.lambdaIntegration,
       carModelLambdaIntegration: carModelLambdaIntegration.lambdaIntegration,
       productLambdaIntegration: productLambdaIntegration.lambdaIntegration,
+      witnessLambdaIntegration: witnessLambdaIntegration.lambdaIntegration,
     });
   }
 }
