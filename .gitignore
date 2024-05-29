@@ -16,3 +16,4 @@ test/Brand/*
 test/CarModel/*
 test/Product/*
 test/ProductPrice/*
+test/Witness/*

@@ -1,6 +1,4 @@
-export class Brand {
-  public id?: string; // Make `id` optional
-
+export class Witness {
   constructor(
     public name: string,
     public description?: string,

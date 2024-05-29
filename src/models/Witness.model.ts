@@ -1,9 +1,9 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
 
-export interface WitnessDocument extends Document {
+interface WitnessDocument extends Document {
+  _id: string;
   name: string;
-  description?: string;
 }
 
 const witnessSchema = new Schema<WitnessDocument>(
@@ -17,21 +17,14 @@ const witnessSchema = new Schema<WitnessDocument>(
       required: true,
       unique: true,
     },
-    description: {
-      type: String,
-    },
   },
   {
     timestamps: true,
   },
 );
 
-witnessSchema.pre("save", function (next) {
-  if (this.name) {
-    this.name = this.name.toUpperCase();
-  }
-  next();
-});
+witnessSchema.set("autoIndex", false);
+witnessSchema.index({ name: 1 }, { unique: true });
 
 const Witness = mongoose.model<WitnessDocument>("Witness", witnessSchema);
 

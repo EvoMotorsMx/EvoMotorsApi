@@ -2,13 +2,17 @@ import { handler } from "../../src/infrastructure/web/routes/Brand/handler";
 
 handler(
   {
-    httpMethod: "POST",
+    requestContext: {
+      http: {
+        method: "POST",
+      },
+    },
     headers: {
-      IdToken: "",
+      idtoken: "",
       Authorization: "",
     },
     body: JSON.stringify({
-      name: "Audi",
+      name: "TOYOTA",
     }),
   } as any,
   {} as any,

@@ -13,6 +13,7 @@ interface EvoMotorsApiStackProps extends cdk.StackProps {
   brandLambdaIntegration: HttpLambdaIntegration;
   carModelLambdaIntegration: HttpLambdaIntegration;
   productLambdaIntegration: HttpLambdaIntegration;
+  witnessLambdaIntegration: HttpLambdaIntegration;
 }
 
 export class EvoMotorsApiStack extends cdk.Stack {
@@ -91,6 +92,21 @@ export class EvoMotorsApiStack extends cdk.Stack {
 
     evoMotorsAdminHttpApi.addRoutes({
       path: "/product/{productId}",
+      methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
+      integration: props.productLambdaIntegration,
+      authorizer,
+    });
+
+    //Witness routes
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/witness",
+      methods: [HttpMethod.GET, HttpMethod.POST],
+      integration: props.productLambdaIntegration,
+      authorizer,
+    });
+
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/witness/{witnessId}",
       methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
       integration: props.productLambdaIntegration,
       authorizer,

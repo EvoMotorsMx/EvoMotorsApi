@@ -1,12 +1,13 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
 
-export interface WitnessDocument extends Document {
+interface BrandDocument extends Document {
+  _id: string;
   name: string;
   description?: string;
 }
 
-const witnessSchema = new Schema<WitnessDocument>(
+const brandSchema = new Schema<BrandDocument>(
   {
     _id: {
       type: String,
@@ -19,6 +20,7 @@ const witnessSchema = new Schema<WitnessDocument>(
     },
     description: {
       type: String,
+      required: false,
     },
   },
   {
@@ -26,13 +28,6 @@ const witnessSchema = new Schema<WitnessDocument>(
   },
 );
 
-witnessSchema.pre("save", function (next) {
-  if (this.name) {
-    this.name = this.name.toUpperCase();
-  }
-  next();
-});
+const Brand = mongoose.model<BrandDocument>("Brand", brandSchema);
 
-const Witness = mongoose.model<WitnessDocument>("Witness", witnessSchema);
-
-export default Witness;
+export default Brand;
