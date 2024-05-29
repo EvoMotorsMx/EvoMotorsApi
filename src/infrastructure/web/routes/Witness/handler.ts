@@ -24,9 +24,6 @@ import { decodeToken } from "../../../../shared/utils/userDecoder";
 import { CUSTOMER_ROLE } from "../../../../shared/constants/roles";
 import { IIdToken } from "../../../security/Auth";
 
-//import { WitnessService } from "../../../../core/domain/services";
-//import { WitnessUseCases } from "../../../../core/application/use_cases";
-
 const createWitnessBodySchema = z.object({
   name: z.string(),
   description: z.string().optional(),
