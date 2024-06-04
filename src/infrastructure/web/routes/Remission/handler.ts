@@ -4,8 +4,8 @@ import {
   Context,
 } from "aws-lambda";
 import { connectToDatabase } from "../../../../shared/utils/db-connection";
-import { WitnessService } from "../../../../core/domain/services/WitnessService";
-import { WitnessUseCases } from "../../../../core/application/use_cases/WitnessUseCases";
+import { RemissionService } from "../../../../core/domain/services/RemissionService";
+import { RemissionUseCases } from "../../../../core/application/use_cases/RemissionUseCases";
 import { z } from "zod";
 import {
   DELETE,
@@ -19,27 +19,58 @@ import {
   PATCH,
   POST,
 } from "../../../../shared/constants";
-import { WitnessRepository } from "../../../persistence/repositories/WitnessRepository";
+import { RemissionRepository } from "../../../persistence/repositories/RemissionRepository";
 import { decodeToken } from "../../../../shared/utils/userDecoder";
 import { CUSTOMER_ROLE } from "../../../../shared/constants/roles";
 import { IIdToken } from "../../../security/Auth";
 
-const createWitnessBodySchema = z.object({
+
+const createRemissionBodySchema = z.object({
+  remission: z.string(),
+  date: z.string(),
   name: z.string(),
-  description: z.string().optional(),
+  contact: z.string().optional(),
+  cellphone: z.string().optional(),
+  city: z.string().optional(),
+  brand: z.string().optional(),
+  modelo: z.string().optional(),
+  email: z.string().optional(),
+  socialNetwork: z.string().optional(),
+  rfc: z.string().optional(),
+  bill: z.string().optional(),
+  cdfiUse: z.string().optional(),
+  mileage: z.string().optional(),
+  year: z.string().optional(),
+  engine: z.string().optional(),
+  vim: z.string().optional(),
 });
 
-const updateWitnessBodySchema = z.object({
+const updateRemissionBodySchema = z.object({
   id: z.string(),
+  remission: z.string().optional(),
+  date: z.string().optional(),
   name: z.string().optional(),
-  description: z.string().optional(),
+  contact: z.string().optional(),
+  cellphone: z.string().optional(),
+  city: z.string().optional(),
+  brand: z.string().optional(),
+  modelo: z.string().optional(),
+  email: z.string().optional(),
+  socialNetwork: z.string().optional(),
+  rfc: z.string().optional(),
+  bill: z.string().optional(),
+  cdfiUse: z.string().optional(),
+  mileage: z.string().optional(),
+  year: z.string().optional(),
+  engine: z.string().optional(),
+  vim: z.string().optional(),
 });
 
-const removeWitnessBody = z.object({
+const removeRemissionBody = z.object({
   id: z.string(),
 });
 
-const getWitnessBody = z.object({
+const getRemissionBody = z.object({
   id: z.string(),
 });
 
@@ -79,16 +110,16 @@ export async function handler(
   }
 
   await connectToDatabase();
-  const witnessRepository = new WitnessRepository();
-  const witnessService = new WitnessService(witnessRepository);
-  const witnessUseCases = new WitnessUseCases(witnessService);
+  const remissionRepository = new RemissionRepository();
+  const remissionService = new RemissionService(remissionRepository);
+  const remissionUseCases = new RemissionUseCases(remissionService);
 
   try {
     switch (event.requestContext.http.method) {
       case GET:
         if (event.pathParameters) {
-          const pathValidationResult = getWitnessBody.safeParse({
-            id: event.pathParameters.witnessId,
+          const pathValidationResult = getRemissionBody.safeParse({
+            id: event.pathParameters.remissionId,
           });
           if (!pathValidationResult.success) {
             return {
@@ -101,27 +132,27 @@ export async function handler(
             };
           }
 
-          const witnesses = await witnessUseCases.getWitness(
+          const remissions = await remissionUseCases.getRemission(
             pathValidationResult.data.id,
           );
           return {
             statusCode: HTTP_OK,
-            body: JSON.stringify(witnesses),
+            body: JSON.stringify(remissions),
           };
         } else {
-          const witnesses = await witnessUseCases.findAllWitnesses();
+          const remissions = await remissionUseCases.findAllRemissions();
           return {
             statusCode: HTTP_OK,
-            body: JSON.stringify(witnesses),
+            body: JSON.stringify(remissions),
           };
         }
 
       case POST: {
         const payload = JSON.parse(event.body ?? "{}");
-        const validationResult = createWitnessBodySchema.safeParse(payload);
-        let newWitness;
+        const validationResult = createRemissionBodySchema.safeParse(payload);
+        let newRemission;
         if (validationResult.success) {
-          newWitness = await witnessUseCases.createWitness(payload);
+          newRemission = await remissionUseCases.createRemission(payload);
         } else {
           return {
             statusCode: HTTP_BAD_REQUEST,
@@ -136,32 +167,32 @@ export async function handler(
 
         return {
           statusCode: HTTP_CREATED,
-          body: JSON.stringify(newWitness),
+          body: JSON.stringify(newRemission),
         };
       }
 
       case PATCH: {
         const payload = JSON.parse(event.body ?? "{}");
-        let updatedWitness;
+        let updatedRemission;
 
-        if (!event.pathParameters || !event.pathParameters.witnessId) {
+        if (!event.pathParameters || !event.pathParameters.remissionId) {
           return {
             statusCode: HTTP_BAD_REQUEST,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              message: "Witness ID is required in the path",
+              message: "Remission ID is required in the path",
             }),
           };
         }
 
-        const validationResult = updateWitnessBodySchema.safeParse({
+        const validationResult = updateRemissionBodySchema.safeParse({
           ...payload,
-          id: event.pathParameters.witnessId,
+          id: event.pathParameters.remissionId,
         });
 
         if (validationResult.success) {
-          updatedWitness = await witnessUseCases.updateWitness(
-            event.pathParameters.witnessId,
+          updatedRemission = await remissionUseCases.updateRemission(
+            event.pathParameters.remissionId,
             payload,
           );
         } else {
@@ -177,23 +208,23 @@ export async function handler(
 
         return {
           statusCode: HTTP_OK,
-          body: JSON.stringify(updatedWitness),
+          body: JSON.stringify(updatedRemission),
         };
       }
 
       case DELETE: {
-        if (!event.pathParameters || !event.pathParameters.witnessId) {
+        if (!event.pathParameters || !event.pathParameters.remissionId) {
           return {
             statusCode: HTTP_BAD_REQUEST,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              message: "Witness ID is required in the path",
+              message: "Remission ID is required in the path",
             }),
           };
         }
 
-        const pathValidationResult = removeWitnessBody.safeParse({
-          id: event.pathParameters.witnessId,
+        const pathValidationResult = removeRemissionBody.safeParse({
+          id: event.pathParameters.remissionId,
         });
 
         if (!pathValidationResult.success) {
@@ -201,28 +232,28 @@ export async function handler(
             statusCode: HTTP_BAD_REQUEST,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              message: "Invalid or missing Witness ID",
+              message: "Invalid or missing Remission ID",
               errors: pathValidationResult.error.issues,
             }),
           };
         }
 
-        const witnessId = pathValidationResult.data.id;
+        const remissionId = pathValidationResult.data.id;
 
         try {
-          await witnessUseCases.removeWitness(witnessId);
+          await remissionUseCases.removeRemission(remissionId);
           return {
             statusCode: HTTP_OK,
             body: JSON.stringify({
-              id: witnessId,
-              message: "Witness removed successfully",
+              id: remissionId,
+              message: "Remission removed successfully",
             }),
           };
         } catch (error) {
           return {
             statusCode: HTTP_INTERNAL_SERVER_ERROR,
             body: JSON.stringify({
-              message: "An error occurred while removing the witness",
+              message: "An error occurred while removing the remission",
             }),
           };
         }

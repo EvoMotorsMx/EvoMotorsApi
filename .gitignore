@@ -17,3 +17,6 @@ test/CarModel/*
 test/Product/*
 test/ProductPrice/*
 test/Witness/*
+test/Certificate/*
+test/Remission/*
+

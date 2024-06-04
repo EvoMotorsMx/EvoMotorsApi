@@ -57,6 +57,18 @@ export class PipelineStage extends Stage {
       envVariables: lambdaVariables,
     });
 
+    //Remission Lambda
+    const remissionLambdaIntegration = new LambdaStack(this, "RemissionLambda", {
+      lambdaDirectory: "Remission",
+      envVariables: lambdaVariables,
+    });
+
+    //Certificate Lambda
+    const certificateLambdaIntegration = new LambdaStack(this, "CertificateLambda", {
+      lambdaDirectory: "Certificate",
+      envVariables: lambdaVariables,
+    });
+
     new EvoMotorsApiStack(this, "EvoMotorsApiStack", {
       stageName: props.stageName,
       userPool: evoMotorsAuthStack.getUserPool(),
@@ -65,6 +77,8 @@ export class PipelineStage extends Stage {
       carModelLambdaIntegration: carModelLambdaIntegration.lambdaIntegration,
       productLambdaIntegration: productLambdaIntegration.lambdaIntegration,
       witnessLambdaIntegration: witnessLambdaIntegration.lambdaIntegration,
+      remissionLambdaIntegration: remissionLambdaIntegration.lambdaIntegration,
+      certificateLambdaIntegration: certificateLambdaIntegration.lambdaIntegration,
     });
   }
 }

@@ -4,8 +4,8 @@ import {
   Context,
 } from "aws-lambda";
 import { connectToDatabase } from "../../../../shared/utils/db-connection";
-import { WitnessService } from "../../../../core/domain/services/WitnessService";
-import { WitnessUseCases } from "../../../../core/application/use_cases/WitnessUseCases";
+import { CertificateService } from "../../../../core/domain/services/CertificateService";
+import { CertificateUseCases } from "../../../../core/application/use_cases/CertificateUseCases";
 import { z } from "zod";
 import {
   DELETE,
@@ -19,27 +19,43 @@ import {
   PATCH,
   POST,
 } from "../../../../shared/constants";
-import { WitnessRepository } from "../../../persistence/repositories/WitnessRepository";
+import { CertificateRepository } from "../../../persistence/repositories/CertificateRepository";
 import { decodeToken } from "../../../../shared/utils/userDecoder";
 import { CUSTOMER_ROLE } from "../../../../shared/constants/roles";
 import { IIdToken } from "../../../security/Auth";
 
-const createWitnessBodySchema = z.object({
+
+const createCertificateBodySchema = z.object({
   name: z.string(),
-  description: z.string().optional(),
+  _id: z.string().optional(),
+  date: z.number().optional(),
+  folio: z.number().optional(),
+  brand: z.string().optional(),
+  modelo: z.string().optional(),
+  year: z.number().optional(),
+  engine: z.number().optional(),
+  vim: z.string().optional(),
+  mileage: z.number().optional(),
 });
 
-const updateWitnessBodySchema = z.object({
+const updateCertificateBodySchema = z.object({
   id: z.string(),
   name: z.string().optional(),
-  description: z.string().optional(),
+  date: z.number().optional(),
+  folio: z.number().optional(),
+  brand: z.string().optional(),
+  modelo: z.string().optional(),
+  year: z.number().optional(),
+  engine: z.number().optional(),
+  vim: z.string().optional(),
+  mileage: z.number().optional(),
 });
 
-const removeWitnessBody = z.object({
+const removeCertificateBody = z.object({
   id: z.string(),
 });
 
-const getWitnessBody = z.object({
+const getCertificateBody = z.object({
   id: z.string(),
 });
 
@@ -79,16 +95,16 @@ export async function handler(
   }
 
   await connectToDatabase();
-  const witnessRepository = new WitnessRepository();
-  const witnessService = new WitnessService(witnessRepository);
-  const witnessUseCases = new WitnessUseCases(witnessService);
+  const certificateRepository = new CertificateRepository();
+  const certificateService = new CertificateService(certificateRepository);
+  const certificateUseCases = new CertificateUseCases(certificateService);
 
   try {
     switch (event.requestContext.http.method) {
       case GET:
         if (event.pathParameters) {
-          const pathValidationResult = getWitnessBody.safeParse({
-            id: event.pathParameters.witnessId,
+          const pathValidationResult = getCertificateBody.safeParse({
+            id: event.pathParameters.certificateId,
           });
           if (!pathValidationResult.success) {
             return {
@@ -101,27 +117,27 @@ export async function handler(
             };
           }
 
-          const witnesses = await witnessUseCases.getWitness(
+          const certificates = await certificateUseCases.getCertificate(
             pathValidationResult.data.id,
           );
           return {
             statusCode: HTTP_OK,
-            body: JSON.stringify(witnesses),
+            body: JSON.stringify(certificates),
           };
         } else {
-          const witnesses = await witnessUseCases.findAllWitnesses();
+          const certificates = await certificateUseCases.findAllCertificates();
           return {
             statusCode: HTTP_OK,
-            body: JSON.stringify(witnesses),
+            body: JSON.stringify(certificates),
           };
         }
 
       case POST: {
         const payload = JSON.parse(event.body ?? "{}");
-        const validationResult = createWitnessBodySchema.safeParse(payload);
-        let newWitness;
+        const validationResult = createCertificateBodySchema.safeParse(payload);
+        let newCertificate;
         if (validationResult.success) {
-          newWitness = await witnessUseCases.createWitness(payload);
+          newCertificate = await certificateUseCases.createCertificate(payload);
         } else {
           return {
             statusCode: HTTP_BAD_REQUEST,
@@ -136,32 +152,32 @@ export async function handler(
 
         return {
           statusCode: HTTP_CREATED,
-          body: JSON.stringify(newWitness),
+          body: JSON.stringify(newCertificate),
         };
       }
 
       case PATCH: {
         const payload = JSON.parse(event.body ?? "{}");
-        let updatedWitness;
+        let updatedCertificate;
 
-        if (!event.pathParameters || !event.pathParameters.witnessId) {
+        if (!event.pathParameters || !event.pathParameters.certificateId) {
           return {
             statusCode: HTTP_BAD_REQUEST,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              message: "Witness ID is required in the path",
+              message: "Certificate ID is required in the path",
             }),
           };
         }
 
-        const validationResult = updateWitnessBodySchema.safeParse({
+        const validationResult = updateCertificateBodySchema.safeParse({
           ...payload,
-          id: event.pathParameters.witnessId,
+          id: event.pathParameters.certificateId,
         });
 
         if (validationResult.success) {
-          updatedWitness = await witnessUseCases.updateWitness(
-            event.pathParameters.witnessId,
+          updatedCertificate = await certificateUseCases.updateCertificate(
+            event.pathParameters.certificateId,
             payload,
           );
         } else {
@@ -177,23 +193,23 @@ export async function handler(
 
         return {
           statusCode: HTTP_OK,
-          body: JSON.stringify(updatedWitness),
+          body: JSON.stringify(updatedCertificate),
         };
       }
 
       case DELETE: {
-        if (!event.pathParameters || !event.pathParameters.witnessId) {
+        if (!event.pathParameters || !event.pathParameters.certificateId) {
           return {
             statusCode: HTTP_BAD_REQUEST,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              message: "Witness ID is required in the path",
+              message: "Certificate ID is required in the path",
             }),
           };
         }
 
-        const pathValidationResult = removeWitnessBody.safeParse({
-          id: event.pathParameters.witnessId,
+        const pathValidationResult = removeCertificateBody.safeParse({
+          id: event.pathParameters.certificateId,
         });
 
         if (!pathValidationResult.success) {
@@ -201,28 +217,28 @@ export async function handler(
             statusCode: HTTP_BAD_REQUEST,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              message: "Invalid or missing Witness ID",
+              message: "Invalid or missing Certificate ID",
               errors: pathValidationResult.error.issues,
             }),
           };
         }
 
-        const witnessId = pathValidationResult.data.id;
+        const certificateId = pathValidationResult.data.id;
 
         try {
-          await witnessUseCases.removeWitness(witnessId);
+          await certificateUseCases.removeCertificate(certificateId);
           return {
             statusCode: HTTP_OK,
             body: JSON.stringify({
-              id: witnessId,
-              message: "Witness removed successfully",
+              id: certificateId,
+              message: "Certificate removed successfully",
             }),
           };
         } catch (error) {
           return {
             statusCode: HTTP_INTERNAL_SERVER_ERROR,
             body: JSON.stringify({
-              message: "An error occurred while removing the witness",
+              message: "An error occurred while removing the certificate",
             }),
           };
         }
