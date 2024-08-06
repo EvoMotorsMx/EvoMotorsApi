@@ -12,6 +12,9 @@ interface CarDocument extends Document {
   plates: string;
   carModelId: string;
   witnessId: string[];
+  certificateId: string;
+  remissionId: string;
+  leadId: string;
 }
 
 const carSchema = new Schema<CarDocument>(
@@ -28,11 +31,11 @@ const carSchema = new Schema<CarDocument>(
       type: Number,
       required: true,
     },
-    damageStatusDescription: {
+    damageImageUrl: {
       type: String,
       required: true,
     },
-    damageImageUrl: {
+    damageStatusDescription: {
       type: String,
       required: true,
     },
@@ -61,6 +64,20 @@ const carSchema = new Schema<CarDocument>(
         ref: "Witness",
       },
     ],
+    certificateId: {
+      type: String,
+      ref: "Certificate",
+    },
+    remissionId: [
+      {
+        type: String,
+        ref: "Remission",
+      },
+    ],
+    leadId: {
+      type: String,
+      ref: "Lead",
+    },
   },
   {
     timestamps: true,
