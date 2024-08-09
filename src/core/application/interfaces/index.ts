@@ -7,3 +7,4 @@ export * from "./ProductPrice";
 export * from "./Witness";
 export * from "./Remission";
 export * from "./Certificate";
+export * from "./Car";
