@@ -1,10 +1,11 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
+import { Car } from "../../../core/domain/entities";
 
 export interface CertificateDocument extends Document {
   name: string;
   date: number;
-  carId: string;
+  carId: Car;
 }
 
 const certificateSchema = new Schema<CertificateDocument>(

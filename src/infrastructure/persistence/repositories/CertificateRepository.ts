@@ -1,7 +1,14 @@
 import { Document } from "mongoose";
-import CertificateModel, { CertificateDocument } from "../models/Certificate.model";
+import CertificateModel, {
+  CertificateDocument,
+} from "../models/Certificate.model";
 import { ICertificateRepository } from "../../../core/application/interfaces/Certificate/ICertificateRepository";
-import { Certificate } from "../../../core/domain/entities";
+import {
+  Brand,
+  CarModel,
+  Certificate,
+  Car,
+} from "../../../core/domain/entities";
 import {
   CreateCertificateDTO,
   UpdateCertificateDTO,
@@ -29,9 +36,13 @@ export class CertificateRepository implements ICertificateRepository {
   }
 
   async update(id: string, dto: UpdateCertificateDTO): Promise<Certificate> {
-    const updatedCertificateDoc = await CertificateModel.findByIdAndUpdate(id, dto, {
-      new: true,
-    }).exec();
+    const updatedCertificateDoc = await CertificateModel.findByIdAndUpdate(
+      id,
+      dto,
+      {
+        new: true,
+      },
+    ).exec();
     if (!updatedCertificateDoc) throw new Error("Certificate not found");
     return this.docToEntity(updatedCertificateDoc);
   }
@@ -41,19 +52,43 @@ export class CertificateRepository implements ICertificateRepository {
   }
 
   private docToEntity(doc: CertificateDoc): Certificate {
-    const certificate = new Certificate(
-      //doc.name, doc.description, doc._id.toString()
-      doc.name,
-      doc.id,
-      doc.date,
-      doc.folio,
-      doc.brand,
-      doc.modelo,
-      doc.year,
-      doc.engine,
-      doc.vim,
-      doc.mileage,
+    const brand = new Brand(
+      doc.carId.carModelId.brandId.name,
+      doc.carId.carModelId.brandId.description,
+      doc.carId.carModelId.brandId._id,
     );
+
+    const carModel = new CarModel(
+      doc.carId.carModelId.name,
+      brand,
+      doc.carId.carModelId.year,
+      doc.carId.carModelId.engineSize,
+      doc.carId.carModelId.cylinder,
+      doc.carId.carModelId.combustion,
+      doc.carId.carModelId.engineType,
+      [],
+      doc.carId.carModelId._id,
+    );
+
+    const car = new Car(
+      doc.carId.mileage,
+      doc.carId.tankStatus,
+      doc.carId.damangeImageUrl,
+      doc.carId.statusDescription,
+      doc.carId.damangeDescription,
+      doc.carId.scannerDescription,
+      doc.carId.vin,
+      doc.carId.plates,
+      "",
+      carModel,
+      undefined,
+      doc.carId._id,
+    );
+
+    const certificate = new Certificate(doc.name, car, doc.id);
+
+    car.setCertificate(certificate);
+
     return certificate;
   }
 }
