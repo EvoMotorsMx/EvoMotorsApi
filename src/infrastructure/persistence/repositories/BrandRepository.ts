@@ -45,7 +45,7 @@ export class BrandRepository implements IBrandRepository {
   }
 
   private docToEntity(doc: BrandDoc): Brand {
-    const brand = new Brand(doc.name, doc.description, doc._id.toString());
+    const brand = new Brand(doc.name, doc.description, doc._id?.toString());
     return brand;
   }
 }
