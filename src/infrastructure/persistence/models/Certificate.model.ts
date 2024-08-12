@@ -1,53 +1,28 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
+import { Car } from "../../../core/domain/entities";
 
 export interface CertificateDocument extends Document {
   name: string;
-  //_id: string;
   date: number;
-  folio: number;
-  brand: string;
-  modelo?: string;
-  year?: number;
-  engine?: number;
-  vim?: string;
-  mileage?: number;
+  carId: Car;
 }
 
 const certificateSchema = new Schema<CertificateDocument>(
   {
+    _id: {
+      type: String,
+      default: () => uuidV4(),
+    },
     name: {
       type: String,
       required: true,
       unique: true,
     },
-    /*_id: {
+    carId: {
       type: String,
-      default: () => uuidV4(),
-    },*/
-    date: {
-      type: Number,
-    },
-    folio: {
-      type: Number,
-    },
-    brand: {
-      type: String,
-    },
-    modelo: {
-      type: String,
-    },
-    year: {
-      type: Number,
-    },
-    engine: {
-      type: Number,
-    },
-    vim: {
-      type: String,
-    },
-    mileage: {
-      type: Number,
+      required: true,
+      ref: "Car",
     },
   },
   {
@@ -55,13 +30,9 @@ const certificateSchema = new Schema<CertificateDocument>(
   },
 );
 
-/*certificateSchema.pre("save", function (next) {
-  if (this.name) {
-    this.name = this.name.toUpperCase();
-  }
-  next();
-});*/
-
-const Certificate = mongoose.model<CertificateDocument>("Certificate", certificateSchema);
+const Certificate = mongoose.model<CertificateDocument>(
+  "Certificate",
+  certificateSchema,
+);
 
 export default Certificate;

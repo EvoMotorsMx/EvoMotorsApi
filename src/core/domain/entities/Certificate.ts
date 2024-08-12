@@ -1,15 +1,10 @@
+import { Car } from "./Car";
+
 export class Certificate {
   constructor(
     public name: string,
+    public carId: Car,
     public _id?: string,
-    public date?: number,
-    public folio?: number,
-    public brand?: string,
-    public modelo?: string,
-    public year?: number,
-    public engine?: number,
-    public vim?: string,
-    public mileage?: number,
   ) {}
 
   // Method to set the id if it's not passed in the constructor
