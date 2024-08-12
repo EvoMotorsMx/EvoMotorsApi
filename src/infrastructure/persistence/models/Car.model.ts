@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
 import {
-  Brand,
   CarModel,
   Certificate,
   Remission,
@@ -11,16 +10,16 @@ import {
 export interface CarDocument extends Document {
   mileage: number;
   tankStatus: number;
-  damageStatusDescription: string;
   damageImageUrl: string;
+  damageStatusDescription: string;
   scannerDescription: string;
   vin: string;
   plates: string;
-  carModelId: CarModel;
-  witnesses: Witness[];
-  certificateId: Certificate;
-  remissionId: Remission;
   leadId: string;
+  carModelId: CarModel;
+  certificateId: Certificate;
+  remissions: Remission[];
+  witnesses: Witness[];
 }
 
 const carSchema = new Schema<CarDocument>(
@@ -74,7 +73,7 @@ const carSchema = new Schema<CarDocument>(
       type: String,
       ref: "Certificate",
     },
-    remissionId: [
+    remissions: [
       {
         type: String,
         ref: "Remission",

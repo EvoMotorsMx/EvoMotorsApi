@@ -8,6 +8,8 @@ import {
   CarModel,
   Certificate,
   Car,
+  Remission,
+  Witness,
 } from "../../../core/domain/entities";
 import {
   CreateCertificateDTO,
@@ -70,18 +72,27 @@ export class CertificateRepository implements ICertificateRepository {
       doc.carId.carModelId._id,
     );
 
+    const remissions = doc.carId.remissions?.map(
+      (remission) => new Remission(remission.name, remission._id),
+    );
+
+    const witnesses = doc.carId.witnesses?.map(
+      (witness) => new Witness(witness.name, witness.description, witness._id),
+    );
+
     const car = new Car(
       doc.carId.mileage,
       doc.carId.tankStatus,
       doc.carId.damangeImageUrl,
-      doc.carId.statusDescription,
-      doc.carId.damangeDescription,
+      doc.carId.damageStatusDescription,
       doc.carId.scannerDescription,
       doc.carId.vin,
       doc.carId.plates,
-      "",
+      doc.carId.leadId,
       carModel,
       undefined,
+      remissions,
+      witnesses,
       doc.carId._id,
     );
 

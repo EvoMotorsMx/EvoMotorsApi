@@ -1,4 +1,3 @@
-import { EngineType } from "../../../shared/enums";
 import { CarModel, Certificate, Remission, Witness } from "./index";
 
 export class Car {
@@ -6,17 +5,16 @@ export class Car {
     public mileage: number,
     public tankStatus: number,
     public damangeImageUrl: string,
-    public statusDescription: string,
-    public damangeDescription: string,
+    public damageStatusDescription: string,
     public scannerDescription: string,
-    public vin: EngineType,
+    public vin: string,
     public plates: string,
     public leadId: string,
     public carModelId: CarModel,
     public certifacteId?: Certificate,
-    public _id?: string,
     public remissions?: Remission[],
     public witnesses?: Witness[],
+    public _id?: string,
   ) {}
 
   setId(id: string) {
