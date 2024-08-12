@@ -70,7 +70,7 @@ export class CarModelRepository implements ICarModelRepository {
       doc.combustion,
       doc.engineType,
       files,
-      doc._id.toString(),
+      doc._id?.toString(),
     );
     return carModel;
   }
