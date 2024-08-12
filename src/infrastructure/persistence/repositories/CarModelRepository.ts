@@ -1,6 +1,6 @@
 import { Document } from "mongoose";
 import CarModelModel, { CarModelDocument } from "../models/CarModel.model";
-import BrandModel, { BrandDocument } from "../models/Brand.model";
+import BrandModel from "../models/Brand.model";
 import { File, Brand, CarModel } from "../../../core/domain/entities";
 import { ICarModelRepository } from "../../../core/application/interfaces";
 import {
@@ -57,6 +57,7 @@ export class CarModelRepository implements ICarModelRepository {
       doc.brandId.description,
       doc.brandId._id,
     );
+
     const files = doc.files?.map(
       (file) => new File(file.fileUrl, file.type, file._id!),
     );
@@ -72,6 +73,7 @@ export class CarModelRepository implements ICarModelRepository {
       files,
       doc._id?.toString(),
     );
+
     return carModel;
   }
 }

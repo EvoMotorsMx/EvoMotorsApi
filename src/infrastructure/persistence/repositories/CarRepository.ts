@@ -1,18 +1,17 @@
 import { Document } from "mongoose";
 import CarModel, { CarDocument } from "../models/Car.model";
-import CarModelModel, { CarModelDocument } from "../models/CarModel.model";
-import BrandModel, { BrandDocument } from "../models/Brand.model";
-import WitnessModel, { WitnessDocument } from "../models/Witness.model";
-import RemissionModel, { RemissionDocument } from "../models/Remission.model";
-import CertificateModel, {
-  CertificateDocument,
-} from "../models/Certificate.model";
+import CarModelModel from "../models/CarModel.model";
+import BrandModel from "../models/Brand.model";
+import WitnessModel from "../models/Witness.model";
+import RemissionModel from "../models/Remission.model";
+import CertificateModel from "../models/Certificate.model";
 import {
-  File,
   Brand,
   Car,
   CarModel as CarModelEntity,
   Certificate,
+  Remission,
+  Witness,
 } from "../../../core/domain/entities";
 import { ICarRepository } from "../../../core/application/interfaces";
 import { CreateCarDTO, UpdateCarDTO } from "../../../core/application/dtos";
@@ -155,11 +154,34 @@ export class CarRepository implements ICarRepository {
 
     const certificate = new Certificate(
       doc.certificateId.name,
+      doc.id,
       doc.certificateId._id,
-      doc.certificateId.date,
-      doc.certificateId.folio,
     );
 
-    return carModel;
+    const remissions = doc.remissions?.map(
+      (remission) => new Remission(remission.name, remission._id),
+    );
+
+    const witnesses = doc.witnesses?.map(
+      (witness) => new Witness(witness.name, witness.description, witness._id),
+    );
+
+    const car = new Car(
+      doc.mileage,
+      doc.tankStatus,
+      doc.damageImageUrl,
+      doc.damageStatusDescription,
+      doc.scannerDescription,
+      doc.vin,
+      doc.plates,
+      doc.leadId,
+      carModel,
+      certificate,
+      remissions,
+      witnesses,
+      doc.id,
+    );
+
+    return car;
   }
 }
