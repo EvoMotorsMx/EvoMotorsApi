@@ -34,6 +34,14 @@ const companySchema = new Schema<CompanyDocument>(
       type: String,
       required: true,
     },
+    phone: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
     users: [
       {
         type: String,
