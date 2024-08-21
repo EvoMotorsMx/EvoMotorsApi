@@ -3,7 +3,6 @@ import { v4 as uuidV4 } from "uuid";
 
 export interface CompanyDocument extends Document {
   name: string;
-  lastName: string;
   city: string;
   state: string;
   country: string;
@@ -12,7 +11,7 @@ export interface CompanyDocument extends Document {
   users: string[];
 }
 
-const companySchema = new Schema<CompanyDocument>(
+const companySchema: Schema<CompanyDocument> = new Schema<CompanyDocument>(
   {
     _id: {
       type: String,
@@ -52,8 +51,6 @@ const companySchema = new Schema<CompanyDocument>(
     timestamps: true,
   },
 );
-
-companySchema.set("autoIndex", false);
 
 const Company = mongoose.model<CompanyDocument>("Company", companySchema);
 
