@@ -58,14 +58,28 @@ export class PipelineStage extends Stage {
     });
 
     //Remission Lambda
-    const remissionLambdaIntegration = new LambdaStack(this, "RemissionLambda", {
-      lambdaDirectory: "Remission",
-      envVariables: lambdaVariables,
-    });
+    const remissionLambdaIntegration = new LambdaStack(
+      this,
+      "RemissionLambda",
+      {
+        lambdaDirectory: "Remission",
+        envVariables: lambdaVariables,
+      },
+    );
 
     //Certificate Lambda
-    const certificateLambdaIntegration = new LambdaStack(this, "CertificateLambda", {
-      lambdaDirectory: "Certificate",
+    const certificateLambdaIntegration = new LambdaStack(
+      this,
+      "CertificateLambda",
+      {
+        lambdaDirectory: "Certificate",
+        envVariables: lambdaVariables,
+      },
+    );
+
+    //Company Lambda
+    const companyLambdaIntegration = new LambdaStack(this, "CompanyLambda", {
+      lambdaDirectory: "Company",
       envVariables: lambdaVariables,
     });
 
@@ -78,7 +92,9 @@ export class PipelineStage extends Stage {
       productLambdaIntegration: productLambdaIntegration.lambdaIntegration,
       witnessLambdaIntegration: witnessLambdaIntegration.lambdaIntegration,
       remissionLambdaIntegration: remissionLambdaIntegration.lambdaIntegration,
-      certificateLambdaIntegration: certificateLambdaIntegration.lambdaIntegration,
+      certificateLambdaIntegration:
+        certificateLambdaIntegration.lambdaIntegration,
+      companyLambdaIntegration: companyLambdaIntegration.lambdaIntegration,
     });
   }
 }
