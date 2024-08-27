@@ -3,32 +3,32 @@ import { CreateCompanyDTO, UpdateCompanyDTO } from "../dtos";
 import { ICompanyService, ICompanyUseCases } from "../interfaces";
 
 export class CompanyUseCases implements ICompanyUseCases {
-  private brandService: ICompanyService;
+  private companyService: ICompanyService;
 
-  constructor(brandService: ICompanyService) {
-    this.brandService = brandService;
+  constructor(companyService: ICompanyService) {
+    this.companyService = companyService;
   }
 
   async findAllCompanys(): Promise<Company[]> {
-    return this.brandService.getAllCompanys();
+    return this.companyService.getAllCompanys();
   }
 
   async createCompany(dto: CreateCompanyDTO): Promise<Company> {
-    return this.brandService.createCompany(dto);
+    return this.companyService.createCompany(dto);
   }
 
   async updateCompany(
     id: string,
     dto: UpdateCompanyDTO,
   ): Promise<Company | null> {
-    return this.brandService.updateCompany(id, dto);
+    return this.companyService.updateCompany(id, dto);
   }
 
   async getCompany(id: string): Promise<Company | null> {
-    return this.brandService.getCompanyById(id);
+    return this.companyService.getCompanyById(id);
   }
 
   async removeCompany(id: string): Promise<void> {
-    return this.brandService.deleteCompany(id);
+    return this.companyService.deleteCompany(id);
   }
 }
