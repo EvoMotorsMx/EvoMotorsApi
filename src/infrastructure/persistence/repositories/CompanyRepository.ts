@@ -24,7 +24,7 @@ export class CompanyRepository implements ICompanyRepository {
       city: company.city,
       state: company.state,
       country: company.country,
-      phone: company.state,
+      phone: company.phone,
       email: company.email,
       users: company.users,
     });
@@ -40,7 +40,7 @@ export class CompanyRepository implements ICompanyRepository {
         city: company.city,
         state: company.state,
         country: company.country,
-        phone: company.state,
+        phone: company.phone,
         email: company.email,
         users: company.users,
       },
