@@ -12,7 +12,7 @@ export class CompanyService implements ICompanyService {
     return this.companyRepository.findById(id);
   }
 
-  async getAllCompanys(): Promise<Company[]> {
+  async getAllCompanies(): Promise<Company[]> {
     return this.companyRepository.findAll();
   }
 

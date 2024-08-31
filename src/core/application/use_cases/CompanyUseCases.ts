@@ -9,8 +9,8 @@ export class CompanyUseCases implements ICompanyUseCases {
     this.companyService = companyService;
   }
 
-  async findAllCompanys(): Promise<Company[]> {
-    return this.companyService.getAllCompanys();
+  async findAllCompanies(): Promise<Company[]> {
+    return this.companyService.getAllCompanies();
   }
 
   async createCompany(dto: CreateCompanyDTO): Promise<Company> {
