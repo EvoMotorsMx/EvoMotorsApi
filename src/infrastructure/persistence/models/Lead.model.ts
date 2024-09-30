@@ -1,23 +1,24 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
-import { Car, Remission } from "../../../core/domain/entities";
+import { Car, Company, Remission } from "../../../core/domain/entities";
 
 export interface LeadDocument extends Document {
   name: string;
   lastName: string;
+  status: string;
   city: string;
   state: string;
   country: string;
-  status: string;
   phone: string;
   email: string;
+  remissions: Remission[];
   rfc: string;
   cfdi: string;
   razon_social: string;
   factura: string;
-  remissions: Remission[];
+  contact: string;
+  company: Company;
   cars: Car[];
-  company: string;
 }
 
 const leadSchema = new Schema<LeadDocument>(
@@ -47,6 +48,30 @@ const leadSchema = new Schema<LeadDocument>(
       required: true,
     },
     status: {
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    rfc: {
+      type: String,
+      required: true,
+    },
+    cfdi: {
+      type: String,
+      required: true,
+    },
+    razon_social: {
+      type: String,
+      required: true,
+    },
+    factura: {
       type: String,
       required: true,
     },
