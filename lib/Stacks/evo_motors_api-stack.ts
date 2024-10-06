@@ -170,7 +170,7 @@ export class EvoMotorsApiStack extends cdk.Stack {
     });
 
     evoMotorsAdminHttpApi.addRoutes({
-      path: "/productPrice/{productPrice}",
+      path: "/productPrice/{productPriceId}",
       methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
       integration: props.productPriceLambdaIntegration,
       authorizer,
