@@ -1,5 +1,5 @@
 import { CombustionType, EngineType } from "../../../shared/enums";
-import { Brand, File } from "./index";
+import { Brand, File, Product } from "./index";
 
 export class CarModel {
   constructor(
@@ -11,6 +11,7 @@ export class CarModel {
     public combustion: CombustionType,
     public engineType: EngineType,
     public files?: File[] | string[],
+    public products?: Product[] | string[],
     public _id?: string,
   ) {}
 
