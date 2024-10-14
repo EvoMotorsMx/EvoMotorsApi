@@ -110,7 +110,7 @@ export class ProductPriceRepository implements IProductPriceRepository {
       carModel,
       product,
       doc.price,
-      doc._id,
+      doc._id as string,
     );
     return productPrice;
   }

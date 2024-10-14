@@ -10,6 +10,7 @@ import {
   Car,
   CarModel as CarModelEntity,
   Certificate,
+  Product,
   Remission,
   Witness,
 } from "../../../core/domain/entities";
@@ -140,6 +141,11 @@ export class CarRepository implements ICarRepository {
       doc.carModelId.brandId._id,
     );
 
+    const carModelProducts = doc.carModelId.products as Product[];
+    const products = carModelProducts.map(
+      (product) => new Product(product.name, product.description, product._id),
+    );
+
     const carModel = new CarModelEntity(
       doc.carModelId.name,
       brand,
@@ -148,7 +154,8 @@ export class CarRepository implements ICarRepository {
       doc.carModelId.cylinder,
       doc.carModelId.combustion,
       doc.carModelId.engineType,
-      [],
+      [], //TODO: Add Files and CarModel entities
+      products,
       doc.carModelId._id,
     );
 
