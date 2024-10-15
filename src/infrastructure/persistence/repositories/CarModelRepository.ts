@@ -1,7 +1,7 @@
 import { Document } from "mongoose";
 import CarModelModel, { CarModelDocument } from "../models/CarModel.model";
-import BrandModel, { BrandDocument } from "../models/Brand.model";
-import { File, Brand, CarModel } from "../../../core/domain/entities";
+import BrandModel from "../models/Brand.model";
+import { File, Brand, CarModel, Product } from "../../../core/domain/entities";
 import { ICarModelRepository } from "../../../core/application/interfaces";
 import {
   CreateCarModelDTO,
@@ -57,6 +57,11 @@ export class CarModelRepository implements ICarModelRepository {
       doc.brandId.description,
       doc.brandId._id,
     );
+
+    const products = doc.products?.map(
+      (product) => new Product(product.name, product.description, product._id),
+    );
+
     const files = doc.files?.map(
       (file) => new File(file.fileUrl, file.type, file._id!),
     );
@@ -70,8 +75,10 @@ export class CarModelRepository implements ICarModelRepository {
       doc.combustion,
       doc.engineType,
       files,
-      doc._id.toString(),
+      products,
+      doc._id?.toString(),
     );
+
     return carModel;
   }
 }

@@ -109,10 +109,10 @@ export async function handler(
             body: JSON.stringify(witnesses),
           };
         } else {
-          const witnesss = await witnessUseCases.findAllWitnesses();
+          const witnesses = await witnessUseCases.findAllWitnesses();
           return {
             statusCode: HTTP_OK,
-            body: JSON.stringify(witnesss),
+            body: JSON.stringify(witnesses),
           };
         }
 

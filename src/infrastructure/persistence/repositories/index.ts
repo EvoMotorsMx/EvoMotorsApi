@@ -5,3 +5,5 @@ export * from "./PlatformRepository";
 export * from "./ProductRepository";
 export * from "./ProductPriceRepository";
 export * from "./WitnessRepository";
+export * from "./RemissionRepository";
+export * from "./CertificateRepository";

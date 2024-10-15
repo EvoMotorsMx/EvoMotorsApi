@@ -23,7 +23,7 @@ export class PipelineStage extends Stage {
       [key: string]: string;
     };
 
-    // TODO: Already created, causing issues after stack delition
+    // TODO: Already created, causing issues after stack deletion
     /* new EvoMotorsMongoAtlasStack(this, "EvoMotorsMongoStack", {
       config: props.config,
     }); */
@@ -57,6 +57,42 @@ export class PipelineStage extends Stage {
       envVariables: lambdaVariables,
     });
 
+    //Remission Lambda
+    const remissionLambdaIntegration = new LambdaStack(
+      this,
+      "RemissionLambda",
+      {
+        lambdaDirectory: "Remission",
+        envVariables: lambdaVariables,
+      },
+    );
+
+    //Certificate Lambda
+    const certificateLambdaIntegration = new LambdaStack(
+      this,
+      "CertificateLambda",
+      {
+        lambdaDirectory: "Certificate",
+        envVariables: lambdaVariables,
+      },
+    );
+
+    //Company Lambda
+    const companyLambdaIntegration = new LambdaStack(this, "CompanyLambda", {
+      lambdaDirectory: "Company",
+      envVariables: lambdaVariables,
+    });
+
+    //Product Price Lambda
+    const productPriceLambdaIntegration = new LambdaStack(
+      this,
+      "ProductPriceLambda",
+      {
+        lambdaDirectory: "ProductPrice",
+        envVariables: lambdaVariables,
+      },
+    );
+
     new EvoMotorsApiStack(this, "EvoMotorsApiStack", {
       stageName: props.stageName,
       userPool: evoMotorsAuthStack.getUserPool(),
@@ -65,6 +101,12 @@ export class PipelineStage extends Stage {
       carModelLambdaIntegration: carModelLambdaIntegration.lambdaIntegration,
       productLambdaIntegration: productLambdaIntegration.lambdaIntegration,
       witnessLambdaIntegration: witnessLambdaIntegration.lambdaIntegration,
+      remissionLambdaIntegration: remissionLambdaIntegration.lambdaIntegration,
+      certificateLambdaIntegration:
+        certificateLambdaIntegration.lambdaIntegration,
+      companyLambdaIntegration: companyLambdaIntegration.lambdaIntegration,
+      productPriceLambdaIntegration:
+        productPriceLambdaIntegration.lambdaIntegration,
     });
   }
 }

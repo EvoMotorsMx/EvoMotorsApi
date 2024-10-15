@@ -2,9 +2,13 @@ import { handler } from "../../src/infrastructure/web/routes/Brand/handler";
 
 handler(
   {
-    httpMethod: "GET",
+    requestContext: {
+      http: {
+        method: "GET",
+      },
+    },
     headers: {
-      IdToken: "",
+      idtoken: "",
       Authorization: "",
     },
   } as any,

@@ -1,19 +1,25 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
-import { Transmission } from "../../../shared/enums";
+import {
+  CarModel,
+  Certificate,
+  Remission,
+  Witness,
+} from "../../../core/domain/entities";
 
-interface CarDocument extends Document {
-  _id: string;
+export interface CarDocument extends Document {
   mileage: number;
   tankStatus: number;
-  damageStatusDescription: string;
   damageImageUrl: string;
+  damageStatusDescription: string;
   scannerDescription: string;
   vin: string;
   plates: string;
-  carModelId: string;
-  transmission: Transmission;
-  witnessId: string[];
+  leadId: string;
+  carModelId: CarModel;
+  certificateId: Certificate;
+  remissions: Remission[];
+  witnesses: Witness[];
 }
 
 const carSchema = new Schema<CarDocument>(
@@ -30,11 +36,11 @@ const carSchema = new Schema<CarDocument>(
       type: Number,
       required: true,
     },
-    damageStatusDescription: {
+    damageImageUrl: {
       type: String,
       required: true,
     },
-    damageImageUrl: {
+    damageStatusDescription: {
       type: String,
       required: true,
     },
@@ -57,16 +63,25 @@ const carSchema = new Schema<CarDocument>(
       required: true,
       ref: "CarModel",
     },
-    witnessId: [
+    witnesses: [
       {
         type: String,
         ref: "Witness",
       },
     ],
-    transmission: {
+    certificateId: {
       type: String,
-      required: true,
-      enum: Object.values(Transmission),
+      ref: "Certificate",
+    },
+    remissions: [
+      {
+        type: String,
+        ref: "Remission",
+      },
+    ],
+    leadId: {
+      type: String,
+      ref: "Lead",
     },
   },
   {

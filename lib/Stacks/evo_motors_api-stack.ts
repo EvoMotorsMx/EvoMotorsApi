@@ -14,6 +14,10 @@ interface EvoMotorsApiStackProps extends cdk.StackProps {
   carModelLambdaIntegration: HttpLambdaIntegration;
   productLambdaIntegration: HttpLambdaIntegration;
   witnessLambdaIntegration: HttpLambdaIntegration;
+  remissionLambdaIntegration: HttpLambdaIntegration;
+  certificateLambdaIntegration: HttpLambdaIntegration;
+  companyLambdaIntegration: HttpLambdaIntegration;
+  productPriceLambdaIntegration: HttpLambdaIntegration;
 }
 
 export class EvoMotorsApiStack extends cdk.Stack {
@@ -101,14 +105,74 @@ export class EvoMotorsApiStack extends cdk.Stack {
     evoMotorsAdminHttpApi.addRoutes({
       path: "/witness",
       methods: [HttpMethod.GET, HttpMethod.POST],
-      integration: props.productLambdaIntegration,
+      integration: props.witnessLambdaIntegration,
       authorizer,
     });
 
     evoMotorsAdminHttpApi.addRoutes({
       path: "/witness/{witnessId}",
       methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
-      integration: props.productLambdaIntegration,
+      integration: props.witnessLambdaIntegration,
+      authorizer,
+    });
+
+    //Remission routes
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/remission",
+      methods: [HttpMethod.GET, HttpMethod.POST],
+      integration: props.remissionLambdaIntegration,
+      authorizer,
+    });
+
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/remission/{remissionId}",
+      methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
+      integration: props.remissionLambdaIntegration,
+      authorizer,
+    });
+
+    //Certificate routes
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/certificate",
+      methods: [HttpMethod.GET, HttpMethod.POST],
+      integration: props.certificateLambdaIntegration,
+      authorizer,
+    });
+
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/certificate/{certificateId}",
+      methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
+      integration: props.certificateLambdaIntegration,
+      authorizer,
+    });
+
+    //Company routes
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/company",
+      methods: [HttpMethod.GET, HttpMethod.POST],
+      integration: props.companyLambdaIntegration,
+      authorizer,
+    });
+
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/company/{companyId}",
+      methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
+      integration: props.companyLambdaIntegration,
+      authorizer,
+    });
+
+    //productPrice routes
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/productPrice",
+      methods: [HttpMethod.GET, HttpMethod.POST],
+      integration: props.productPriceLambdaIntegration,
+      authorizer,
+    });
+
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/productPrice/{productPriceId}",
+      methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
+      integration: props.productPriceLambdaIntegration,
       authorizer,
     });
   }
