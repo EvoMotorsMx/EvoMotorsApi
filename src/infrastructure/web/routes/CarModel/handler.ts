@@ -28,14 +28,15 @@ import { CombustionType, EngineType } from "../../../../shared/enums";
 const createCarModelBodySchema = z.object({
   name: z.string(),
   brandId: z.string(),
-  year: z.string().refine((val) => /^\d{4}$/.test(val), {
-    message: "Year must be a four-digit number",
-  }),
+  year: z
+    .array(z.string().regex(/^\d{4}$/, "Year must be a four-digit number"))
+    .optional(),
   engineSize: z.string(),
   cylinder: z.number().positive(),
   combustion: z.nativeEnum(CombustionType),
   engineType: z.nativeEnum(EngineType),
   files: z.array(z.string()).optional(),
+  products: z.array(z.string()).optional(),
 });
 
 const updateCarModelBodySchema = z.object({
@@ -43,14 +44,14 @@ const updateCarModelBodySchema = z.object({
   name: z.string().optional(),
   brandId: z.string().optional(),
   year: z
-    .string()
-    .regex(/^\d{4}$/, "Year must be a four-digit number")
+    .array(z.string().regex(/^\d{4}$/, "Year must be a four-digit number"))
     .optional(),
   engineSize: z.string().optional(),
   cylinder: z.number().positive().optional(),
   combustion: z.nativeEnum(CombustionType).optional(),
   engineType: z.nativeEnum(EngineType).optional(),
   files: z.array(z.string()).optional(),
+  products: z.array(z.string()).optional(),
 });
 
 const removeCarModelBody = z.object({
