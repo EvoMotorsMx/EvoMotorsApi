@@ -6,7 +6,7 @@ import { File, Brand, Product } from "../../../core/domain/entities";
 export interface CarModelDocument extends Document {
   name: string;
   brandId: Brand;
-  year: string;
+  year: string[];
   engineSize: string;
   cylinder: number;
   combustion: CombustionType;
@@ -30,22 +30,24 @@ const carModelSchema: Schema<CarModelDocument> = new Schema<CarModelDocument>(
       required: true,
       ref: "Brand",
     },
-    year: {
-      type: String,
-      required: true,
-      validate: {
-        validator: function (v: string) {
-          const yearNum = parseInt(v, 10);
-          return (
-            /^\d{4}$/.test(v) &&
-            yearNum >= 1886 &&
-            yearNum <= new Date().getFullYear()
-          );
+    year: [
+      {
+        type: String,
+        required: true,
+        validate: {
+          validator: function (v: string) {
+            const yearNum = parseInt(v, 10);
+            return (
+              /^\d{4}$/.test(v) &&
+              yearNum >= 1886 &&
+              yearNum <= new Date().getFullYear()
+            );
+          },
+          message: (props: { value: string }) =>
+            `${props.value} is not a valid year! Year must be a four-digit number between 1886 and the current year.`,
         },
-        message: (props: { value: string }) =>
-          `${props.value} is not a valid year! Year must be a four-digit number between 1886 and the current year.`,
       },
-    },
+    ],
     engineSize: {
       type: String,
       required: true,
