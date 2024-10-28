@@ -10,6 +10,7 @@ import {
   CarModel,
   Brand,
   Product,
+  File,
 } from "../../../core/domain/entities";
 import { IProductPriceRepository } from "../../../core/application/interfaces";
 import {
@@ -88,6 +89,18 @@ export class ProductPriceRepository implements IProductPriceRepository {
       doc.carModelId.brandId._id,
     );
 
+    const carModelFiles: File[] = doc.carModelId?.files as File[];
+
+    const files = carModelFiles.map(
+      (file) => new File(file.fileUrl, file.type, file._id!),
+    );
+
+    const carModelProducts: Product[] = doc.carModelId?.products as Product[];
+
+    const products = carModelProducts.map(
+      (product) => new Product(product.name, product.description, product._id),
+    );
+
     const carModel = new CarModel(
       doc.carModelId.name,
       brand,
@@ -96,7 +109,8 @@ export class ProductPriceRepository implements IProductPriceRepository {
       doc.carModelId.cylinder,
       doc.carModelId.combustion,
       doc.carModelId.engineType,
-      doc.carModelId.files,
+      files,
+      products,
       doc.carModelId._id,
     );
 
@@ -110,7 +124,9 @@ export class ProductPriceRepository implements IProductPriceRepository {
       carModel,
       product,
       doc.price,
-      doc._id as string,
+      doc.hpIncrement,
+      doc.torqueIncrement,
+      doc._id?.toString() as string,
     );
     return productPrice;
   }

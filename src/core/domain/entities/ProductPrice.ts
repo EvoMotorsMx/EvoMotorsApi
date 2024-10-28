@@ -5,6 +5,8 @@ export class ProductPrice {
     public carModelId: CarModel,
     public productId: Product,
     public price: number,
+    public hpIncrement: number,
+    public torqueIncrement: number,
     public _id?: string,
   ) {}
 
