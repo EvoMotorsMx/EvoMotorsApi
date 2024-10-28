@@ -28,6 +28,8 @@ const createProductPricePriceBodySchema = z.object({
   carModelId: z.string(),
   productId: z.string(),
   price: z.number(),
+  hpIncrement: z.number(),
+  torqueIncrement: z.number(),
 });
 
 const updateProductPricePriceBodySchema = z.object({
@@ -35,6 +37,8 @@ const updateProductPricePriceBodySchema = z.object({
   carModelId: z.string().optional(),
   productId: z.string().optional(),
   price: z.string().optional(),
+  hpIncrement: z.number(),
+  torqueIncrement: z.number(),
 });
 
 const removeProductPricePriceBody = z.object({

@@ -7,7 +7,6 @@ export interface FileDocument extends Document {
   fileUrl: string;
   type: FileType;
   carModelId: CarModel | string;
-  platformId: string;
 }
 
 const fileSchema = new Schema<FileDocument>(
@@ -29,11 +28,6 @@ const fileSchema = new Schema<FileDocument>(
       type: String,
       required: true,
       ref: "CarModel",
-    },
-    platformId: {
-      type: String,
-      required: true,
-      ref: "Platform",
     },
   },
   {

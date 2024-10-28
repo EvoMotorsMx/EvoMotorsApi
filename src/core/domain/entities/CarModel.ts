@@ -5,7 +5,7 @@ export class CarModel {
   constructor(
     public name: string,
     public brandId: Brand,
-    public year: string,
+    public year: string[],
     public engineSize: string,
     public cylinder: number,
     public combustion: CombustionType,

@@ -41,7 +41,7 @@ export class ProductRepository implements IProductRepository {
   }
 
   private docToEntity(doc: ProductDoc): Product {
-    const product = new Product(doc.name, doc.description, doc._id.toString());
+    const product = new Product(doc.name, doc.description, doc._id?.toString());
     return product;
   }
 }

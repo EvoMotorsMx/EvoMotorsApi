@@ -10,6 +10,8 @@ import {
   Car,
   Remission,
   Witness,
+  File,
+  Product,
 } from "../../../core/domain/entities";
 import {
   CreateCertificateDTO,
@@ -60,6 +62,19 @@ export class CertificateRepository implements ICertificateRepository {
       doc.carId.carModelId.brandId._id,
     );
 
+    const carModelFiles: File[] = doc.carId.carModelId?.files as File[];
+
+    const files = carModelFiles.map(
+      (file) => new File(file.fileUrl, file.type, file._id!),
+    );
+
+    const carModelProducts: Product[] = doc.carId.carModelId
+      ?.products as Product[];
+
+    const products = carModelProducts.map(
+      (product) => new Product(product.name, product.description, product._id),
+    );
+
     const carModel = new CarModel(
       doc.carId.carModelId.name,
       brand,
@@ -68,7 +83,8 @@ export class CertificateRepository implements ICertificateRepository {
       doc.carId.carModelId.cylinder,
       doc.carId.carModelId.combustion,
       doc.carId.carModelId.engineType,
-      [],
+      files,
+      products,
       doc.carId.carModelId._id,
     );
 
