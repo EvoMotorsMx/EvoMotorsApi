@@ -6,6 +6,8 @@ export interface ProductPriceDocument extends Document {
   carModelId: CarModel;
   productId: Product;
   price: number;
+  hpIncrement: number;
+  torqueIncrement: number;
 }
 
 const productPriceSchema = new Schema<ProductPriceDocument>(
@@ -25,6 +27,14 @@ const productPriceSchema = new Schema<ProductPriceDocument>(
       ref: "Product",
     },
     price: {
+      type: Number,
+      required: true,
+    },
+    hpIncrement: {
+      type: Number,
+      required: true,
+    },
+    torqueIncrement: {
       type: Number,
       required: true,
     },

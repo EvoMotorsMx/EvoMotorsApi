@@ -41,7 +41,11 @@ export class WitnessRepository implements IWitnessRepository {
   }
 
   private docToEntity(doc: WitnessDoc): Witness {
-    const witness = new Witness(doc.name, doc.description, doc._id.toString());
+    const witness = new Witness(
+      doc.name,
+      doc.description,
+      doc._id?.toString() as string,
+    );
     return witness;
   }
 }

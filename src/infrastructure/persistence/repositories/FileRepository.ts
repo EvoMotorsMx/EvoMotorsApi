@@ -6,7 +6,7 @@ import {
   CreateFileDTO,
   UpdateFileDTO,
 } from "../../../core/application/dtos/File";
-import { Brand, CarModel } from "../../../core/domain/entities";
+import { Brand, CarModel, Product } from "../../../core/domain/entities";
 
 interface FileDoc extends Document, FileDocument {}
 
@@ -78,6 +78,13 @@ export class FileRepository implements IFileRepository {
         });
       }
 
+      const carModelProducts = doc.carModelId.products as Product[];
+
+      const products = carModelProducts.map(
+        (product) =>
+          new Product(product.name, product.description, product._id),
+      );
+
       const carModel = new CarModel(
         doc.carModelId.name,
         brand,
@@ -87,11 +94,12 @@ export class FileRepository implements IFileRepository {
         doc.carModelId.combustion,
         doc.carModelId.engineType,
         carModelFiles,
-        doc.carModelId._id,
+        products,
+        doc.carModelId._id?.toString() as string,
       );
 
       const file = new File(doc.fileUrl, doc.type, carModel._id!);
-      file.setId(doc._id.toString());
+      file.setId(doc._id?.toString() as string);
       return file;
     } else {
       throw new Error("CarModel details are not properly populated");
