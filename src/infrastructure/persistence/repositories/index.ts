@@ -7,3 +7,4 @@ export * from "./ProductPriceRepository";
 export * from "./WitnessRepository";
 export * from "./RemissionRepository";
 export * from "./CertificateRepository";
+export * from "./ErrorCodeRepository";

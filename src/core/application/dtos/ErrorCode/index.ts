@@ -1,2 +1,2 @@
-export * from "./CreateFile.dto";
-export * from "./UpdateFile.dto";
+export * from "./CreateErrorCode.dto";
+export * from "./UpdateErrorCode.dto";
