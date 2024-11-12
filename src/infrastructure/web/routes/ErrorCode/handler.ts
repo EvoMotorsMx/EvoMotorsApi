@@ -36,6 +36,7 @@ const updateErrorCodeBodySchema = z.object({
   name: z.string().optional(),
   code: z.string().optional(),
   description: z.string().optional(),
+  brand: z.string().optional(),
 });
 
 const removeErrorCodeBody = z.object({
