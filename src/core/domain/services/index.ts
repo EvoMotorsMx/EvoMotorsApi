@@ -6,3 +6,4 @@ export * from "./ProductPriceService";
 export * from "./WitnessService";
 export * from "./RemissionService";
 export * from "./CertificateService";
+export * from "./ErrorCodeService";

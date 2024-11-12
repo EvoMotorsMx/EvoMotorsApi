@@ -18,6 +18,7 @@ interface EvoMotorsApiStackProps extends cdk.StackProps {
   certificateLambdaIntegration: HttpLambdaIntegration;
   companyLambdaIntegration: HttpLambdaIntegration;
   productPriceLambdaIntegration: HttpLambdaIntegration;
+  errorCodeLambdaIntegration: HttpLambdaIntegration;
 }
 
 export class EvoMotorsApiStack extends cdk.Stack {
@@ -173,6 +174,21 @@ export class EvoMotorsApiStack extends cdk.Stack {
       path: "/productPrice/{productPriceId}",
       methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
       integration: props.productPriceLambdaIntegration,
+      authorizer,
+    });
+
+    //Error Code routes
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/errorCode",
+      methods: [HttpMethod.GET, HttpMethod.POST],
+      integration: props.errorCodeLambdaIntegration,
+      authorizer,
+    });
+
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/errorCode/{errorCodeId}",
+      methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
+      integration: props.errorCodeLambdaIntegration,
       authorizer,
     });
   }
