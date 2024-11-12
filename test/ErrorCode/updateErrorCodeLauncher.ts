@@ -3,7 +3,7 @@ import { handler } from "../../src/infrastructure/web/routes/ProductPrice/handle
 handler(
   {
     pathParameters: {
-      carModelId: "",
+      errorCodeId: "",
     },
     headers: {
       idtoken: "",
@@ -11,9 +11,10 @@ handler(
     },
     requestContext: {
       http: {
-        method: "GET",
+        method: "PATCH",
       },
     },
+    body: JSON.stringify({}),
   } as any,
   {} as any,
 );

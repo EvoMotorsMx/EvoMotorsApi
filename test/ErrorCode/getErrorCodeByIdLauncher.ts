@@ -1,8 +1,10 @@
-import { handler } from "../../src/infrastructure/web/routes/CarModel/handler";
+import { handler } from "../../src/infrastructure/web/routes/ProductPrice/handler";
 
 handler(
   {
-    httpMethod: "GET",
+    pathParameters: {
+      errorCodeId: "",
+    },
     headers: {
       idtoken: "",
       Authorization: "",
