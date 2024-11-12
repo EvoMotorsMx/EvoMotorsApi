@@ -5,6 +5,7 @@ import BrandModel from "../models/Brand.model";
 import WitnessModel from "../models/Witness.model";
 import RemissionModel from "../models/Remission.model";
 import CertificateModel from "../models/Certificate.model";
+import ErrorCodeModel from "../models/ErrorCode.model";
 import {
   Brand,
   Car,
@@ -13,9 +14,11 @@ import {
   Product,
   Remission,
   Witness,
+  ErrorCode,
 } from "../../../core/domain/entities";
 import { ICarRepository } from "../../../core/application/interfaces";
 import { CreateCarDTO, UpdateCarDTO } from "../../../core/application/dtos";
+import { error } from "console";
 
 interface CarDoc extends Document, CarDocument {}
 
@@ -38,6 +41,10 @@ export class CarRepository implements ICarRepository {
       .populate({
         path: "Certificate",
         model: CertificateModel,
+      })
+      .populate({
+        path: "ErrorCode",
+        model: ErrorCodeModel,
       })
       .exec();
     if (!carModelDoc) return null;
@@ -63,6 +70,10 @@ export class CarRepository implements ICarRepository {
         path: "Certificate",
         model: CertificateModel,
       })
+      .populate({
+        path: "ErrorCode",
+        model: ErrorCodeModel,
+      })
       .exec();
     if (!carModelDocs.length) return [];
     return carModelDocs.map((doc) => this.docToEntity(doc));
@@ -75,10 +86,7 @@ export class CarRepository implements ICarRepository {
       .populate({
         path: "carModelId",
         model: CarModelModel,
-        populate: {
-          path: "brandId",
-          model: BrandModel,
-        },
+        populate: { path: "brandId", model: BrandModel },
       })
       .populate({
         path: "witnessId",
@@ -91,6 +99,10 @@ export class CarRepository implements ICarRepository {
       .populate({
         path: "Certificate",
         model: CertificateModel,
+      })
+      .populate({
+        path: "ErrorCode",
+        model: ErrorCodeModel,
       })
       .exec();
 
@@ -108,10 +120,7 @@ export class CarRepository implements ICarRepository {
       .populate({
         path: "carModelId",
         model: CarModelModel,
-        populate: {
-          path: "brandId",
-          model: BrandModel,
-        },
+        populate: { path: "brandId", model: BrandModel },
       })
       .populate({
         path: "witnessId",
@@ -124,6 +133,10 @@ export class CarRepository implements ICarRepository {
       .populate({
         path: "Certificate",
         model: CertificateModel,
+      })
+      .populate({
+        path: "ErrorCode",
+        model: ErrorCodeModel,
       })
       .exec();
     if (!updatedBrandDoc) throw new Error("Car Model not found");
@@ -173,6 +186,17 @@ export class CarRepository implements ICarRepository {
       (witness) => new Witness(witness.name, witness.description, witness._id),
     );
 
+    const errorCodes = doc.errorCodes?.map(
+      (errorCode) =>
+        new ErrorCode(
+          errorCode.code,
+          errorCode.name,
+          errorCode.brand,
+          errorCode.description,
+          errorCode._id,
+        ),
+    );
+
     const car = new Car(
       doc.mileage,
       doc.tankStatus,
@@ -186,6 +210,7 @@ export class CarRepository implements ICarRepository {
       certificate,
       remissions,
       witnesses,
+      errorCodes,
       doc.id,
     );
 

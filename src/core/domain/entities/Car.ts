@@ -1,4 +1,4 @@
-import { CarModel, Certificate, Remission, Witness } from "./index";
+import { CarModel, Certificate, ErrorCode, Remission, Witness } from "./index";
 
 export class Car {
   constructor(
@@ -14,6 +14,7 @@ export class Car {
     public certifacteId?: Certificate,
     public remissions?: Remission[],
     public witnesses?: Witness[],
+    public errorCodes?: ErrorCode[],
     public _id?: string,
   ) {}
 
