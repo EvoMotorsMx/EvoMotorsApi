@@ -38,7 +38,12 @@ export class ToolRepository implements IToolRepository {
   }
 
   private docToEntity(doc: ToolDoc): Tool {
-    const tool = new Tool(doc.name, doc.description, doc._id?.toString());
+    const tool = new Tool(
+      doc.name,
+      doc.totalQuantity,
+      doc.description,
+      doc._id?.toString(),
+    );
     return tool;
   }
 }
