@@ -103,6 +103,18 @@ export class PipelineStage extends Stage {
       },
     );
 
+    //Car Lambda
+    const carLambdaIntegration = new LambdaStack(this, "carLambda", {
+      lambdaDirectory: "Car",
+      envVariables: lambdaVariables,
+    });
+
+    //Car Lambda
+    const toolLambdaIntegration = new LambdaStack(this, "toolLambda", {
+      lambdaDirectory: "tool",
+      envVariables: lambdaVariables,
+    });
+
     new EvoMotorsApiStack(this, "EvoMotorsApiStack", {
       stageName: props.stageName,
       userPool: evoMotorsAuthStack.getUserPool(),
@@ -118,7 +130,8 @@ export class PipelineStage extends Stage {
       productPriceLambdaIntegration:
         productPriceLambdaIntegration.lambdaIntegration,
       errorCodeLambdaIntegration: errorCodeLambdaIntegration.lambdaIntegration,
-      carLambdaIntegration: carModelLambdaIntegration.lambdaIntegration,
+      carLambdaIntegration: carLambdaIntegration.lambdaIntegration,
+      toolLambdaIntegration: toolLambdaIntegration.lambdaIntegration,
     });
   }
 }
