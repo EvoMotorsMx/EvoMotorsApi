@@ -1,10 +1,10 @@
-import { CarModel } from "../../../domain/entities/CarModel";
-import { CreateCarModelDTO, UpdateCarModelDTO } from "../../dtos/CarModel";
+import { Car } from "../../../domain/entities/Car";
+import { CreateCarDTO, UpdateCarDTO } from "../../dtos/Car";
 
 export interface ICarService {
-  createCarModel(dto: CreateCarModelDTO): Promise<CarModel>;
-  getCarModelById(id: string): Promise<CarModel | null>;
-  getAllCarModels(): Promise<CarModel[]>;
-  updateCarModel(id: string, dto: UpdateCarModelDTO): Promise<CarModel | null>;
-  deleteCarModel(id: string): Promise<void>;
+  createCar(dto: CreateCarDTO): Promise<Car | null>;
+  getCarById(id: string): Promise<Car | null>;
+  getAllCars(): Promise<Car[]>;
+  updateCar(id: string, dto: UpdateCarDTO): Promise<Car | null>;
+  deleteCar(id: string): Promise<void>;
 }

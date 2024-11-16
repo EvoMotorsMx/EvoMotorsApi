@@ -118,6 +118,7 @@ export class PipelineStage extends Stage {
       productPriceLambdaIntegration:
         productPriceLambdaIntegration.lambdaIntegration,
       errorCodeLambdaIntegration: errorCodeLambdaIntegration.lambdaIntegration,
+      carLambdaIntegration: carModelLambdaIntegration.lambdaIntegration,
     });
   }
 }
