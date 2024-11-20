@@ -109,6 +109,7 @@ export class CertificateRepository implements ICertificateRepository {
       undefined,
       remissions,
       witnesses,
+      [], //TODO: ADD ERROR CODE MODEL
       doc.carId._id,
     );
 

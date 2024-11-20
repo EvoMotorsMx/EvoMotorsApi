@@ -8,3 +8,4 @@ export * from "./RemissionService";
 export * from "./CertificateService";
 export * from "./ErrorCodeService";
 export * from "./CarService";
+export * from "./ToolService";

@@ -8,3 +8,4 @@ export * from "./RemissionUseCases";
 export * from "./CertificateUseCases";
 export * from "./ErrorCodeUseCases";
 export * from "./CarUseCases";
+export * from "./ToolUseCases";
