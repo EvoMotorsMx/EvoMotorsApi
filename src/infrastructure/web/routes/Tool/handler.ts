@@ -20,26 +20,28 @@ import {
 import { decodeToken } from "../../../../shared/utils/userDecoder";
 import { CUSTOMER_ROLE } from "../../../../shared/constants/roles";
 import { IIdToken } from "../../../security/Auth";
-import { ProductRepository } from "../../../persistence/repositories";
-import { ProductService } from "../../../../core/domain/services";
-import { ProductUseCases } from "../../../../core/application/use_cases";
+import { ToolRepository } from "../../../persistence/repositories";
+import { ToolService } from "../../../../core/domain/services";
+import { ToolUseCases } from "../../../../core/application/use_cases";
 
-const createProductBodySchema = z.object({
+const createToolBodySchema = z.object({
   name: z.string(),
+  totalQuantity: z.number(),
   description: z.string().optional(),
 });
 
-const updateProductBodySchema = z.object({
+const updateToolBodySchema = z.object({
   id: z.string(),
   name: z.string().optional(),
+  totalQuantity: z.number().optional(),
   description: z.string().optional(),
 });
 
-const removeProductBody = z.object({
+const removeToolBody = z.object({
   id: z.string(),
 });
 
-const getProductBody = z.object({
+const getToolBody = z.object({
   id: z.string(),
 });
 
@@ -79,16 +81,16 @@ export async function handler(
   }
 
   await connectToDatabase();
-  const productRepository = new ProductRepository();
-  const productService = new ProductService(productRepository);
-  const productUseCases = new ProductUseCases(productService);
+  const toolRepository = new ToolRepository();
+  const toolService = new ToolService(toolRepository);
+  const toolUseCases = new ToolUseCases(toolService);
 
   try {
     switch (event.requestContext.http.method) {
       case GET:
         if (event.pathParameters) {
-          const pathValidationResult = getProductBody.safeParse({
-            id: event.pathParameters.productId,
+          const pathValidationResult = getToolBody.safeParse({
+            id: event.pathParameters.toolId,
           });
           if (!pathValidationResult.success) {
             return {
@@ -101,27 +103,27 @@ export async function handler(
             };
           }
 
-          const products = await productUseCases.getProduct(
+          const tools = await toolUseCases.getTool(
             pathValidationResult.data.id,
           );
           return {
             statusCode: HTTP_OK,
-            body: JSON.stringify(products),
+            body: JSON.stringify(tools),
           };
         } else {
-          const products = await productUseCases.findAllProducts();
+          const tools = await toolUseCases.findAllTools();
           return {
             statusCode: HTTP_OK,
-            body: JSON.stringify(products),
+            body: JSON.stringify(tools),
           };
         }
 
       case POST: {
         const payload = JSON.parse(event.body ?? "{}");
-        const validationResult = createProductBodySchema.safeParse(payload);
-        let newProduct;
+        const validationResult = createToolBodySchema.safeParse(payload);
+        let newTool;
         if (validationResult.success) {
-          newProduct = await productUseCases.createProduct(payload);
+          newTool = await toolUseCases.createTool(payload);
         } else {
           return {
             statusCode: HTTP_BAD_REQUEST,
@@ -136,32 +138,32 @@ export async function handler(
 
         return {
           statusCode: HTTP_CREATED,
-          body: JSON.stringify(newProduct),
+          body: JSON.stringify(newTool),
         };
       }
 
       case PATCH: {
         const payload = JSON.parse(event.body ?? "{}");
-        let updatedProduct;
+        let updatedTool;
 
-        if (!event.pathParameters || !event.pathParameters.productId) {
+        if (!event.pathParameters || !event.pathParameters.toolId) {
           return {
             statusCode: HTTP_BAD_REQUEST,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              message: "Product ID is required in the path",
+              message: "Tool ID is required in the path",
             }),
           };
         }
 
-        const validationResult = updateProductBodySchema.safeParse({
+        const validationResult = updateToolBodySchema.safeParse({
           ...payload,
-          id: event.pathParameters.productId,
+          id: event.pathParameters.toolId,
         });
 
         if (validationResult.success) {
-          updatedProduct = await productUseCases.updateProduct(
-            event.pathParameters.productId,
+          updatedTool = await toolUseCases.updateTool(
+            event.pathParameters.toolId,
             payload,
           );
         } else {
@@ -177,23 +179,23 @@ export async function handler(
 
         return {
           statusCode: HTTP_OK,
-          body: JSON.stringify(updatedProduct),
+          body: JSON.stringify(updatedTool),
         };
       }
 
       case DELETE: {
-        if (!event.pathParameters || !event.pathParameters.productId) {
+        if (!event.pathParameters || !event.pathParameters.toolId) {
           return {
             statusCode: HTTP_BAD_REQUEST,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              message: "Product ID is required in the path",
+              message: "Tool ID is required in the path",
             }),
           };
         }
 
-        const pathValidationResult = removeProductBody.safeParse({
-          id: event.pathParameters.productId,
+        const pathValidationResult = removeToolBody.safeParse({
+          id: event.pathParameters.toolId,
         });
 
         if (!pathValidationResult.success) {
@@ -201,28 +203,28 @@ export async function handler(
             statusCode: HTTP_BAD_REQUEST,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              message: "Invalid or missing Product ID",
+              message: "Invalid or missing Tool ID",
               errors: pathValidationResult.error.issues,
             }),
           };
         }
 
-        const productId = pathValidationResult.data.id;
+        const toolId = pathValidationResult.data.id;
 
         try {
-          await productUseCases.removeProduct(productId);
+          await toolUseCases.removeTool(toolId);
           return {
             statusCode: HTTP_OK,
             body: JSON.stringify({
-              id: productId,
-              message: "Product removed successfully",
+              id: toolId,
+              message: "Tool removed successfully",
             }),
           };
         } catch (error) {
           return {
             statusCode: HTTP_INTERNAL_SERVER_ERROR,
             body: JSON.stringify({
-              message: "An error occurred while removing the product",
+              message: "An error occurred while removing the tool",
             }),
           };
         }
