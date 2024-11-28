@@ -109,11 +109,21 @@ export class PipelineStage extends Stage {
       envVariables: lambdaVariables,
     });
 
-    //Car Lambda
+    //Tool Lambda
     const toolLambdaIntegration = new LambdaStack(this, "toolLambda", {
-      lambdaDirectory: "tool",
+      lambdaDirectory: "Tool",
       envVariables: lambdaVariables,
     });
+
+    //Assignment Lambda
+    const toolAssignmentLambdaIntegration = new LambdaStack(
+      this,
+      "toolAssignmentLambda",
+      {
+        lambdaDirectory: "ToolAssignment",
+        envVariables: lambdaVariables,
+      },
+    );
 
     new EvoMotorsApiStack(this, "EvoMotorsApiStack", {
       stageName: props.stageName,
@@ -132,6 +142,8 @@ export class PipelineStage extends Stage {
       errorCodeLambdaIntegration: errorCodeLambdaIntegration.lambdaIntegration,
       carLambdaIntegration: carLambdaIntegration.lambdaIntegration,
       toolLambdaIntegration: toolLambdaIntegration.lambdaIntegration,
+      toolAssignmentLambdaIntegration:
+        toolAssignmentLambdaIntegration.lambdaIntegration,
     });
   }
 }
