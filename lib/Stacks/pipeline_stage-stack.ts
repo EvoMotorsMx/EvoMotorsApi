@@ -1,7 +1,7 @@
 import { Stage, StageProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { EvoMotorsApiStack } from "./evo_motors_api-stack";
-import { EvoMotorsMongoAtlasStack } from "./evo_motors_mongodb_stack";
+//import { EvoMotorsMongoAtlasStack } from "./evo_motors_mongodb_stack";
 import { ConfigProps } from "../../config/envConfig";
 import { AdminAuthStack } from "./evo_motors_auth-stack";
 import { LambdaStack } from "./evo_motors_lambda-stack";
@@ -17,6 +17,8 @@ export class PipelineStage extends Stage {
 
     const envVariables: { [key: string]: string | undefined } = {
       DATABASE_URL: process.env.DATABASE_URL,
+      AWS_REGION: process.env.AWS_REGION,
+      AWS_COGNITO_ID: process.env.AWS_COGNITO_ID,
     };
 
     const lambdaVariables = _.omitBy(envVariables, _.isUndefined) as {
@@ -125,6 +127,12 @@ export class PipelineStage extends Stage {
       },
     );
 
+    //User Lambda
+    const userLambdaIntegration = new LambdaStack(this, "userLambda", {
+      lambdaDirectory: "User",
+      envVariables: lambdaVariables,
+    });
+
     new EvoMotorsApiStack(this, "EvoMotorsApiStack", {
       stageName: props.stageName,
       userPool: evoMotorsAuthStack.getUserPool(),
@@ -144,6 +152,7 @@ export class PipelineStage extends Stage {
       toolLambdaIntegration: toolLambdaIntegration.lambdaIntegration,
       toolAssignmentLambdaIntegration:
         toolAssignmentLambdaIntegration.lambdaIntegration,
+      userLambdaIntegration: userLambdaIntegration.lambdaIntegration,
     });
   }
 }

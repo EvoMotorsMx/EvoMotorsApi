@@ -9,3 +9,4 @@ export * from "./CertificateService";
 export * from "./ErrorCodeService";
 export * from "./CarService";
 export * from "./ToolService";
+export * from "./UserService";

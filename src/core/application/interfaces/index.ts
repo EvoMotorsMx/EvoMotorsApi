@@ -12,3 +12,4 @@ export * from "./Company";
 export * from "./ErrorCode";
 export * from "./Tool";
 export * from "./ToolAssignment";
+export * from "./User";
