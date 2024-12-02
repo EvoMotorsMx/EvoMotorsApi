@@ -1,7 +1,10 @@
+import { number } from "zod";
+
 export class Tool {
   constructor(
     public name: string,
     public totalQuantity: number,
+    public availableQuantity: number,
     public description?: string,
     public _id?: string,
   ) {}

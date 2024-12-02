@@ -26,6 +26,10 @@ const ToolSchema = new Schema<ToolDocument>(
       type: Number,
       required: true,
     },
+    availableQuantity: {
+      type: Number,
+      required: true,
+    },
   },
   {
     timestamps: true,
