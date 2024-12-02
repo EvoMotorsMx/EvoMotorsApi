@@ -9,3 +9,4 @@ export * from "./CertificateUseCases";
 export * from "./ErrorCodeUseCases";
 export * from "./CarUseCases";
 export * from "./ToolUseCases";
+export * from "./ToolAssignmentUseCases";
