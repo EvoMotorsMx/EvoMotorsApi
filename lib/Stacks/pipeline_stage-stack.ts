@@ -1,7 +1,7 @@
 import { Stage, StageProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { EvoMotorsApiStack } from "./evo_motors_api-stack";
-import { EvoMotorsMongoAtlasStack } from "./evo_motors_mongodb_stack";
+//import { EvoMotorsMongoAtlasStack } from "./evo_motors_mongodb_stack";
 import { ConfigProps } from "../../config/envConfig";
 import { AdminAuthStack } from "./evo_motors_auth-stack";
 import { LambdaStack } from "./evo_motors_lambda-stack";
@@ -17,6 +17,8 @@ export class PipelineStage extends Stage {
 
     const envVariables: { [key: string]: string | undefined } = {
       DATABASE_URL: process.env.DATABASE_URL,
+      AWS_REGION: process.env.AWS_REGION,
+      AWS_POOL_ID: process.env.AWS_POOL_ID,
     };
 
     const lambdaVariables = _.omitBy(envVariables, _.isUndefined) as {
@@ -103,6 +105,28 @@ export class PipelineStage extends Stage {
       },
     );
 
+    //Car Lambda
+    const carLambdaIntegration = new LambdaStack(this, "carLambda", {
+      lambdaDirectory: "Car",
+      envVariables: lambdaVariables,
+    });
+
+    //Tool Lambda
+    const toolLambdaIntegration = new LambdaStack(this, "toolLambda", {
+      lambdaDirectory: "Tool",
+      envVariables: lambdaVariables,
+    });
+
+    //Assignment Lambda
+    const toolAssignmentLambdaIntegration = new LambdaStack(
+      this,
+      "toolAssignmentLambda",
+      {
+        lambdaDirectory: "ToolAssignment",
+        envVariables: lambdaVariables,
+      },
+    );
+
     new EvoMotorsApiStack(this, "EvoMotorsApiStack", {
       stageName: props.stageName,
       userPool: evoMotorsAuthStack.getUserPool(),
@@ -118,6 +142,10 @@ export class PipelineStage extends Stage {
       productPriceLambdaIntegration:
         productPriceLambdaIntegration.lambdaIntegration,
       errorCodeLambdaIntegration: errorCodeLambdaIntegration.lambdaIntegration,
+      carLambdaIntegration: carLambdaIntegration.lambdaIntegration,
+      toolLambdaIntegration: toolLambdaIntegration.lambdaIntegration,
+      toolAssignmentLambdaIntegration:
+        toolAssignmentLambdaIntegration.lambdaIntegration,
     });
   }
 }

@@ -13,6 +13,8 @@ export type ConfigProps = {
   DB_USERNAME: string;
   DB_PASSWORD: string;
   DB_NAME: string;
+  AWS_REGION: string;
+  AWS_POOL_ID: string;
 };
 
 export const getConfig = (): ConfigProps => ({
@@ -25,4 +27,6 @@ export const getConfig = (): ConfigProps => ({
   DB_USERNAME: process.env.DB_USERNAME || "",
   DB_PASSWORD: process.env.DB_PASSWORD || "",
   DB_NAME: process.env.DB_NAME || "",
+  AWS_REGION: process.env.AWS_REGION || "",
+  AWS_POOL_ID: process.env.AWS_POOL_ID || "",
 });

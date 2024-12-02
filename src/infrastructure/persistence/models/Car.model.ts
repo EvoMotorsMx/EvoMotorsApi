@@ -3,6 +3,7 @@ import { v4 as uuidV4 } from "uuid";
 import {
   CarModel,
   Certificate,
+  ErrorCode,
   Remission,
   Witness,
 } from "../../../core/domain/entities";
@@ -20,6 +21,7 @@ export interface CarDocument extends Document {
   certificateId: Certificate;
   remissions: Remission[];
   witnesses: Witness[];
+  errorCodes: ErrorCode[];
 }
 
 const carSchema = new Schema<CarDocument>(
@@ -83,6 +85,12 @@ const carSchema = new Schema<CarDocument>(
       type: String,
       ref: "Lead",
     },
+    errorCodes: [
+      {
+        type: String,
+        ref: "ErrorCode",
+      },
+    ],
   },
   {
     timestamps: true,

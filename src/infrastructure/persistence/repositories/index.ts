@@ -8,3 +8,5 @@ export * from "./WitnessRepository";
 export * from "./RemissionRepository";
 export * from "./CertificateRepository";
 export * from "./ErrorCodeRepository";
+export * from "./ToolRepository";
+export * from "./ToolAssignmentRepository";

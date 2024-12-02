@@ -19,6 +19,9 @@ interface EvoMotorsApiStackProps extends cdk.StackProps {
   companyLambdaIntegration: HttpLambdaIntegration;
   productPriceLambdaIntegration: HttpLambdaIntegration;
   errorCodeLambdaIntegration: HttpLambdaIntegration;
+  carLambdaIntegration: HttpLambdaIntegration;
+  toolLambdaIntegration: HttpLambdaIntegration;
+  toolAssignmentLambdaIntegration: HttpLambdaIntegration;
 }
 
 export class EvoMotorsApiStack extends cdk.Stack {
@@ -189,6 +192,51 @@ export class EvoMotorsApiStack extends cdk.Stack {
       path: "/errorCode/{errorCodeId}",
       methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
       integration: props.errorCodeLambdaIntegration,
+      authorizer,
+    });
+
+    //Car routes
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/car",
+      methods: [HttpMethod.GET, HttpMethod.POST],
+      integration: props.carLambdaIntegration,
+      authorizer,
+    });
+
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/car/{carId}",
+      methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
+      integration: props.carLambdaIntegration,
+      authorizer,
+    });
+
+    //Tool
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/tool",
+      methods: [HttpMethod.GET, HttpMethod.POST],
+      integration: props.toolLambdaIntegration,
+      authorizer,
+    });
+
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/tool/{toolId}",
+      methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
+      integration: props.toolLambdaIntegration,
+      authorizer,
+    });
+
+    // Assignment
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/toolAssignment",
+      methods: [HttpMethod.GET, HttpMethod.POST],
+      integration: props.toolAssignmentLambdaIntegration,
+      authorizer,
+    });
+
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/toolAssignment/{toolAssignmentId}",
+      methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
+      integration: props.toolAssignmentLambdaIntegration,
       authorizer,
     });
   }
