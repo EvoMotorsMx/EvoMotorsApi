@@ -1,13 +1,19 @@
 import { IUserRepository } from "../../../core/application/interfaces/User/IUserRepository";
 import { User } from "../../../core/domain/entities";
-import { CognitoIdentityServiceProvider } from "aws-sdk";
+import {
+  CognitoIdentityProviderClient,
+  ListUsersCommand,
+} from "@aws-sdk/client-cognito-identity-provider";
 
 export class UserRepository implements IUserRepository {
-  private cognitoIdentityServiceProvider: CognitoIdentityServiceProvider;
+  private cognitoClient: CognitoIdentityProviderClient;
 
-  constructor() {
-    this.cognitoIdentityServiceProvider = new CognitoIdentityServiceProvider({
-      region: process.env.AWS_REGION, // specify your region
+  constructor(
+    private userPoolId: string,
+    private region: string,
+  ) {
+    this.cognitoClient = new CognitoIdentityProviderClient({
+      region: this.region,
     });
   }
 
@@ -17,11 +23,10 @@ export class UserRepository implements IUserRepository {
 
   async findAll(): Promise<User[]> {
     try {
-      const data = await this.cognitoIdentityServiceProvider
-        .listUsers({
-          UserPoolId: process.env.AWS_COGNITO_ID || "", // specify your User Pool Id
-        })
-        .promise();
+      const command = new ListUsersCommand({
+        UserPoolId: this.userPoolId,
+      });
+      const data = await this.cognitoClient.send(command);
 
       return (
         data.Users?.map((user) => new User(user.Username!, user.Attributes!)) ||

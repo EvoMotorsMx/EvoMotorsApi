@@ -17,8 +17,8 @@ export class PipelineStage extends Stage {
 
     const envVariables: { [key: string]: string | undefined } = {
       DATABASE_URL: process.env.DATABASE_URL,
-      AWS_REGION: process.env.AWS_REGION,
-      AWS_COGNITO_ID: process.env.AWS_COGNITO_ID,
+      AWS_REGION_COGNITO: process.env.AWS_REGION_COGNITO,
+      AWS_POOL_ID: process.env.AWS_POOL_ID,
     };
 
     const lambdaVariables = _.omitBy(envVariables, _.isUndefined) as {

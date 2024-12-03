@@ -10,3 +10,4 @@ export * from "./CertificateRepository";
 export * from "./ErrorCodeRepository";
 export * from "./ToolRepository";
 export * from "./UserRepository";
+export * from "./ToolAssignmentRepository";

@@ -20,8 +20,14 @@ import {
 import { decodeToken } from "../../../../shared/utils/userDecoder";
 import { CUSTOMER_ROLE } from "../../../../shared/constants/roles";
 import { IIdToken } from "../../../security/Auth";
-import { ToolAssignmentRepository } from "../../../persistence/repositories";
-import { ToolAssignmentService } from "../../../../core/domain/services";
+import {
+  ToolAssignmentRepository,
+  ToolRepository,
+} from "../../../persistence/repositories";
+import {
+  ToolAssignmentService,
+  ToolService,
+} from "../../../../core/domain/services";
 import { ToolAssignmentUseCases } from "../../../../core/application/use_cases";
 
 const createToolAssignmentBodySchema = z.object({
@@ -85,8 +91,11 @@ export async function handler(
   const toolAssignmentService = new ToolAssignmentService(
     toolAssignmentRepository,
   );
+  const toolRepository = new ToolRepository();
+  const toolService = new ToolService(toolRepository);
   const toolAssignmentUseCases = new ToolAssignmentUseCases(
     toolAssignmentService,
+    toolService,
   );
 
   try {

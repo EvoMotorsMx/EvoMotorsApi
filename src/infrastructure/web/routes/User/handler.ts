@@ -62,9 +62,21 @@ export async function handler(
       body: JSON.stringify({ message: "Invalid token" }),
     };
   }
+  const userPoolId = process.env.AWS_COGNITO_ID;
+  const awsRegion = process.env.AWS_REGION_COGNITO;
 
-  await connectToDatabase();
-  const userRepository = new UserRepository();
+  // Verifica que las variables de entorno necesarias estén definidas
+  if (!userPoolId || !awsRegion) {
+    return {
+      statusCode: HTTP_BAD_REQUEST,
+      body: JSON.stringify({
+        message: "Configuration error: Missing AWS Cognito configuration",
+      }),
+    };
+  }
+
+  // Crea el repositorio con las variables de entorno
+  const userRepository = new UserRepository(userPoolId, awsRegion);
   const userService = new UserService(userRepository);
   const userUseCases = new UserUseCases(userService);
 
