@@ -17,8 +17,26 @@ export class UserRepository implements IUserRepository {
     });
   }
 
-  async findById(id: string): Promise<User | null> {
-    return null;
+  async findById(sub: string): Promise<User | null> {
+    try {
+      const command = new ListUsersCommand({
+        UserPoolId: this.userPoolId,
+        Filter: `sub = "${sub}"`,
+        Limit: 1,
+      });
+      const data = await this.cognitoClient.send(command);
+
+      if (data.Users && data.Users.length > 0) {
+        const cognitoUser = data.Users[0];
+        return new User(cognitoUser.Username!, cognitoUser.Attributes!);
+      } else {
+        console.log("No user found with the given sub ID.");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching user by sub ID from Cognito:", error);
+      throw error;
+    }
   }
 
   async findAll(): Promise<User[]> {

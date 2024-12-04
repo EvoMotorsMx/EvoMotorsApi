@@ -5,7 +5,6 @@ import { EvoMotorsCiCdStack } from "../lib/Stacks/evo_motors_cicd-stack";
 import { getConfig } from "../config/envConfig";
 
 const config = getConfig();
-console.log({ config });
 const app = new cdk.App();
 new EvoMotorsCiCdStack(app, "EvoMotorsCiCdStack", { config });
 
