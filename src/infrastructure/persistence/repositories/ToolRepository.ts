@@ -41,6 +41,7 @@ export class ToolRepository implements IToolRepository {
     const tool = new Tool(
       doc.name,
       doc.totalQuantity,
+      doc.availableQuantity,
       doc.description,
       doc._id?.toString(),
     );
