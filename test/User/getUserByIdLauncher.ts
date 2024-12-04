@@ -3,7 +3,7 @@ import { handler } from "../../src/infrastructure/web/routes/User/handler";
 handler(
   {
     pathParameters: {
-      carModelId: "",
+      userId: "",
     },
     headers: {
       idtoken: "",
