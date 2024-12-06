@@ -13,3 +13,4 @@ export * from "./ErrorCode";
 export * from "./Tool";
 export * from "./ToolAssignment";
 export * from "./User";
+export * from "./ToolCompatibility";

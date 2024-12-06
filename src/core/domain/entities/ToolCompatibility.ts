@@ -1,9 +1,9 @@
-export class Tool {
+import { CarModel, Tool } from ".";
+
+export class ToolCompatibility {
   constructor(
-    public name: string,
-    public totalQuantity: number,
-    public availableQuantity: number,
-    public description?: string,
+    public carModel: CarModel,
+    public Tool: Tool,
     public _id?: string,
   ) {}
 

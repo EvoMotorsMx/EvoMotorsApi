@@ -31,7 +31,7 @@ const ToolAssignmentSchema = new Schema<ToolAssignmentDocument>(
     tool: {
       type: String,
       required: true,
-      ref: "CarModel",
+      ref: "Tool",
     },
     cognitoId: {
       type: String,
