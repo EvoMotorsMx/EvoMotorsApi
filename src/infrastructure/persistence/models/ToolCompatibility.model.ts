@@ -5,7 +5,6 @@ import { CarModel, Tool } from "../../../core/domain/entities";
 export interface ToolCompatibilityDocument extends Document {
   tool: Tool;
   carModel: CarModel;
-  cognitoId: string;
 }
 
 const ToolCompatibilitySchema = new Schema<ToolCompatibilityDocument>(
