@@ -17,6 +17,7 @@ const ProductCompatibilitySchema = new Schema<ProductCompatibilityDocument>(
       type: String,
       required: true,
       ref: "Product",
+      unique: true,
     },
     carModel: {
       type: String,
