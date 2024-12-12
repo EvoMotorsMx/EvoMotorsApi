@@ -11,3 +11,4 @@ export * from "./CarService";
 export * from "./ToolService";
 export * from "./UserService";
 export * from "./ToolAssignmentService";
+export * from "./ProductCompatibilityService";

@@ -2,7 +2,7 @@ import { CarModel, Product } from ".";
 
 export class ProductCompatibility {
   constructor(
-    public Tool: Product,
+    public product: Product,
     public carModel: CarModel,
     public _id?: string,
   ) {}
