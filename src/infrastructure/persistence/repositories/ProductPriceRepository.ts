@@ -11,6 +11,7 @@ import {
   Brand,
   Product,
   File,
+  ProductCompatibility,
 } from "../../../core/domain/entities";
 import { IProductPriceRepository } from "../../../core/application/interfaces";
 import {
@@ -95,10 +96,16 @@ export class ProductPriceRepository implements IProductPriceRepository {
       (file) => new File(file.fileUrl, file.type, file._id!),
     );
 
-    const carModelProducts: Product[] = doc.carModelId?.products as Product[];
+    const carModelProducts: ProductCompatibility[] = doc.carModelId
+      ?.products as ProductCompatibility[];
 
     const products = carModelProducts.map(
-      (product) => new Product(product.name, product.description, product._id),
+      (product) =>
+        new ProductCompatibility(
+          product.product,
+          product.carModel,
+          product._id,
+        ),
     );
 
     const carModel = new CarModel(

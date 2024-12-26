@@ -120,12 +120,12 @@ export async function handler(
             };
           }
 
-          const carModels = await carModelUseCases.getCarModel(
+          const carModel = await carModelUseCases.getCarModel(
             pathValidationResult.data.id,
           );
           return {
             statusCode: HTTP_OK,
-            body: JSON.stringify(carModels),
+            body: JSON.stringify(carModel),
           };
         } else {
           const carModels = await carModelUseCases.findAllCarModels();

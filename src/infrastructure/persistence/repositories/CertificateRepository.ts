@@ -11,7 +11,7 @@ import {
   Remission,
   Witness,
   File,
-  Product,
+  ProductCompatibility,
 } from "../../../core/domain/entities";
 import {
   CreateCertificateDTO,
@@ -68,11 +68,16 @@ export class CertificateRepository implements ICertificateRepository {
       (file) => new File(file.fileUrl, file.type, file._id!),
     );
 
-    const carModelProducts: Product[] = doc.carId.carModelId
-      ?.products as Product[];
+    const carModelProducts: ProductCompatibility[] = doc.carId.carModelId
+      ?.products as ProductCompatibility[];
 
     const products = carModelProducts.map(
-      (product) => new Product(product.name, product.description, product._id),
+      (product) =>
+        new ProductCompatibility(
+          product.product,
+          product.carModel,
+          product._id,
+        ),
     );
 
     const carModel = new CarModel(
