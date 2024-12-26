@@ -6,7 +6,11 @@ import {
   CreateFileDTO,
   UpdateFileDTO,
 } from "../../../core/application/dtos/File";
-import { Brand, CarModel, Product } from "../../../core/domain/entities";
+import {
+  Brand,
+  CarModel,
+  ProductCompatibility,
+} from "../../../core/domain/entities";
 
 interface FileDoc extends Document, FileDocument {}
 
@@ -78,11 +82,16 @@ export class FileRepository implements IFileRepository {
         });
       }
 
-      const carModelProducts = doc.carModelId.products as Product[];
+      const carModelProducts = doc.carModelId
+        .products as ProductCompatibility[];
 
       const products = carModelProducts.map(
         (product) =>
-          new Product(product.name, product.description, product._id),
+          new ProductCompatibility(
+            product.product,
+            product.carModel,
+            product._id,
+          ),
       );
 
       const carModel = new CarModel(

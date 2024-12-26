@@ -103,9 +103,13 @@ export class ProductCompatibilityRepository
     );
 
     let products =
-      (doc.carModel.products as Product[]).map(
+      (doc.carModel.products as ProductCompatibility[]).map(
         (product) =>
-          new Product(product.name, product.description, product._id),
+          new ProductCompatibility(
+            product.product,
+            product.carModel,
+            product._id,
+          ),
       ) ?? [];
 
     const files =

@@ -4,8 +4,8 @@ import { CombustionType, EngineType } from "../../../shared/enums";
 import {
   File,
   Brand,
-  Product,
   ToolCompatibility,
+  ProductCompatibility,
 } from "../../../core/domain/entities";
 
 export interface CarModelDocument extends Document {
@@ -17,7 +17,7 @@ export interface CarModelDocument extends Document {
   combustion: CombustionType;
   engineType: EngineType;
   files?: File[];
-  products?: Product[];
+  products?: ProductCompatibility[];
   toolCompatibility?: ToolCompatibility[];
 }
 
@@ -81,7 +81,7 @@ const carModelSchema: Schema<CarModelDocument> = new Schema<CarModelDocument>(
     products: [
       {
         type: String,
-        ref: "Product",
+        ref: "ProductCompatibility",
       },
     ],
     toolCompatibility: [

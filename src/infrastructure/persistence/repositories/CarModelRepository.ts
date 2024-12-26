@@ -1,8 +1,14 @@
 import { Document } from "mongoose";
 import CarModelModel, { CarModelDocument } from "../models/CarModel.model";
 import BrandModel from "../models/Brand.model";
-import ProductModel from "../models/Product.model";
-import { File, Brand, CarModel, Product } from "../../../core/domain/entities";
+import ProductCompatibilityModel from "../models/ProductCompatibility.model";
+import {
+  File,
+  Brand,
+  CarModel,
+  Product,
+  ProductCompatibility,
+} from "../../../core/domain/entities";
 import { ICarModelRepository } from "../../../core/application/interfaces";
 import {
   CreateCarModelDTO,
@@ -15,7 +21,7 @@ export class CarModelRepository implements ICarModelRepository {
   async findById(id: string): Promise<CarModel | null> {
     const carModelDoc = await CarModelModel.findById(id)
       .populate({ path: "brandId", model: BrandModel })
-      .populate({ path: "products", model: ProductModel })
+      .populate({ path: "products", model: ProductCompatibilityModel })
       .exec();
     if (!carModelDoc) return null;
     return this.docToEntity(carModelDoc);
@@ -24,7 +30,7 @@ export class CarModelRepository implements ICarModelRepository {
   async findAll(): Promise<CarModel[]> {
     const carModelDocs = await CarModelModel.find()
       .populate({ path: "brandId", model: BrandModel })
-      .populate({ path: "products", model: ProductModel })
+      .populate({ path: "products", model: ProductCompatibilityModel })
       .exec();
     if (!carModelDocs.length) return [];
     return carModelDocs.map((doc) => this.docToEntity(doc)); // Convertir cada documento a una entidad Brand
@@ -34,7 +40,10 @@ export class CarModelRepository implements ICarModelRepository {
     const carModelDoc = new CarModelModel(dto);
     const savedCarModelDoc = await carModelDoc.save();
     await savedCarModelDoc.populate({ path: "brandId", model: BrandModel });
-    await savedCarModelDoc.populate({ path: "products", model: ProductModel });
+    await savedCarModelDoc.populate({
+      path: "products",
+      model: ProductCompatibilityModel,
+    });
     return this.docToEntity(savedCarModelDoc);
   }
 
@@ -43,7 +52,7 @@ export class CarModelRepository implements ICarModelRepository {
       new: true,
     })
       .populate({ path: "brandId", model: BrandModel })
-      .populate({ path: "products", model: ProductModel })
+      .populate({ path: "products", model: ProductCompatibilityModel })
       .exec();
     if (!updatedBrandDoc) throw new Error("Car Model not found");
     return this.docToEntity(updatedBrandDoc);
@@ -61,7 +70,12 @@ export class CarModelRepository implements ICarModelRepository {
     );
 
     const products = doc.products?.map(
-      (product) => new Product(product.name, product.description, product._id),
+      (product) =>
+        new ProductCompatibility(
+          product.product,
+          product.carModel,
+          product._id,
+        ),
     );
 
     const files = doc.files?.map(
