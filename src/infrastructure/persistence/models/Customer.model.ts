@@ -1,8 +1,9 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
 import { Car, Remission } from "../../../core/domain/entities";
+import { ContactType } from "../../../shared/enums";
 
-export interface LeadDocument extends Document {
+export interface CustomerDocument extends Document {
   name: string;
   lastName: string;
   city: string;
@@ -12,15 +13,14 @@ export interface LeadDocument extends Document {
   phone: string;
   email: string;
   rfc: string;
-  cfdi: string;
-  razon_social: string;
-  factura: string;
+  razonSocial: string;
+  contacto: ContactType;
   remissions: Remission[];
   cars: Car[];
   company: string;
 }
 
-const leadSchema = new Schema<LeadDocument>(
+const customerSchema = new Schema<CustomerDocument>(
   {
     _id: {
       type: String,
@@ -50,20 +50,53 @@ const leadSchema = new Schema<LeadDocument>(
       type: String,
       required: true,
     },
+    phone: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    email: {
+      type: String,
+      unique: true,
+    },
+    rfc: {
+      type: String,
+      unique: true,
+    },
+    razonSocial: {
+      type: String,
+      unique: true,
+    },
+    contacto: {
+      type: String,
+      required: true,
+      enum: Object.values(ContactType),
+    },
     remissions: [
       {
         type: String,
         ref: "Remission",
       },
     ],
+    cars: [
+      {
+        type: String,
+        ref: "Car",
+      },
+    ],
+    company: {
+      type: String,
+      ref: "Company",
+      required: true,
+    },
   },
   {
     timestamps: true,
   },
 );
 
-leadSchema.set("autoIndex", false);
+customerSchema.set("autoIndex", false);
 
-const Lead = mongoose.model<LeadDocument>("Lead", leadSchema);
+const Customer = mongoose.model<CustomerDocument>("Customer", customerSchema);
 
-export default Lead;
+export default Customer;
