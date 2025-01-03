@@ -24,6 +24,7 @@ interface EvoMotorsApiStackProps extends cdk.StackProps {
   toolAssignmentLambdaIntegration: HttpLambdaIntegration;
   userLambdaIntegration: HttpLambdaIntegration;
   productCompatibilityLambdaIntegration: HttpLambdaIntegration;
+  customerLambdaIntegration: HttpLambdaIntegration;
 }
 
 export class EvoMotorsApiStack extends cdk.Stack {
@@ -269,6 +270,21 @@ export class EvoMotorsApiStack extends cdk.Stack {
       path: "/productCompatibility/{productCompatibilityId}",
       methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
       integration: props.productCompatibilityLambdaIntegration,
+      authorizer,
+    });
+
+    //Customer routes
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/customer",
+      methods: [HttpMethod.GET, HttpMethod.POST],
+      integration: props.customerLambdaIntegration,
+      authorizer,
+    });
+
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/customer/{customerId}",
+      methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
+      integration: props.customerLambdaIntegration,
       authorizer,
     });
   }
