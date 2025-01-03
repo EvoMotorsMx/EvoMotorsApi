@@ -143,6 +143,12 @@ export class PipelineStage extends Stage {
       },
     );
 
+    //Customer Lambda
+    const customerLambdaIntegration = new LambdaStack(this, "customerLambda", {
+      lambdaDirectory: "Customer",
+      envVariables: lambdaVariables,
+    });
+
     new EvoMotorsApiStack(this, "EvoMotorsApiStack", {
       stageName: props.stageName,
       userPool: evoMotorsAuthStack.getUserPool(),
@@ -165,6 +171,7 @@ export class PipelineStage extends Stage {
       userLambdaIntegration: userLambdaIntegration.lambdaIntegration,
       productCompatibilityLambdaIntegration:
         productCompatibilityLambdaIntegration.lambdaIntegration,
+      customerLambdaIntegration: customerLambdaIntegration.lambdaIntegration,
     });
   }
 }

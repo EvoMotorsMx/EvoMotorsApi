@@ -15,3 +15,4 @@ export * from "./ToolAssignment";
 export * from "./User";
 export * from "./ToolCompatibility";
 export * from "./ProductCompatibility";
+export * from "./Customer";
