@@ -1,9 +1,9 @@
-import { handler } from "../../src/infrastructure/web/routes/CarModel/handler";
+import { handler } from "../../src/infrastructure/web/routes/Customer/handler";
 
 handler(
   {
     pathParameters: {
-      carModelId: "",
+      customerId: "",
     },
     headers: {
       idtoken: "",
@@ -14,9 +14,7 @@ handler(
         method: "PATCH",
       },
     },
-    body: JSON.stringify({
-      products: [""],
-    }),
+    body: JSON.stringify({}),
   } as any,
   {} as any,
 );

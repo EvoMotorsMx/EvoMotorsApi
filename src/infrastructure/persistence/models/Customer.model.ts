@@ -9,7 +9,6 @@ export interface CustomerDocument extends Document {
   city: string;
   state: string;
   country: string;
-  status: string;
   phone: string;
   email: string;
   rfc: string;
@@ -43,10 +42,6 @@ const customerSchema = new Schema<CustomerDocument>(
       required: true,
     },
     country: {
-      type: String,
-      required: true,
-    },
-    status: {
       type: String,
       required: true,
     },
@@ -87,13 +82,21 @@ const customerSchema = new Schema<CustomerDocument>(
     company: {
       type: String,
       ref: "Company",
-      required: true,
     },
   },
   {
     timestamps: true,
   },
 );
+
+customerSchema.pre("save", function (next) {
+  this.name = this.name.toUpperCase();
+  this.lastName = this.lastName.toUpperCase();
+  this.city = this.city.toUpperCase();
+  this.state = this.state.toUpperCase();
+  this.country = this.country.toUpperCase();
+  next();
+});
 
 customerSchema.set("autoIndex", false);
 

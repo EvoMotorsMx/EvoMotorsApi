@@ -1,8 +1,7 @@
-import { handler } from "../../src/infrastructure/web/routes/CarModel/handler";
+import { handler } from "../../src/infrastructure/web/routes/Customer/handler";
 
 handler(
   {
-    httpMethod: "GET",
     headers: {
       idtoken: "",
       Authorization: "",

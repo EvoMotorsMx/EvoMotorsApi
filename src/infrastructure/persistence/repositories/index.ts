@@ -12,3 +12,4 @@ export * from "./ToolRepository";
 export * from "./UserRepository";
 export * from "./ToolAssignmentRepository";
 export * from "./ProductCompatibilityRepository";
+export * from "./CustomerRepository";
