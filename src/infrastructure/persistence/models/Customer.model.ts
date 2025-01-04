@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
-import { Car, Remission } from "../../../core/domain/entities";
+import { Car, Company, Remission } from "../../../core/domain/entities";
 import { ContactType } from "../../../shared/enums";
 
 export interface CustomerDocument extends Document {
@@ -16,7 +16,7 @@ export interface CustomerDocument extends Document {
   contacto: ContactType;
   remissions: Remission[];
   cars: Car[];
-  company: string;
+  company: Company;
 }
 
 const customerSchema = new Schema<CustomerDocument>(
