@@ -1,5 +1,5 @@
 import { ContactType } from "../../../shared/enums";
-import { Car, Remission } from "./";
+import { Car, Company, Remission } from "./";
 
 export class Customer {
   constructor(
@@ -15,6 +15,7 @@ export class Customer {
     public contacto: ContactType,
     public remissions?: Remission[],
     public cars?: Car[],
+    public company?: Company,
     public _id?: string,
   ) {}
 
