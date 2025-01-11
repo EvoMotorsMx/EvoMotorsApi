@@ -12,4 +12,5 @@ export type UpdateCustomerDTO = {
   razonSocial?: string;
   contacto?: ContactType;
   remissions?: string[];
+  cars?: string[];
 };

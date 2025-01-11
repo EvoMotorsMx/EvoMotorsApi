@@ -6,6 +6,7 @@ import WitnessModel from "../models/Witness.model";
 import RemissionModel from "../models/Remission.model";
 import CertificateModel from "../models/Certificate.model";
 import ErrorCodeModel from "../models/ErrorCode.model";
+import CustomerModel from "../models/Customer.model";
 import {
   Brand,
   Car,
@@ -15,10 +16,11 @@ import {
   Remission,
   Witness,
   ErrorCode,
+  ProductCompatibility,
+  Customer,
 } from "../../../core/domain/entities";
 import { ICarRepository } from "../../../core/application/interfaces";
 import { CreateCarDTO, UpdateCarDTO } from "../../../core/application/dtos";
-import { error } from "console";
 
 interface CarDoc extends Document, CarDocument {}
 
@@ -31,19 +33,23 @@ export class CarRepository implements ICarRepository {
         populate: { path: "brandId", model: BrandModel },
       })
       .populate({
-        path: "witnessId",
+        path: "witnesses",
         model: WitnessModel,
       })
       .populate({
-        path: "Remission",
+        path: "remissions",
         model: RemissionModel,
       })
       .populate({
-        path: "Certificate",
+        path: "certificateId",
         model: CertificateModel,
       })
       .populate({
-        path: "ErrorCode",
+        path: "customerId",
+        model: CustomerModel,
+      })
+      .populate({
+        path: "errorCodes",
         model: ErrorCodeModel,
       })
       .exec();
@@ -59,19 +65,23 @@ export class CarRepository implements ICarRepository {
         populate: { path: "brandId", model: BrandModel },
       })
       .populate({
-        path: "witnessId",
+        path: "witnesses",
         model: WitnessModel,
       })
       .populate({
-        path: "Remission",
+        path: "remissions",
         model: RemissionModel,
       })
       .populate({
-        path: "Certificate",
+        path: "certificateId",
         model: CertificateModel,
       })
       .populate({
-        path: "ErrorCode",
+        path: "customerId",
+        model: CustomerModel,
+      })
+      .populate({
+        path: "errorCodes",
         model: ErrorCodeModel,
       })
       .exec();
@@ -89,19 +99,23 @@ export class CarRepository implements ICarRepository {
         populate: { path: "brandId", model: BrandModel },
       })
       .populate({
-        path: "witnessId",
+        path: "witnesses",
         model: WitnessModel,
       })
       .populate({
-        path: "Remission",
+        path: "remissions",
         model: RemissionModel,
       })
       .populate({
-        path: "Certificate",
+        path: "certificateId",
         model: CertificateModel,
       })
       .populate({
-        path: "ErrorCode",
+        path: "customerId",
+        model: CustomerModel,
+      })
+      .populate({
+        path: "errorCodes",
         model: ErrorCodeModel,
       })
       .exec();
@@ -123,19 +137,23 @@ export class CarRepository implements ICarRepository {
         populate: { path: "brandId", model: BrandModel },
       })
       .populate({
-        path: "witnessId",
+        path: "witnesses",
         model: WitnessModel,
       })
       .populate({
-        path: "Remission",
+        path: "remissions",
         model: RemissionModel,
       })
       .populate({
-        path: "Certificate",
+        path: "certificateId",
         model: CertificateModel,
       })
       .populate({
-        path: "ErrorCode",
+        path: "customerId",
+        model: CustomerModel,
+      })
+      .populate({
+        path: "errorCodes",
         model: ErrorCodeModel,
       })
       .exec();
@@ -154,9 +172,15 @@ export class CarRepository implements ICarRepository {
       doc.carModelId.brandId._id,
     );
 
-    const carModelProducts = doc.carModelId.products as Product[];
+    const carModelProducts = doc.carModelId.products as ProductCompatibility[];
+
     const products = carModelProducts.map(
-      (product) => new Product(product.name, product.description, product._id),
+      (product) =>
+        new ProductCompatibility(
+          product.product,
+          product.carModel,
+          product._id,
+        ),
     );
 
     const carModel = new CarModelEntity(
@@ -172,11 +196,11 @@ export class CarRepository implements ICarRepository {
       doc.carModelId._id,
     );
 
-    const certificate = new Certificate(
+    /*     const certificate = new Certificate(
       doc.certificateId.name,
       doc.id,
       doc.certificateId._id,
-    );
+    ); */
 
     const remissions = doc.remissions?.map(
       (remission) => new Remission(remission.name, remission._id),
@@ -197,6 +221,23 @@ export class CarRepository implements ICarRepository {
         ),
     );
 
+    const customer = new Customer(
+      doc.customerId.name,
+      doc.customerId.lastName,
+      doc.customerId.city,
+      doc.customerId.state,
+      doc.customerId.country,
+      doc.customerId.phone,
+      doc.customerId.email,
+      doc.customerId.rfc,
+      doc.customerId.razonSocial,
+      doc.customerId.contacto,
+      doc.customerId.remissions,
+      doc.customerId.cars,
+      doc.customerId.company,
+      doc.customerId._id,
+    );
+
     const car = new Car(
       doc.mileage,
       doc.tankStatus,
@@ -205,12 +246,13 @@ export class CarRepository implements ICarRepository {
       doc.scannerDescription,
       doc.vin,
       doc.plates,
-      doc.leadId,
       carModel,
-      certificate,
+      customer,
+      undefined,
       remissions,
       witnesses,
       errorCodes,
+      [],
       doc.id,
     );
 

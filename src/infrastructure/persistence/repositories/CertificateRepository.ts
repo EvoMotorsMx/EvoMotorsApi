@@ -104,17 +104,18 @@ export class CertificateRepository implements ICertificateRepository {
     const car = new Car(
       doc.carId.mileage,
       doc.carId.tankStatus,
-      doc.carId.damangeImageUrl,
+      doc.carId.damageImageUrl,
       doc.carId.damageStatusDescription,
       doc.carId.scannerDescription,
       doc.carId.vin,
       doc.carId.plates,
-      doc.carId.leadId,
       carModel,
+      doc.carId.customerId,
       undefined,
       remissions,
       witnesses,
       [], //TODO: ADD ERROR CODE MODEL
+      [],
       doc.carId._id,
     );
 
