@@ -1,20 +1,28 @@
-import { CarModel, Certificate, ErrorCode, Remission, Witness } from "./index";
+import {
+  CarModel,
+  Certificate,
+  Customer,
+  ErrorCode,
+  Remission,
+  Witness,
+} from "./index";
 
 export class Car {
   constructor(
     public mileage: number,
     public tankStatus: number,
-    public damangeImageUrl: string,
+    public damageImageUrl: string[],
     public damageStatusDescription: string,
     public scannerDescription: string,
     public vin: string,
     public plates: string,
-    public leadId: string,
     public carModelId: CarModel,
-    public certifacteId?: Certificate,
+    public customerId: Customer,
+    public certificateId?: Certificate,
     public remissions?: Remission[],
     public witnesses?: Witness[],
     public errorCodes?: ErrorCode[],
+    public files?: File[],
     public _id?: string,
   ) {}
 
@@ -25,8 +33,8 @@ export class Car {
   }
 
   setCertificate(certificate: Certificate) {
-    if (!this.certifacteId) {
-      this.certifacteId = certificate;
+    if (!this.certificateId) {
+      this.certificateId = certificate;
     }
   }
 }

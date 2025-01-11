@@ -50,6 +50,7 @@ export class ToolAssignmentRepository implements IToolAssignmentRepository {
     const tool = new Tool(
       doc.tool.name,
       doc.tool.totalQuantity,
+      doc.tool.availableQuantity,
       doc.tool.description,
       doc._id?.toString(),
     );

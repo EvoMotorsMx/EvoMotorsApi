@@ -22,6 +22,9 @@ interface EvoMotorsApiStackProps extends cdk.StackProps {
   carLambdaIntegration: HttpLambdaIntegration;
   toolLambdaIntegration: HttpLambdaIntegration;
   toolAssignmentLambdaIntegration: HttpLambdaIntegration;
+  userLambdaIntegration: HttpLambdaIntegration;
+  productCompatibilityLambdaIntegration: HttpLambdaIntegration;
+  customerLambdaIntegration: HttpLambdaIntegration;
 }
 
 export class EvoMotorsApiStack extends cdk.Stack {
@@ -237,6 +240,51 @@ export class EvoMotorsApiStack extends cdk.Stack {
       path: "/toolAssignment/{toolAssignmentId}",
       methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
       integration: props.toolAssignmentLambdaIntegration,
+      authorizer,
+    });
+
+    //User Routes
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/user",
+      methods: [HttpMethod.GET],
+      integration: props.userLambdaIntegration,
+      authorizer,
+    });
+
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/user/{userId}",
+      methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
+      integration: props.userLambdaIntegration,
+      authorizer,
+    });
+
+    //ProductCompatibility
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/productCompatibility",
+      methods: [HttpMethod.GET, HttpMethod.POST],
+      integration: props.productCompatibilityLambdaIntegration,
+      authorizer,
+    });
+
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/productCompatibility/{productCompatibilityId}",
+      methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
+      integration: props.productCompatibilityLambdaIntegration,
+      authorizer,
+    });
+
+    //Customer routes
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/customer",
+      methods: [HttpMethod.GET, HttpMethod.POST],
+      integration: props.customerLambdaIntegration,
+      authorizer,
+    });
+
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/customer/{customerId}",
+      methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
+      integration: props.customerLambdaIntegration,
       authorizer,
     });
   }

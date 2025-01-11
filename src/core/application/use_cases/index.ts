@@ -9,4 +9,7 @@ export * from "./CertificateUseCases";
 export * from "./ErrorCodeUseCases";
 export * from "./CarUseCases";
 export * from "./ToolUseCases";
+export * from "./UserUseCases";
 export * from "./ToolAssignmentUseCases";
+export * from "./ProductCompatibilityUseCases";
+export * from "./CustomerUseCases";

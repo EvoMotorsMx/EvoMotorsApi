@@ -21,37 +21,43 @@ import { CarRepository } from "../../../persistence/repositories/CarRepository";
 import { decodeToken } from "../../../../shared/utils/userDecoder";
 import { CUSTOMER_ROLE } from "../../../../shared/constants/roles";
 import { IIdToken } from "../../../security/Auth";
-import { CombustionType, EngineType } from "../../../../shared/enums";
-import { CarService } from "../../../../core/domain/services";
+import { CarService, CustomerService } from "../../../../core/domain/services";
 import { CarUseCases } from "../../../../core/application/use_cases";
+import { CustomerRepository } from "../../../persistence/repositories";
 
 const createCarBodySchema = z.object({
-  name: z.string(),
-  brandId: z.string(),
-  year: z
-    .array(z.string().regex(/^\d{4}$/, "Year must be a four-digit number"))
-    .optional(),
-  engineSize: z.string(),
-  cylinder: z.number().positive(),
-  combustion: z.nativeEnum(CombustionType),
-  engineType: z.nativeEnum(EngineType),
+  mileage: z.number(),
+  tankStatus: z.number(),
+  damageImageUrl: z.array(z.string()).optional(),
+  damageStatusDescription: z.string(),
+  scannerDescription: z.string(),
+  vin: z.string(),
+  plates: z.string(),
+  carModelId: z.string(),
+  customerId: z.string(),
+  certificateId: z.string().optional(),
+  remissions: z.array(z.string()).optional(),
+  witnesses: z.array(z.string()).optional(),
+  errorCodes: z.array(z.string()).optional(),
   files: z.array(z.string()).optional(),
-  products: z.array(z.string()).optional(),
 });
 
 const updateCarBodySchema = z.object({
   id: z.string(),
-  name: z.string().optional(),
-  brandId: z.string().optional(),
-  year: z
-    .array(z.string().regex(/^\d{4}$/, "Year must be a four-digit number"))
-    .optional(),
-  engineSize: z.string().optional(),
-  cylinder: z.number().positive().optional(),
-  combustion: z.nativeEnum(CombustionType).optional(),
-  engineType: z.nativeEnum(EngineType).optional(),
+  mileage: z.number().optional(),
+  tankStatus: z.string().optional(),
+  damageImageUrl: z.array(z.string()).optional(),
+  damageStatusDescription: z.string().optional(),
+  scannerDescription: z.string().optional(),
+  vin: z.string().optional(),
+  plates: z.string().optional(),
+  carModelId: z.string().optional(),
+  customerId: z.string().optional(),
+  certificateId: z.string().optional(),
+  remissions: z.array(z.string()).optional(),
+  witnesses: z.array(z.string()).optional(),
+  errorCodes: z.array(z.string()).optional(),
   files: z.array(z.string()).optional(),
-  products: z.array(z.string()).optional(),
 });
 
 const removeCarBody = z.object({
@@ -100,7 +106,11 @@ export async function handler(
   await connectToDatabase();
   const carRepository = new CarRepository();
   const carService = new CarService(carRepository);
-  const carUseCases = new CarUseCases(carService);
+
+  const customerRepository = new CustomerRepository();
+  const customerService = new CustomerService(customerRepository);
+
+  const carUseCases = new CarUseCases(carService, customerService);
 
   try {
     switch (event.requestContext.http.method) {
@@ -146,7 +156,7 @@ export async function handler(
 
             body: JSON.stringify({
               message: "Invalid input data",
-              errors: validationResult.error,
+              errors: validationResult.error.errors,
             }),
           };
         }

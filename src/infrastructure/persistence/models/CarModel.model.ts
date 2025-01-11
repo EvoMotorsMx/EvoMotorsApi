@@ -1,7 +1,12 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
 import { CombustionType, EngineType } from "../../../shared/enums";
-import { File, Brand, Product } from "../../../core/domain/entities";
+import {
+  File,
+  Brand,
+  ToolCompatibility,
+  ProductCompatibility,
+} from "../../../core/domain/entities";
 
 export interface CarModelDocument extends Document {
   name: string;
@@ -12,7 +17,8 @@ export interface CarModelDocument extends Document {
   combustion: CombustionType;
   engineType: EngineType;
   files?: File[];
-  products?: Product[];
+  products?: ProductCompatibility[];
+  toolCompatibility?: ToolCompatibility[];
 }
 
 const carModelSchema: Schema<CarModelDocument> = new Schema<CarModelDocument>(
@@ -75,7 +81,13 @@ const carModelSchema: Schema<CarModelDocument> = new Schema<CarModelDocument>(
     products: [
       {
         type: String,
-        ref: "Product",
+        ref: "ProductCompatibility",
+      },
+    ],
+    toolCompatibility: [
+      {
+        type: String,
+        ref: "ToolCompatibility",
       },
     ],
   },

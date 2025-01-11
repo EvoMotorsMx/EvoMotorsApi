@@ -3,7 +3,9 @@ import { v4 as uuidV4 } from "uuid";
 import {
   CarModel,
   Certificate,
+  Customer,
   ErrorCode,
+  File,
   Remission,
   Witness,
 } from "../../../core/domain/entities";
@@ -11,17 +13,19 @@ import {
 export interface CarDocument extends Document {
   mileage: number;
   tankStatus: number;
-  damageImageUrl: string;
+  damageImageUrl: string[];
   damageStatusDescription: string;
+  scannerDescriptionUrl: string[];
   scannerDescription: string;
   vin: string;
   plates: string;
-  leadId: string;
   carModelId: CarModel;
   certificateId: Certificate;
   remissions: Remission[];
   witnesses: Witness[];
+  customerId: Customer;
   errorCodes: ErrorCode[];
+  files: File[];
 }
 
 const carSchema = new Schema<CarDocument>(
@@ -30,6 +34,17 @@ const carSchema = new Schema<CarDocument>(
       type: String,
       default: () => uuidV4(),
     },
+    carModelId: {
+      type: String,
+      required: true,
+      ref: "CarModel",
+    },
+    witnesses: [
+      {
+        type: String,
+        ref: "Witness",
+      },
+    ],
     mileage: {
       type: Number,
       required: true,
@@ -38,14 +53,21 @@ const carSchema = new Schema<CarDocument>(
       type: Number,
       required: true,
     },
-    damageImageUrl: {
-      type: String,
-      required: true,
-    },
+    damageImageUrl: [
+      {
+        type: String,
+      },
+    ],
     damageStatusDescription: {
       type: String,
       required: true,
     },
+    scannerDescriptionUrl: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
     scannerDescription: {
       type: String,
       required: true,
@@ -60,17 +82,6 @@ const carSchema = new Schema<CarDocument>(
       required: true,
       unique: true,
     },
-    carModelId: {
-      type: String,
-      required: true,
-      ref: "CarModel",
-    },
-    witnesses: [
-      {
-        type: String,
-        ref: "Witness",
-      },
-    ],
     certificateId: {
       type: String,
       ref: "Certificate",
@@ -81,9 +92,10 @@ const carSchema = new Schema<CarDocument>(
         ref: "Remission",
       },
     ],
-    leadId: {
+    customerId: {
       type: String,
-      ref: "Lead",
+      ref: "Customer",
+      required: true,
     },
     errorCodes: [
       {

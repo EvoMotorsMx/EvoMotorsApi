@@ -1,5 +1,3 @@
-import { number } from "zod";
-
 export class Tool {
   constructor(
     public name: string,
