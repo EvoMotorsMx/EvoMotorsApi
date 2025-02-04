@@ -6,6 +6,7 @@ import { ConfigProps } from "../../config/envConfig";
 import { AdminAuthStack } from "./evo_motors_auth-stack";
 import { LambdaStack } from "./evo_motors_lambda-stack";
 import * as _ from "lodash";
+import { EvoMotorsS3Stack } from "./evo_motors_s3-stack";
 interface IPipelineStageProps extends StageProps {
   config: Readonly<ConfigProps>;
   stageName: string;
@@ -34,6 +35,9 @@ export class PipelineStage extends Stage {
       this,
       "EvoMotorsAdminAuthStack",
     );
+
+    // Crear el stack de S3
+    const s3Stack = new EvoMotorsS3Stack(this, "EvoMotorsS3Stack");
 
     //Brand lAMBDA
     const brandLambdaIntegration = new LambdaStack(this, "brandLambda", {
@@ -149,6 +153,16 @@ export class PipelineStage extends Stage {
       envVariables: lambdaVariables,
     });
 
+    // Read PDF Lambda
+    const readPdfLambdaIntegration = new LambdaStack(this, "readPdfLambda", {
+      lambdaDirectory: "S3Read", // Directory for the new Lambda function
+      envVariables: {
+        ...lambdaVariables,
+        BUCKET_NAME: s3Stack.sportDriveTemplates.bucketName,
+      },
+      bucket: s3Stack.sportDriveTemplates,
+    });
+
     new EvoMotorsApiStack(this, "EvoMotorsApiStack", {
       stageName: props.stageName,
       userPool: evoMotorsAuthStack.getUserPool(),
@@ -172,6 +186,7 @@ export class PipelineStage extends Stage {
       productCompatibilityLambdaIntegration:
         productCompatibilityLambdaIntegration.lambdaIntegration,
       customerLambdaIntegration: customerLambdaIntegration.lambdaIntegration,
+      readPdfLambdaIntegration: readPdfLambdaIntegration.lambdaIntegration,
     });
   }
 }
