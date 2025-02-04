@@ -25,6 +25,7 @@ interface EvoMotorsApiStackProps extends cdk.StackProps {
   userLambdaIntegration: HttpLambdaIntegration;
   productCompatibilityLambdaIntegration: HttpLambdaIntegration;
   customerLambdaIntegration: HttpLambdaIntegration;
+  readPdfLambdaIntegration: HttpLambdaIntegration;
 }
 
 export class EvoMotorsApiStack extends cdk.Stack {
