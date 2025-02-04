@@ -1,21 +1,14 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
+import { isBase64 } from "validator";
 
 interface ReceiptDocument extends Document {
   _id: string;
-  userId: string;
+  cognitoId: string;
   productId: string[];
-  installationTime: Date;
-  reviewVehicleStart: number;
-  reviewVehicleResponse: number;
-  reviewFunctionality: number;
-  reviewService: number;
-  reviewTime: number;
-  reviewRecommendation: number;
-  discount: string;
-  date: Date;
-  finalPrice: number;
   arriveTime: Date;
+  endTime: Date;
+  signatureImage: String;
 }
 
 const receiptSchema = new Schema<ReceiptDocument>(
@@ -24,10 +17,10 @@ const receiptSchema = new Schema<ReceiptDocument>(
       type: String,
       default: () => uuidV4(),
     },
-    userId: {
+    cognitoId: {
       type: String,
       required: true,
-      ref: "User",
+      index: true,
     },
     productId: [
       {
@@ -36,61 +29,23 @@ const receiptSchema = new Schema<ReceiptDocument>(
         ref: "Product",
       },
     ],
-    installationTime: {
-      type: Date,
-      required: true,
-    },
-    reviewVehicleStart: {
-      type: Number,
-      required: false,
-      min: 1,
-      max: 5,
-    },
-    reviewVehicleResponse: {
-      type: Number,
-      required: false,
-      min: 1,
-      max: 5,
-    },
-    reviewFunctionality: {
-      type: Number,
-      required: false,
-      min: 1,
-      max: 5,
-    },
-    reviewService: {
-      type: Number,
-      required: false,
-      min: 1,
-      max: 5,
-    },
-    reviewTime: {
-      type: Number,
-      required: false,
-      min: 1,
-      max: 5,
-    },
-    reviewRecommendation: {
-      type: Number,
-      required: false,
-      min: 1,
-      max: 5,
-    },
-    discount: {
-      type: String,
-      required: false,
-    },
-    date: {
-      type: Date,
-      required: true,
-    },
-    finalPrice: {
-      type: Number,
-      required: true,
-    },
     arriveTime: {
       type: Date,
       required: true,
+    },
+    endTime: {
+      type: Date,
+      required: true,
+    },
+    signatureImage: {
+      type: String,
+      required: true,
+      validate: {
+        validator: function (value) {
+          return isBase64(value);
+        },
+        message: (props) => `${props.value} is not a valid base64 string!`,
+      },
     },
   },
   {
