@@ -22,7 +22,7 @@
     "@types/validator": "^13.12.2",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
-    "aws-cdk": "2.126.0",
+    "aws-cdk": "^2.178.1",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
