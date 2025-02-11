@@ -206,10 +206,6 @@ export class CarRepository implements ICarRepository {
       (remission) => new Remission(remission.name, remission._id),
     );
 
-    const witnesses = doc.witnesses?.map(
-      (witness) => new Witness(witness.name, witness.description, witness._id),
-    );
-
     const errorCodes = doc.errorCodes?.map(
       (errorCode) =>
         new ErrorCode(
@@ -239,21 +235,14 @@ export class CarRepository implements ICarRepository {
     );
 
     const car = new Car(
-      doc.mileage,
-      doc.tankStatus,
-      doc.damageImageUrl,
-      doc.damageStatusDescription,
-      doc.scannerDescription,
       doc.vin,
       doc.plates,
       carModel,
       customer,
       undefined,
       remissions,
-      witnesses,
-      errorCodes,
       [],
-      doc.id,
+      doc.id?.toString(),
     );
 
     return car;
