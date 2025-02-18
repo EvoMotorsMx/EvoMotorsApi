@@ -117,7 +117,7 @@ export class CustomerRepository implements ICustomerRepository {
       doc.company._id?.toString(),
     );
 
-    const cars = doc.cars?.map((car) => {
+    const cars: Car[] = doc.cars?.map((car) => {
       const brand = new Brand(
         car.carModelId.brandId.name,
         car.carModelId.brandId.description,
@@ -145,20 +145,13 @@ export class CustomerRepository implements ICustomerRepository {
       );
 
       return new Car(
-        car.mileage,
-        car.tankStatus,
-        car.damageImageUrl,
-        car.damageStatusDescription,
-        car.scannerDescription,
         car.vin,
         car.plates,
         carModel,
-        car.customerId,
-        car.certificateId,
-        car.remissions,
-        car.witnesses,
-        car.errorCodes,
-        car.files,
+        customer,
+        undefined,
+        [],
+        [],
         car._id?.toString(),
       );
     });
