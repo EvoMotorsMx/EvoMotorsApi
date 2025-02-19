@@ -4,8 +4,8 @@ handler(
   {
     httpMethod: "GET",
     headers: {
-      idtoken: "",
-      Authorization: "",
+      idtoken: process.env.ID_TOKEN,
+      Authorization: process.env.AUTHORIZATION,
     },
     requestContext: {
       http: {
