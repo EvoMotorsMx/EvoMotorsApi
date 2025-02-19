@@ -8,8 +8,8 @@ handler(
       },
     },
     headers: {
-      IdToken: "",
-      Authorization: "",
+      idtoken: process.env.ID_TOKEN,
+      Authorization: process.env.AUTHORIZATION,
     },
     body: JSON.stringify({}),
   } as any,
