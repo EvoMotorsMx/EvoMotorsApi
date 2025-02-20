@@ -9,7 +9,6 @@ import {
   Certificate,
   Car,
   Remission,
-  Witness,
   File,
   ProductCompatibility,
 } from "../../../core/domain/entities";
@@ -97,26 +96,15 @@ export class CertificateRepository implements ICertificateRepository {
       (remission) => new Remission(remission.name, remission._id),
     );
 
-    const witnesses = doc.carId.witnesses?.map(
-      (witness) => new Witness(witness.name, witness.description, witness._id),
-    );
-
     const car = new Car(
-      doc.carId.mileage,
-      doc.carId.tankStatus,
-      doc.carId.damageImageUrl,
-      doc.carId.damageStatusDescription,
-      doc.carId.scannerDescription,
       doc.carId.vin,
       doc.carId.plates,
       carModel,
       doc.carId.customerId,
       undefined,
       remissions,
-      witnesses,
-      [], //TODO: ADD ERROR CODE MODEL
       [],
-      doc.carId._id,
+      doc.id?.toString(),
     );
 
     const certificate = new Certificate(doc.name, car, doc.id);
