@@ -117,6 +117,23 @@ export class CustomerRepository implements ICustomerRepository {
       doc.company._id?.toString(),
     );
 
+    const customer = new Customer(
+      doc.name,
+      doc.lastName,
+      doc.city,
+      doc.state,
+      doc.country,
+      doc.phone,
+      doc.email,
+      doc.rfc,
+      doc.razonSocial,
+      doc.contacto,
+      [],
+      [], // Inicialmente vacío, se llenará después
+      company,
+      doc._id?.toString(),
+    );
+
     const cars: Car[] = doc.cars?.map((car) => {
       const brand = new Brand(
         car.carModelId.brandId.name,
@@ -156,22 +173,8 @@ export class CustomerRepository implements ICustomerRepository {
       );
     });
 
-    const customer = new Customer(
-      doc.name,
-      doc.lastName,
-      doc.city,
-      doc.state,
-      doc.country,
-      doc.phone,
-      doc.email,
-      doc.rfc,
-      doc.razonSocial,
-      doc.contacto,
-      [],
-      cars,
-      company,
-      doc._id?.toString(),
-    );
+    customer.cars = cars; // Asignar los autos al cliente después de crearlos
+
     return customer;
   }
 }
