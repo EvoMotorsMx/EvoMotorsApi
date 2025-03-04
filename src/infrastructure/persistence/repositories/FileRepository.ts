@@ -6,11 +6,7 @@ import {
   CreateFileDTO,
   UpdateFileDTO,
 } from "../../../core/application/dtos/File";
-import {
-  Brand,
-  CarModel,
-  ProductCompatibility,
-} from "../../../core/domain/entities";
+import { Brand, CarModel } from "../../../core/domain/entities";
 
 interface FileDoc extends Document, FileDocument {}
 
@@ -45,7 +41,7 @@ export class FileRepository implements IFileRepository {
     await FileModel.findByIdAndDelete(id).exec();
   }
 
-  private docToEntity(doc: FileDocument): File {
+  private docToEntity(doc: FileDoc): File {
     // Initialize placeholders for CarModel and File
     let brand: Brand = new Brand("", "");
     let carModelFiles: File[] = [];
