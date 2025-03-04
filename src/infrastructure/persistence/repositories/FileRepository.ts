@@ -82,18 +82,6 @@ export class FileRepository implements IFileRepository {
         });
       }
 
-      const carModelProducts = doc.carModelId
-        .products as ProductCompatibility[];
-
-      const products = carModelProducts.map(
-        (product) =>
-          new ProductCompatibility(
-            product.product,
-            product.carModel,
-            product._id,
-          ),
-      );
-
       const carModel = new CarModel(
         doc.carModelId.name,
         brand,
@@ -103,7 +91,6 @@ export class FileRepository implements IFileRepository {
         doc.carModelId.combustion,
         doc.carModelId.engineType,
         carModelFiles,
-        products,
         doc.carModelId._id?.toString() as string,
       );
 
