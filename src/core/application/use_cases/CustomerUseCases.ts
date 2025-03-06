@@ -9,8 +9,8 @@ export class CustomerUseCases implements ICustomerUseCases {
     this.customerService = customerService;
   }
 
-  async findAllCustomers(): Promise<Customer[]> {
-    return this.customerService.getAllCustomers();
+  async getAllCustomersWithCars() {
+    return this.customerService.getAllCustomersWithCars();
   }
 
   async createCustomer(dto: CreateCustomerDTO): Promise<Customer> {
@@ -24,8 +24,8 @@ export class CustomerUseCases implements ICustomerUseCases {
     return this.customerService.updateCustomer(id, dto);
   }
 
-  async getCustomer(id: string): Promise<Customer | null> {
-    return this.customerService.getCustomerById(id);
+  async getCustomerWithCars(id: string) {
+    return this.customerService.getCustomerByIdWithCars(id);
   }
 
   async removeCustomer(id: string): Promise<void> {

@@ -93,11 +93,7 @@ export async function handler(
   await connectToDatabase();
   const carRepository = new CarRepository();
   const carService = new CarService(carRepository);
-
-  const customerRepository = new CustomerRepository();
-  const customerService = new CustomerService(customerRepository);
-
-  const carUseCases = new CarUseCases(carService, customerService);
+  const carUseCases = new CarUseCases(carService);
 
   try {
     switch (event.requestContext.http.method) {

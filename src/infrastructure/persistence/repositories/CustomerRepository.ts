@@ -1,24 +1,13 @@
 import { Document } from "mongoose";
 import CustomerModel, { CustomerDocument } from "../models/Customer.model";
 import RemissionModel from "../models/Remission.model";
-import CarModel from "../models/Car.model";
-import CarModelModel from "../models/CarModel.model";
-import BrandModel from "../models/Brand.model";
 import { ICustomerRepository } from "../../../core/application/interfaces/Customer";
 import CompanyModel from "../models/Company.model";
-import {
-  Customer,
-  Company,
-  Car,
-  CarModel as CarModelEntity,
-  Brand,
-  ProductCompatibility,
-} from "../../../core/domain/entities";
+import { Customer, Company } from "../../../core/domain/entities";
 import {
   CreateCustomerDTO,
   UpdateCustomerDTO,
 } from "../../../core/application/dtos";
-import { populate } from "dotenv";
 
 interface CustomerDoc extends Document, CustomerDocument {}
 
@@ -26,37 +15,25 @@ export class CustomerRepository implements ICustomerRepository {
   async findById(id: string): Promise<Customer | null> {
     const customerDoc = await CustomerModel.findById(id)
       .populate({
-        path: "cars",
-        model: CarModel,
-        populate: {
-          path: "carModelId",
-          model: CarModelModel,
-          populate: { path: "brandId", model: BrandModel },
-        },
+        path: "company",
+        model: CompanyModel,
       })
-      .populate({ path: "remissions", model: RemissionModel })
-      .populate({ path: "company", model: CompanyModel })
       .exec();
     if (!customerDoc) return null;
+
     return this.docToEntity(customerDoc);
   }
 
   async findAll(): Promise<Customer[]> {
-    const customerDocs = await CustomerModel.find()
+    let customerDocs = await CustomerModel.find()
       .populate({
-        path: "cars",
-        model: CarModel,
-        populate: {
-          path: "carModelId",
-          model: CarModelModel,
-          populate: { path: "brandId", model: BrandModel },
-        },
+        path: "company",
+        model: CompanyModel,
       })
-      .populate({ path: "remissions", model: RemissionModel })
-      .populate({ path: "company", model: CompanyModel })
       .exec();
     if (!customerDocs.length) return [];
-    return customerDocs.map((doc) => this.docToEntity(doc)); // Convertir cada documento a una entidad Customer
+
+    return customerDocs.map((doc) => this.docToEntity(doc));
   }
 
   async save(dto: CreateCustomerDTO): Promise<Customer> {
@@ -66,18 +43,12 @@ export class CustomerRepository implements ICustomerRepository {
       savedCustomerDoc._id,
     )
       .populate({
-        path: "cars",
-        model: CarModel,
-        populate: {
-          path: "carModelId",
-          model: CarModelModel,
-          populate: { path: "brandId", model: BrandModel },
-        },
+        path: "company",
+        model: CompanyModel,
       })
-      .populate({ path: "remissions", model: RemissionModel })
-      .populate({ path: "company", model: CompanyModel })
       .exec();
     if (!populatedCustomerDoc) throw new Error("Customer not found");
+
     return this.docToEntity(populatedCustomerDoc);
   }
 
@@ -86,18 +57,12 @@ export class CustomerRepository implements ICustomerRepository {
       new: true,
     })
       .populate({
-        path: "cars",
-        model: CarModel,
-        populate: {
-          path: "carModelId",
-          model: CarModelModel,
-          populate: { path: "brandId", model: BrandModel },
-        },
+        path: "company",
+        model: CompanyModel,
       })
-      .populate({ path: "remissions", model: RemissionModel })
-      .populate({ path: "company", model: CompanyModel })
       .exec();
     if (!updatedCustomerDoc) throw new Error("Customer not found");
+
     return this.docToEntity(updatedCustomerDoc);
   }
 
@@ -128,52 +93,9 @@ export class CustomerRepository implements ICustomerRepository {
       doc.rfc,
       doc.razonSocial,
       doc.contacto,
-      [],
-      [], // Inicialmente vacío, se llenará después
       company,
       doc._id?.toString(),
     );
-
-    const cars: Car[] = doc.cars?.map((car) => {
-      const brand = new Brand(
-        car.carModelId.brandId.name,
-        car.carModelId.brandId.description,
-        car.carModelId.brandId._id?.toString(),
-      );
-
-      const carModel = new CarModelEntity(
-        car.carModelId.name,
-        brand,
-        car.carModelId.year,
-        car.carModelId.engineSize,
-        car.carModelId.cylinder,
-        car.carModelId.combustion,
-        car.carModelId.engineType,
-        [],
-        (car.carModelId.products as ProductCompatibility[])?.map(
-          (productCompatibility) =>
-            new ProductCompatibility(
-              productCompatibility.product,
-              productCompatibility.carModel,
-              productCompatibility._id,
-            ),
-        ),
-        car.carModelId._id?.toString(),
-      );
-
-      return new Car(
-        car.vin,
-        car.plates,
-        carModel,
-        customer,
-        undefined,
-        [],
-        [],
-        car._id?.toString(),
-      );
-    });
-
-    customer.cars = cars; // Asignar los autos al cliente después de crearlos
 
     return customer;
   }

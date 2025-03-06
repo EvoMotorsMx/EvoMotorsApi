@@ -13,9 +13,7 @@ export class Customer {
     public rfc: string,
     public razonSocial: string,
     public contacto: ContactType,
-    public remissions?: Remission[],
-    public cars?: Car[],
-    public company?: Company,
+    public companyId: Company,
     public _id?: string,
   ) {}
 

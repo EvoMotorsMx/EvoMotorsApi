@@ -6,5 +6,6 @@ export type UpdateCarDTO = {
   remissions?: string[];
   customerId?: string;
   errorCodes?: string[];
-  files?: string[];
+  oriFile?: string;
+  modFile?: string;
 };

@@ -67,18 +67,6 @@ const customerSchema = new Schema<CustomerDocument>(
       required: true,
       enum: Object.values(ContactType),
     },
-    remissions: [
-      {
-        type: String,
-        ref: "Remission",
-      },
-    ],
-    cars: [
-      {
-        type: String,
-        ref: "Car",
-      },
-    ],
     company: {
       type: String,
       ref: "Company",

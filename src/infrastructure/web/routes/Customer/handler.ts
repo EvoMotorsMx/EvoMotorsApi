@@ -24,6 +24,7 @@ import { CustomerRepository } from "../../../persistence/repositories";
 import { CarService, CustomerService } from "../../../../core/domain/services";
 import { CustomerUseCases } from "../../../../core/application/use_cases";
 import { ContactType } from "../../../../shared/enums";
+import { CarRepository } from "../../../persistence/repositories/CarRepository";
 
 const createCustomerBodySchema = z.object({
   name: z.string(),
@@ -36,8 +37,6 @@ const createCustomerBodySchema = z.object({
   rfc: z.string().optional(),
   razonSocial: z.string().optional(),
   contacto: z.nativeEnum(ContactType),
-  remissions: z.array(z.string()).optional(),
-  cars: z.array(z.string()).optional(),
   company: z.string().optional(),
 });
 
@@ -53,8 +52,6 @@ const updateCustomerBodySchema = z.object({
   rfc: z.string().optional(),
   razonSocial: z.string().optional(),
   contacto: z.nativeEnum(ContactType).optional(),
-  remissions: z.array(z.string()).optional(),
-  cars: z.array(z.string()).optional(),
   company: z.string().optional(),
 });
 
@@ -103,7 +100,12 @@ export async function handler(
 
   await connectToDatabase();
   const customerRepository = new CustomerRepository();
-  const customerService = new CustomerService(customerRepository);
+  const carRepository = new CarRepository();
+
+  const customerService = new CustomerService(
+    customerRepository,
+    carRepository,
+  );
   const customerUseCases = new CustomerUseCases(customerService);
 
   try {
@@ -124,15 +126,15 @@ export async function handler(
             };
           }
 
-          const customers = await customerUseCases.getCustomer(
+          const customer = await customerUseCases.getCustomerWithCars(
             pathValidationResult.data.id,
           );
           return {
             statusCode: HTTP_OK,
-            body: JSON.stringify(customers),
+            body: JSON.stringify(customer),
           };
         } else {
-          const customers = await customerUseCases.findAllCustomers();
+          const customers = await customerUseCases.getAllCustomersWithCars();
           return {
             statusCode: HTTP_OK,
             body: JSON.stringify(customers),

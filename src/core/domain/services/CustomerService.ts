@@ -1,19 +1,37 @@
 import { CreateCustomerDTO, UpdateCustomerDTO } from "../../application/dtos";
 import {
+  ICarRepository,
   ICustomerRepository,
   ICustomerService,
 } from "../../application/interfaces";
-import { Customer } from "../entities";
+import { Car, Customer } from "../entities";
 
 export class CustomerService implements ICustomerService {
-  constructor(private customerRepository: ICustomerRepository) {}
+  constructor(
+    private customerRepository: ICustomerRepository,
+    private carRepository: ICarRepository,
+  ) {}
 
-  async getCustomerById(id: string): Promise<Customer | null> {
-    return this.customerRepository.findById(id);
+  async getCustomerByIdWithCars(
+    id: string,
+  ): Promise<{ customer: Customer; cars: Car[] } | null> {
+    const customer = await this.customerRepository.findById(id);
+    if (!customer) return null;
+
+    const cars = await this.carRepository.findAll(customer._id?.toString()!);
+    return { customer, cars };
   }
 
-  async getAllCustomers(): Promise<Customer[]> {
-    return this.customerRepository.findAll();
+  async getAllCustomersWithCars(): Promise<
+    { customer: Customer; cars: Car[] }[]
+  > {
+    const customers = await this.customerRepository.findAll();
+    const result = [];
+    for (const customer of customers) {
+      const cars = await this.carRepository.findAll(customer._id?.toString()!);
+      result.push({ customer, cars });
+    }
+    return result;
   }
 
   async createCustomer(dto: CreateCustomerDTO): Promise<Customer> {

@@ -7,8 +7,8 @@ export class Car {
     public carModelId: CarModel,
     public customerId: Customer,
     public certificateId?: Certificate,
-    public remissions?: Remission[],
-    public files?: File[],
+    public oriFile?: File,
+    public modFile?: File,
     public _id?: string,
   ) {}
 

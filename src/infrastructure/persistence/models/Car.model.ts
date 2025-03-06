@@ -4,20 +4,17 @@ import {
   CarModel,
   Certificate,
   Customer,
-  ErrorCode,
   File,
-  Remission,
 } from "../../../core/domain/entities";
 
 export interface CarDocument extends Document {
   vin: string;
   plates: string;
   carModelId: CarModel;
-  certificateId: Certificate;
-  remissions: Remission[];
   customerId: Customer;
-  errorCodes: ErrorCode[];
-  files: File[];
+  certificateId: Certificate;
+  oriFile?: File;
+  modFile?: File;
 }
 
 const carSchema = new Schema<CarDocument>(
@@ -31,7 +28,6 @@ const carSchema = new Schema<CarDocument>(
       required: true,
       ref: "CarModel",
     },
-
     vin: {
       type: String,
       required: true,
@@ -46,23 +42,19 @@ const carSchema = new Schema<CarDocument>(
       type: String,
       ref: "Certificate",
     },
-    remissions: [
-      {
-        type: String,
-        ref: "Remission",
-      },
-    ],
     customerId: {
       type: String,
       ref: "Customer",
       required: true,
     },
-    errorCodes: [
-      {
-        type: String,
-        ref: "ErrorCode",
-      },
-    ],
+    oriFile: {
+      type: String,
+      ref: "File",
+    },
+    modFile: {
+      type: String,
+      ref: "File",
+    },
   },
   {
     timestamps: true,
