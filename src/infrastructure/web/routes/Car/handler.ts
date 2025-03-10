@@ -24,6 +24,7 @@ import { IIdToken } from "../../../security/Auth";
 import { CarService, CustomerService } from "../../../../core/domain/services";
 import { CarUseCases } from "../../../../core/application/use_cases";
 import { CustomerRepository } from "../../../persistence/repositories";
+import { ReceiptRepository } from "../../../persistence/repositories/ReceiptRepository";
 
 const createCarBodySchema = z.object({
   vin: z.string(),
@@ -92,7 +93,9 @@ export async function handler(
 
   await connectToDatabase();
   const carRepository = new CarRepository();
-  const carService = new CarService(carRepository);
+  const receiptRepository = new ReceiptRepository();
+
+  const carService = new CarService(carRepository, receiptRepository);
   const carUseCases = new CarUseCases(carService);
 
   try {

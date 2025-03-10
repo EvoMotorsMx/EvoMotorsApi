@@ -11,7 +11,7 @@ export class CarUseCases implements ICarUseCases {
   }
 
   async findAllCars(): Promise<Car[]> {
-    return this.carService.getAllCars();
+    return this.carService.getAllCarsExtended();
   }
 
   async createCar(dto: CreateCarDTO): Promise<Car | null> {
@@ -23,7 +23,7 @@ export class CarUseCases implements ICarUseCases {
   }
 
   async getCar(id: string): Promise<Car | null> {
-    return this.carService.getCarById(id);
+    return this.carService.getCarByIdExtended(id);
   }
 
   async removeCar(id: string): Promise<void> {

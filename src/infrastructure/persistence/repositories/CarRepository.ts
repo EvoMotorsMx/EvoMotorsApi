@@ -24,10 +24,6 @@ export class CarRepository implements ICarRepository {
         populate: [{ path: "brandId", model: BrandModel }],
       })
       .populate({
-        path: "certificateId",
-        model: CertificateModel,
-      })
-      .populate({
         path: "customerId",
         model: CustomerModel,
       })
@@ -43,10 +39,6 @@ export class CarRepository implements ICarRepository {
         path: "carModelId",
         model: CarModelModel,
         populate: [{ path: "brandId", model: BrandModel }],
-      })
-      .populate({
-        path: "certificateId",
-        model: CertificateModel,
       })
       .populate({
         path: "customerId",
@@ -65,10 +57,6 @@ export class CarRepository implements ICarRepository {
         path: "carModelId",
         model: CarModelModel,
         populate: [{ path: "brandId", model: BrandModel }],
-      })
-      .populate({
-        path: "certificateId",
-        model: CertificateModel,
       })
       .populate({
         path: "customerId",
@@ -91,10 +79,6 @@ export class CarRepository implements ICarRepository {
         path: "carModelId",
         model: CarModelModel,
         populate: [{ path: "brandId", model: BrandModel }],
-      })
-      .populate({
-        path: "certificateId",
-        model: CertificateModel,
       })
       .populate({
         path: "customerId",
@@ -148,7 +132,6 @@ export class CarRepository implements ICarRepository {
       doc.plates,
       carModel,
       customer,
-      undefined,
       undefined,
       undefined,
       doc.id?.toString(),
