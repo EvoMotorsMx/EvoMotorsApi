@@ -5,11 +5,13 @@ import { Car } from "../entities";
 export class CarService implements ICarService {
   constructor(private carRepository: ICarRepository) {}
 
-  async getCarById(id: string): Promise<Car | null> {
+  //GETS CAR Certificate, Orders and Remissions
+  async getCarByIdExtended(id: string): Promise<Car | null> {
     return this.carRepository.findById(id);
   }
 
-  async getAllCars(): Promise<Car[]> {
+  //GETS CAR Certificate, Orders and Remissions
+  async getAllCarsExtended(): Promise<Car[]> {
     return this.carRepository.findAll();
   }
 

@@ -38,10 +38,6 @@ const carSchema = new Schema<CarDocument>(
       required: true,
       unique: true,
     },
-    certificateId: {
-      type: String,
-      ref: "Certificate",
-    },
     customerId: {
       type: String,
       ref: "Customer",

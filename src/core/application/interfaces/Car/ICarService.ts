@@ -3,8 +3,8 @@ import { CreateCarDTO, UpdateCarDTO } from "../../dtos/Car";
 
 export interface ICarService {
   createCar(dto: CreateCarDTO): Promise<Car | null>;
-  getCarById(id: string): Promise<Car | null>;
-  getAllCars(): Promise<Car[]>;
+  getCarByIdExtended(id: string): Promise<Car | null>;
+  getAllCarsExtended(): Promise<Car[]>;
   updateCar(id: string, dto: UpdateCarDTO): Promise<Car | null>;
   deleteCar(id: string): Promise<void>;
 }

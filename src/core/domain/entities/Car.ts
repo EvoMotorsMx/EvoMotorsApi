@@ -6,7 +6,6 @@ export class Car {
     public plates: string,
     public carModelId: CarModel,
     public customerId: Customer,
-    public certificateId?: Certificate,
     public oriFile?: File,
     public modFile?: File,
     public _id?: string,
@@ -15,12 +14,6 @@ export class Car {
   setId(id: string) {
     if (!this._id) {
       this._id = id;
-    }
-  }
-
-  setCertificate(certificate: Certificate) {
-    if (!this.certificateId) {
-      this.certificateId = certificate;
     }
   }
 }
