@@ -2,7 +2,7 @@ import { Receipt } from "../../../domain/entities";
 import { CreateReceiptDTO, UpdateReceiptDTO } from "../../dtos";
 
 export interface IReceiptUseCases {
-  createReceipt(dto: CreateReceiptDTO): Promise<Receipt>;
+  createReceipt(dto: CreateReceiptDTO): Promise<Receipt | null>;
   updateReceipt(id: string, dto: UpdateReceiptDTO): Promise<Receipt | null>;
   getReceipt(id: string): Promise<Receipt | null>;
   findAllReceipts(): Promise<Receipt[]>;
