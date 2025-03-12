@@ -1,7 +1,6 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as s3 from "aws-cdk-lib/aws-s3";
-
 interface EvoMotorsS3StackProps extends cdk.StackProps {}
 
 export class EvoMotorsS3Stack extends cdk.Stack {
