@@ -12,57 +12,51 @@ export class EvoMotorsS3Stack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: EvoMotorsS3StackProps) {
     super(scope, id, props);
 
-    // Crear el bucket S3
+    // Create the S3 bucket
     this.sportDriveTemplates = new s3.Bucket(
       this,
       "SportDriveTemplatesBucket",
       {
         versioned: true,
-        removalPolicy: cdk.RemovalPolicy.RETAIN, // Retener el bucket cuando se elimine el stack
+        removalPolicy: cdk.RemovalPolicy.RETAIN, // Retain the bucket when the stack is deleted
       },
     );
 
-    // Crear el Access Point para el bucket S3
+    // Create the Access Point for the S3 bucket
     this.sportDriveTemplatesAccessPoint = new s3.CfnAccessPoint(
       this,
       "SportDriveTemplatesAccessPoint",
       {
         bucket: this.sportDriveTemplates.bucketName,
         name: "sport-drive-templates-access-point",
-        policy: {
+        policy: JSON.stringify({
           Version: "2012-10-17",
           Statement: [
             {
               Effect: "Allow",
-              Principal: "*",
+              Principal: { AWS: `arn:aws:iam::${this.account}:root` }, // Restrict to this account only or specify roles
               Action: "s3:GetObject",
-              Resource: `arn:aws:s3:us-east-1:${this.account}:accesspoint/sport-drive-templates-access-point/object/*`,
+              Resource: `arn:aws:s3:${this.region}:${this.account}:accesspoint/sport-drive-templates-access-point/object/*`,
             },
           ],
-        },
+        }),
       },
     );
 
     // Define IAM Role with necessary permissions
     const accessPointRole = new iam.Role(this, "AccessPointRole", {
       assumedBy: new iam.ServicePrincipal("s3.amazonaws.com"),
-      inlinePolicies: {
-        AccessPointPolicy: new iam.PolicyDocument({
-          statements: [
-            new iam.PolicyStatement({
-              actions: [
-                "s3:CreateAccessPoint",
-                "s3:PutAccessPointPolicy",
-                "s3:GetBucket",
-                "s3:ListBucket",
-              ],
-              resources: ["*"],
-              effect: iam.Effect.ALLOW,
-            }),
-          ],
-        }),
-      },
     });
+
+    accessPointRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
+        resources: [
+          this.sportDriveTemplates.bucketArn + "/*", // Specific to this bucket's objects
+        ],
+        effect: iam.Effect.ALLOW,
+      }),
+    );
 
     // Attach the role to the access point
     this.sportDriveTemplatesAccessPoint.node.addDependency(accessPointRole);
