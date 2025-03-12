@@ -78,12 +78,6 @@ const carModelSchema: Schema<CarModelDocument> = new Schema<CarModelDocument>(
         ref: "File",
       },
     ],
-    products: [
-      {
-        type: String,
-        ref: "ProductCompatibility",
-      },
-    ],
     toolCompatibility: [
       {
         type: String,
