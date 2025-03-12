@@ -1,6 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as s3 from "aws-cdk-lib/aws-s3";
+
 interface EvoMotorsS3StackProps extends cdk.StackProps {}
 
 export class EvoMotorsS3Stack extends cdk.Stack {
@@ -27,19 +28,17 @@ export class EvoMotorsS3Stack extends cdk.Stack {
       {
         bucket: this.sportDriveTemplates.bucketName,
         name: "sport-drive-templates-access-point",
-        policy: {
-          policyDocument: {
-            Version: "2012-10-17",
-            Statement: [
-              {
-                Effect: "Allow",
-                Principal: "*",
-                Action: "s3:GetObject",
-                Resource: `arn:aws:s3:us-east-1:${this.account}:accesspoint/sport-drive-templates-access-point/object/*`,
-              },
-            ],
-          },
-        },
+        policy: JSON.stringify({
+          Version: "2012-10-17",
+          Statement: [
+            {
+              Effect: "Allow",
+              Principal: "*",
+              Action: "s3:GetObject",
+              Resource: `arn:aws:s3:us-east-1:${this.account}:accesspoint/sport-drive-templates-access-point/object/*`,
+            },
+          ],
+        }),
       },
     );
   }
