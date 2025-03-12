@@ -10,13 +10,3 @@ cdk.out
 .vscode
 command.txt
 evoapi.http
-
-# local testing
-test/Brand/*
-test/CarModel/*
-test/Product/*
-test/ProductPrice/*
-test/Witness/*
-test/Certificate/*
-test/Remission/*
-test/Car/*

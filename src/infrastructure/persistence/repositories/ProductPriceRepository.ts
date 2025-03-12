@@ -11,7 +11,6 @@ import {
   Brand,
   Product,
   File,
-  ProductCompatibility,
 } from "../../../core/domain/entities";
 import { IProductPriceRepository } from "../../../core/application/interfaces";
 import {
@@ -96,18 +95,6 @@ export class ProductPriceRepository implements IProductPriceRepository {
       (file) => new File(file.fileUrl, file.type, file._id!),
     );
 
-    const carModelProducts: ProductCompatibility[] = doc.carModelId
-      ?.products as ProductCompatibility[];
-
-    const products = carModelProducts.map(
-      (product) =>
-        new ProductCompatibility(
-          product.product,
-          product.carModel,
-          product._id,
-        ),
-    );
-
     const carModel = new CarModel(
       doc.carModelId.name,
       brand,
@@ -117,7 +104,6 @@ export class ProductPriceRepository implements IProductPriceRepository {
       doc.carModelId.combustion,
       doc.carModelId.engineType,
       files,
-      products,
       doc.carModelId._id,
     );
 

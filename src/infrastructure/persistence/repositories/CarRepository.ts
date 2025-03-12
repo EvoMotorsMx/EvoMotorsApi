@@ -2,21 +2,12 @@ import { Document } from "mongoose";
 import CarModel, { CarDocument } from "../models/Car.model";
 import CarModelModel from "../models/CarModel.model";
 import BrandModel from "../models/Brand.model";
-import WitnessModel from "../models/Witness.model";
-import RemissionModel from "../models/Remission.model";
 import CertificateModel from "../models/Certificate.model";
-import ErrorCodeModel from "../models/ErrorCode.model";
 import CustomerModel from "../models/Customer.model";
 import {
   Brand,
   Car,
   CarModel as CarModelEntity,
-  Certificate,
-  Product,
-  Remission,
-  Witness,
-  ErrorCode,
-  ProductCompatibility,
   Customer,
 } from "../../../core/domain/entities";
 import { ICarRepository } from "../../../core/application/interfaces";
@@ -30,59 +21,28 @@ export class CarRepository implements ICarRepository {
       .populate({
         path: "carModelId",
         model: CarModelModel,
-        populate: { path: "brandId", model: BrandModel },
-      })
-      .populate({
-        path: "witnesses",
-        model: WitnessModel,
-      })
-      .populate({
-        path: "remissions",
-        model: RemissionModel,
-      })
-      .populate({
-        path: "certificateId",
-        model: CertificateModel,
+        populate: [{ path: "brandId", model: BrandModel }],
       })
       .populate({
         path: "customerId",
         model: CustomerModel,
-      })
-      .populate({
-        path: "errorCodes",
-        model: ErrorCodeModel,
       })
       .exec();
     if (!carModelDoc) return null;
     return this.docToEntity(carModelDoc);
   }
 
-  async findAll(): Promise<Car[]> {
-    const carModelDocs = await CarModel.find()
+  async findAll(customerId?: string): Promise<Car[]> {
+    const query = customerId ? { customerId } : {};
+    const carModelDocs = await CarModel.find(query)
       .populate({
         path: "carModelId",
         model: CarModelModel,
-        populate: { path: "brandId", model: BrandModel },
-      })
-      .populate({
-        path: "witnesses",
-        model: WitnessModel,
-      })
-      .populate({
-        path: "remissions",
-        model: RemissionModel,
-      })
-      .populate({
-        path: "certificateId",
-        model: CertificateModel,
+        populate: [{ path: "brandId", model: BrandModel }],
       })
       .populate({
         path: "customerId",
         model: CustomerModel,
-      })
-      .populate({
-        path: "errorCodes",
-        model: ErrorCodeModel,
       })
       .exec();
     if (!carModelDocs.length) return [];
@@ -96,27 +56,11 @@ export class CarRepository implements ICarRepository {
       .populate({
         path: "carModelId",
         model: CarModelModel,
-        populate: { path: "brandId", model: BrandModel },
-      })
-      .populate({
-        path: "witnesses",
-        model: WitnessModel,
-      })
-      .populate({
-        path: "remissions",
-        model: RemissionModel,
-      })
-      .populate({
-        path: "certificateId",
-        model: CertificateModel,
+        populate: [{ path: "brandId", model: BrandModel }],
       })
       .populate({
         path: "customerId",
         model: CustomerModel,
-      })
-      .populate({
-        path: "errorCodes",
-        model: ErrorCodeModel,
       })
       .exec();
 
@@ -134,27 +78,11 @@ export class CarRepository implements ICarRepository {
       .populate({
         path: "carModelId",
         model: CarModelModel,
-        populate: { path: "brandId", model: BrandModel },
-      })
-      .populate({
-        path: "witnesses",
-        model: WitnessModel,
-      })
-      .populate({
-        path: "remissions",
-        model: RemissionModel,
-      })
-      .populate({
-        path: "certificateId",
-        model: CertificateModel,
+        populate: [{ path: "brandId", model: BrandModel }],
       })
       .populate({
         path: "customerId",
         model: CustomerModel,
-      })
-      .populate({
-        path: "errorCodes",
-        model: ErrorCodeModel,
       })
       .exec();
     if (!updatedBrandDoc) throw new Error("Car Model not found");
@@ -172,17 +100,6 @@ export class CarRepository implements ICarRepository {
       doc.carModelId.brandId._id,
     );
 
-    const carModelProducts = doc.carModelId.products as ProductCompatibility[];
-
-    const products = carModelProducts.map(
-      (product) =>
-        new ProductCompatibility(
-          product.product,
-          product.carModel,
-          product._id,
-        ),
-    );
-
     const carModel = new CarModelEntity(
       doc.carModelId.name,
       brand,
@@ -192,33 +109,7 @@ export class CarRepository implements ICarRepository {
       doc.carModelId.combustion,
       doc.carModelId.engineType,
       [], //TODO: Add Files and CarModel entities
-      products,
       doc.carModelId._id,
-    );
-
-    /*     const certificate = new Certificate(
-      doc.certificateId.name,
-      doc.id,
-      doc.certificateId._id,
-    ); */
-
-    const remissions = doc.remissions?.map(
-      (remission) => new Remission(remission.name, remission._id),
-    );
-
-    const witnesses = doc.witnesses?.map(
-      (witness) => new Witness(witness.name, witness.description, witness._id),
-    );
-
-    const errorCodes = doc.errorCodes?.map(
-      (errorCode) =>
-        new ErrorCode(
-          errorCode.code,
-          errorCode.name,
-          errorCode.brand,
-          errorCode.description,
-          errorCode._id,
-        ),
     );
 
     const customer = new Customer(
@@ -232,28 +123,18 @@ export class CarRepository implements ICarRepository {
       doc.customerId.rfc,
       doc.customerId.razonSocial,
       doc.customerId.contacto,
-      doc.customerId.remissions,
-      doc.customerId.cars,
-      doc.customerId.company,
-      doc.customerId._id,
+      doc.customerId.companyId,
+      doc.customerId._id?.toString(),
     );
 
     const car = new Car(
-      doc.mileage,
-      doc.tankStatus,
-      doc.damageImageUrl,
-      doc.damageStatusDescription,
-      doc.scannerDescription,
       doc.vin,
       doc.plates,
       carModel,
       customer,
       undefined,
-      remissions,
-      witnesses,
-      errorCodes,
-      [],
-      doc.id,
+      undefined,
+      doc.id?.toString(),
     );
 
     return car;
