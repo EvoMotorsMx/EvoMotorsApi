@@ -3,19 +3,14 @@ import {
   APIGatewayProxyResult,
   Context,
 } from "aws-lambda";
-import { connectToDatabase } from "../../../../shared/utils/db-connection";
 import { z } from "zod";
 import {
-  DELETE,
   GET,
   HTTP_BAD_REQUEST,
-  HTTP_CREATED,
   HTTP_FORBIDDEN,
   HTTP_INTERNAL_SERVER_ERROR,
   HTTP_OK,
   HTTP_UNAUTHORIZED,
-  PATCH,
-  POST,
 } from "../../../../shared/constants";
 import { decodeToken } from "../../../../shared/utils/userDecoder";
 import { CUSTOMER_ROLE } from "../../../../shared/constants/roles";
@@ -98,12 +93,10 @@ export async function handler(
             };
           }
 
-          const users = await userUseCases.getUser(
-            pathValidationResult.data.id,
-          );
+          const user = await userUseCases.getUser(pathValidationResult.data.id);
           return {
             statusCode: HTTP_OK,
-            body: JSON.stringify(users),
+            body: JSON.stringify(user),
           };
         } else {
           const users = await userUseCases.findAllUsers();
