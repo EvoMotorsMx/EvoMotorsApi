@@ -163,6 +163,12 @@ export class PipelineStage extends Stage {
       bucket: s3Stack.sportDriveTemplates,
     });
 
+    //Customer Lambda
+    const receiptLambdaIntegration = new LambdaStack(this, "receiptLambda", {
+      lambdaDirectory: "Receipt",
+      envVariables: lambdaVariables,
+    });
+
     new EvoMotorsApiStack(this, "EvoMotorsApiStack", {
       stageName: props.stageName,
       userPool: evoMotorsAuthStack.getUserPool(),
@@ -187,6 +193,7 @@ export class PipelineStage extends Stage {
         productCompatibilityLambdaIntegration.lambdaIntegration,
       customerLambdaIntegration: customerLambdaIntegration.lambdaIntegration,
       readPdfLambdaIntegration: readPdfLambdaIntegration.lambdaIntegration,
+      receiptLambdaIntegration: receiptLambdaIntegration.lambdaIntegration,
     });
   }
 }
