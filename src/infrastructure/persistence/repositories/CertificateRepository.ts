@@ -8,7 +8,6 @@ import {
   CarModel,
   Certificate,
   Car,
-  Remission,
   File,
   ProductCompatibility,
 } from "../../../core/domain/entities";
@@ -67,18 +66,6 @@ export class CertificateRepository implements ICertificateRepository {
       (file) => new File(file.fileUrl, file.type, file._id!),
     );
 
-    const carModelProducts: ProductCompatibility[] = doc.carId.carModelId
-      ?.products as ProductCompatibility[];
-
-    const products = carModelProducts.map(
-      (product) =>
-        new ProductCompatibility(
-          product.product,
-          product.carModel,
-          product._id,
-        ),
-    );
-
     const carModel = new CarModel(
       doc.carId.carModelId.name,
       brand,
@@ -88,12 +75,7 @@ export class CertificateRepository implements ICertificateRepository {
       doc.carId.carModelId.combustion,
       doc.carId.carModelId.engineType,
       files,
-      products,
       doc.carId.carModelId._id,
-    );
-
-    const remissions = doc.carId.remissions?.map(
-      (remission) => new Remission(remission.name, remission._id),
     );
 
     const car = new Car(
@@ -102,14 +84,11 @@ export class CertificateRepository implements ICertificateRepository {
       carModel,
       doc.carId.customerId,
       undefined,
-      remissions,
-      [],
+      undefined,
       doc.id?.toString(),
     );
 
-    const certificate = new Certificate(doc.name, car, doc.id);
-
-    car.setCertificate(certificate);
+    const certificate = new Certificate(car, doc.id);
 
     return certificate;
   }

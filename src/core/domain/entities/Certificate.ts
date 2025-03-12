@@ -2,7 +2,6 @@ import { Car } from "./Car";
 
 export class Certificate {
   constructor(
-    public name: string,
     public carId: Car,
     public _id?: string,
   ) {}
