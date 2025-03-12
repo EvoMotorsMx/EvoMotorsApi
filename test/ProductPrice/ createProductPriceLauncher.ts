@@ -8,8 +8,8 @@ handler(
       },
     },
     headers: {
-      idtoken: "",
-      Authorization: "",
+      idtoken: process.env.ID_TOKEN,
+      Authorization: process.env.AUTHORIZATION,
     },
     body: JSON.stringify({
       carModelId: "6b6db388-40a1-4e98-8692-b7a52ebd9cbc",

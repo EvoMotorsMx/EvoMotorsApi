@@ -11,6 +11,5 @@ export type CreateCustomerDTO = {
   rfc: string;
   razonSocial: string;
   contacto: ContactType;
-  remissions: string[];
-  cars: string[];
+  companyId: string;
 };

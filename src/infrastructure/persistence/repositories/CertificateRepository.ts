@@ -8,8 +8,6 @@ import {
   CarModel,
   Certificate,
   Car,
-  Remission,
-  Witness,
   File,
   ProductCompatibility,
 } from "../../../core/domain/entities";
@@ -68,18 +66,6 @@ export class CertificateRepository implements ICertificateRepository {
       (file) => new File(file.fileUrl, file.type, file._id!),
     );
 
-    const carModelProducts: ProductCompatibility[] = doc.carId.carModelId
-      ?.products as ProductCompatibility[];
-
-    const products = carModelProducts.map(
-      (product) =>
-        new ProductCompatibility(
-          product.product,
-          product.carModel,
-          product._id,
-        ),
-    );
-
     const carModel = new CarModel(
       doc.carId.carModelId.name,
       brand,
@@ -89,39 +75,20 @@ export class CertificateRepository implements ICertificateRepository {
       doc.carId.carModelId.combustion,
       doc.carId.carModelId.engineType,
       files,
-      products,
       doc.carId.carModelId._id,
     );
 
-    const remissions = doc.carId.remissions?.map(
-      (remission) => new Remission(remission.name, remission._id),
-    );
-
-    const witnesses = doc.carId.witnesses?.map(
-      (witness) => new Witness(witness.name, witness.description, witness._id),
-    );
-
     const car = new Car(
-      doc.carId.mileage,
-      doc.carId.tankStatus,
-      doc.carId.damageImageUrl,
-      doc.carId.damageStatusDescription,
-      doc.carId.scannerDescription,
       doc.carId.vin,
       doc.carId.plates,
       carModel,
       doc.carId.customerId,
       undefined,
-      remissions,
-      witnesses,
-      [], //TODO: ADD ERROR CODE MODEL
-      [],
-      doc.carId._id,
+      undefined,
+      doc.id?.toString(),
     );
 
-    const certificate = new Certificate(doc.name, car, doc.id);
-
-    car.setCertificate(certificate);
+    const certificate = new Certificate(car, doc.id);
 
     return certificate;
   }

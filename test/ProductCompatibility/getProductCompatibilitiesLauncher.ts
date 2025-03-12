@@ -3,8 +3,8 @@ import { handler } from "../../src/infrastructure/web/routes/ProductCompatibilit
 handler(
   {
     headers: {
-      idtoken: "",
-      Authorization: "",
+      idtoken: process.env.ID_TOKEN,
+      Authorization: process.env.AUTHORIZATION,
     },
     requestContext: {
       http: {

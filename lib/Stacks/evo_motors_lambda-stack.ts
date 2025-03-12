@@ -43,6 +43,15 @@ export class LambdaStack extends Stack {
         "handler.ts",
       ),
       environment,
+      bundling: {
+        externalModules: [
+          "aws-sdk",
+          "@aws-sdk/core/client",
+          "@smithy/core",
+          "@aws-sdk/core",
+          "@smithy/core/protocols",
+        ],
+      },
     });
 
     // Otorgar permisos de lectura al bucket S3 si se proporciona

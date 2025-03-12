@@ -24,38 +24,26 @@ import { IIdToken } from "../../../security/Auth";
 import { CarService, CustomerService } from "../../../../core/domain/services";
 import { CarUseCases } from "../../../../core/application/use_cases";
 import { CustomerRepository } from "../../../persistence/repositories";
+import { ReceiptRepository } from "../../../persistence/repositories/ReceiptRepository";
 
 const createCarBodySchema = z.object({
-  mileage: z.number(),
-  tankStatus: z.number(),
-  damageImageUrl: z.array(z.string()).optional(),
-  damageStatusDescription: z.string(),
-  scannerDescription: z.string(),
   vin: z.string(),
   plates: z.string(),
   carModelId: z.string(),
   customerId: z.string(),
   certificateId: z.string().optional(),
   remissions: z.array(z.string()).optional(),
-  witnesses: z.array(z.string()).optional(),
   errorCodes: z.array(z.string()).optional(),
   files: z.array(z.string()).optional(),
 });
 
 const updateCarBodySchema = z.object({
-  id: z.string(),
-  mileage: z.number().optional(),
-  tankStatus: z.string().optional(),
-  damageImageUrl: z.array(z.string()).optional(),
-  damageStatusDescription: z.string().optional(),
-  scannerDescription: z.string().optional(),
   vin: z.string().optional(),
   plates: z.string().optional(),
   carModelId: z.string().optional(),
   customerId: z.string().optional(),
   certificateId: z.string().optional(),
   remissions: z.array(z.string()).optional(),
-  witnesses: z.array(z.string()).optional(),
   errorCodes: z.array(z.string()).optional(),
   files: z.array(z.string()).optional(),
 });
@@ -105,12 +93,10 @@ export async function handler(
 
   await connectToDatabase();
   const carRepository = new CarRepository();
-  const carService = new CarService(carRepository);
+  const receiptRepository = new ReceiptRepository();
 
-  const customerRepository = new CustomerRepository();
-  const customerService = new CustomerService(customerRepository);
-
-  const carUseCases = new CarUseCases(carService, customerService);
+  const carService = new CarService(carRepository, receiptRepository);
+  const carUseCases = new CarUseCases(carService);
 
   try {
     switch (event.requestContext.http.method) {
