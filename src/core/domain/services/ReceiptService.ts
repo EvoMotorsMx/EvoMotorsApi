@@ -78,6 +78,7 @@ export class ReceiptService implements IReceiptService {
     templateKey: string,
   ): Promise<Buffer> {
     const receipt = await this.receiptRepository.findById(receiptId);
+
     if (!receipt) {
       throw new Error("Receipt not found");
     }
@@ -100,7 +101,7 @@ export class ReceiptService implements IReceiptService {
     };
 
     const pdfBuffer = await streamToBuffer(data.Body as Readable);
-    const pdfDoc = await PDFDocument.load(pdfBuffer);
+    const pdfDoc = await PDFDocument.load(new Uint8Array(pdfBuffer));
 
     // Editar el PDF usando pdf-lib
     const pages = pdfDoc.getPages();
