@@ -29,7 +29,7 @@ export class EvoMotorsS3Stack extends cdk.Stack {
       {
         bucket: this.sportDriveTemplates.bucketName,
         name: "sport-drive-templates-access-point",
-        policy: JSON.stringify({
+        policy: {
           Version: "2012-10-17",
           Statement: [
             {
@@ -39,7 +39,7 @@ export class EvoMotorsS3Stack extends cdk.Stack {
               Resource: `arn:aws:s3:${this.region}:${this.account}:accesspoint/sport-drive-templates-access-point/object/*`,
             },
           ],
-        }),
+        },
       },
     );
 
