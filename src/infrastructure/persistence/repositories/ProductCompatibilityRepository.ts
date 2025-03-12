@@ -102,16 +102,6 @@ export class ProductCompatibilityRepository
       doc.carModel.brandId._id?.toString(),
     );
 
-    let products =
-      (doc.carModel.products as ProductCompatibility[]).map(
-        (product) =>
-          new ProductCompatibility(
-            product.product,
-            product.carModel,
-            product._id,
-          ),
-      ) ?? [];
-
     const files =
       (doc.carModel.files as File[]).map(
         (file) => new File(file.fileUrl, file.type, file._id!),
@@ -126,7 +116,6 @@ export class ProductCompatibilityRepository
       doc.carModel.combustion,
       doc.carModel.engineType,
       files,
-      products,
       doc.carModel._id?.toString(),
     );
 
