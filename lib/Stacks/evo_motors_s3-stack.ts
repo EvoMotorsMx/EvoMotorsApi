@@ -28,15 +28,17 @@ export class EvoMotorsS3Stack extends cdk.Stack {
         bucket: this.sportDriveTemplates.bucketName,
         name: "sport-drive-templates-access-point",
         policy: {
-          version: "2012-10-17",
-          statement: [
-            {
-              effect: "Allow",
-              principal: "*",
-              action: "s3:GetObject",
-              resource: `arn:aws:s3:us-east-1:${this.account}:accesspoint/sport-drive-templates-access-point/object/*`,
-            },
-          ],
+          policyDocument: {
+            Version: "2012-10-17",
+            Statement: [
+              {
+                Effect: "Allow",
+                Principal: "*",
+                Action: "s3:GetObject",
+                Resource: `arn:aws:s3:us-east-1:${this.account}:accesspoint/sport-drive-templates-access-point/object/*`,
+              },
+            ],
+          },
         },
       },
     );
