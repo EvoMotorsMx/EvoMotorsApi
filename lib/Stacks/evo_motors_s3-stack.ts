@@ -12,6 +12,9 @@ export class EvoMotorsS3Stack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: EvoMotorsS3StackProps) {
     super(scope, id, props);
 
+    // Set the region explicitly
+    const region = this.region || "us-east-1";
+
     // Create the S3 bucket
     this.sportDriveTemplates = new s3.Bucket(
       this,
@@ -36,7 +39,7 @@ export class EvoMotorsS3Stack extends cdk.Stack {
               Effect: "Allow",
               Principal: { AWS: `arn:aws:iam::${this.account}:root` }, // Restrict to this account only or specify roles
               Action: "s3:GetObject",
-              Resource: `arn:aws:s3:${this.region}:${this.account}:accesspoint/sport-drive-templates-access-point/object/*`,
+              Resource: `arn:aws:s3:${region}:${this.account}:accesspoint/sport-drive-templates-access-point/object/*`,
             },
           ],
         },
