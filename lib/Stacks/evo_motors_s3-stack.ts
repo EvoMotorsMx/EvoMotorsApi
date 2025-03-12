@@ -1,6 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as s3 from "aws-cdk-lib/aws-s3";
+import * as iam from "aws-cdk-lib/aws-iam";
 
 interface EvoMotorsS3StackProps extends cdk.StackProps {}
 
@@ -41,5 +42,29 @@ export class EvoMotorsS3Stack extends cdk.Stack {
         },
       },
     );
+
+    // Define IAM Role with necessary permissions
+    const accessPointRole = new iam.Role(this, "AccessPointRole", {
+      assumedBy: new iam.ServicePrincipal("s3.amazonaws.com"),
+      inlinePolicies: {
+        AccessPointPolicy: new iam.PolicyDocument({
+          statements: [
+            new iam.PolicyStatement({
+              actions: [
+                "s3:CreateAccessPoint",
+                "s3:PutAccessPointPolicy",
+                "s3:GetBucket",
+                "s3:ListBucket",
+              ],
+              resources: ["*"],
+              effect: iam.Effect.ALLOW,
+            }),
+          ],
+        }),
+      },
+    });
+
+    // Attach the role to the access point
+    this.sportDriveTemplatesAccessPoint.node.addDependency(accessPointRole);
   }
 }
