@@ -8,6 +8,8 @@ import {
   Witness as WitnessEntity,
   Product as ProductEntity,
   Brand,
+  Car,
+  Customer,
 } from "../../../core/domain/entities";
 import {
   CreateReceiptDTO,
@@ -16,8 +18,10 @@ import {
 import Witness from "../models/Witness.model";
 import ProductCompatibility from "../models/ProductCompatibility.model";
 import Product from "../models/Product.model";
+import CarModel from "../models/Car.model";
 import CarModelModel from "../models/CarModel.model";
 import BrandModel from "../models/Brand.model";
+import CustomerModel from "../models/Customer.model";
 import { Document } from "mongoose";
 import { UserRepository } from "./UserRepository";
 
@@ -38,6 +42,11 @@ export class ReceiptRepository implements IReceiptRepository {
       .populate({
         path: "witnesses",
         model: Witness,
+      })
+      .populate({
+        path: "carId",
+        model: CarModel,
+        populate: { path: "customerId", model: CustomerModel },
       })
       .populate({
         path: "productInstalled",
@@ -69,6 +78,11 @@ export class ReceiptRepository implements IReceiptRepository {
       .populate({
         path: "witnesses",
         model: Witness,
+      })
+      .populate({
+        path: "carId",
+        model: CarModel,
+        populate: { path: "customerId", model: CustomerModel },
       })
       .populate({
         path: "productInstalled",
@@ -108,6 +122,11 @@ export class ReceiptRepository implements IReceiptRepository {
         model: Witness,
       })
       .populate({
+        path: "carId",
+        model: CarModel,
+        populate: { path: "customerId", model: CustomerModel },
+      })
+      .populate({
         path: "productInstalled",
         model: ProductCompatibility,
         populate: [
@@ -141,6 +160,11 @@ export class ReceiptRepository implements IReceiptRepository {
       .populate({
         path: "witnesses",
         model: Witness,
+      })
+      .populate({
+        path: "carId",
+        model: CarModel,
+        populate: { path: "customerId", model: CustomerModel },
       })
       .populate({
         path: "productInstalled",
@@ -217,6 +241,31 @@ export class ReceiptRepository implements IReceiptRepository {
       return productCompatibility;
     });
 
+    const customer = new Customer(
+      doc.carId.customerId.name,
+      doc.carId.customerId.lastName,
+      doc.carId.customerId.city,
+      doc.carId.customerId.state,
+      doc.carId.customerId.country,
+      doc.carId.customerId.phone,
+      doc.carId.customerId.email,
+      doc.carId.customerId.rfc,
+      doc.carId.customerId.razonSocial,
+      doc.carId.customerId.contacto,
+      doc.carId.customerId.companyId,
+      doc.carId.customerId._id?.toString(),
+    );
+
+    const car = new Car(
+      doc.carId.vin,
+      doc.carId.plates,
+      doc.carId.carModelId,
+      customer,
+      undefined,
+      undefined,
+      doc.carId._id?.toString(),
+    );
+
     const receipt = new Receipt(
       doc.signImage,
       doc.installationStatus,
@@ -225,7 +274,7 @@ export class ReceiptRepository implements IReceiptRepository {
       doc.damageImages,
       doc.scannerDescriptionImages,
       user,
-      undefined,
+      car,
       doc.installationEndDate,
       doc.damageStatusDescription,
       doc.scannerDescription,
@@ -233,6 +282,7 @@ export class ReceiptRepository implements IReceiptRepository {
       productsInstalled,
       doc._id?.toString(),
     );
+
     return receipt;
   }
 }
