@@ -154,7 +154,7 @@ export class PipelineStage extends Stage {
       envVariables: lambdaVariables,
     });
 
-    //Customer Lambda
+    //Receipt Lambda
     const receiptLambdaIntegration = new LambdaStack(this, "receiptLambda", {
       lambdaDirectory: "Receipt",
       envVariables: lambdaVariables,

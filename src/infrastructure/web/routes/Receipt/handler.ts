@@ -111,6 +111,8 @@ export async function handler(
   try {
     switch (event.requestContext.http.method) {
       case GET:
+        const receiptId = event.pathParameters?.receiptId;
+        const download = event.queryStringParameters?.download;
         if (event.pathParameters) {
           const pathValidationResult = getReceiptBody.safeParse({
             id: event.pathParameters.receiptId,
@@ -126,16 +128,11 @@ export async function handler(
             };
           }
 
-          const receiptId = pathValidationResult.data.id;
-
-          // Verificar si el parámetro de consulta "download" está presente
-          const download = event.queryStringParameters?.download;
-
           if (download) {
             // Generar y devolver el PDF
             const templateKey = "ORDEN-DE-SERVICIO-2024-CARTA.pdf"; // Reemplaza con la clave real de la plantilla
             const pdfBuffer = await receiptService.generatePdfFromTemplate(
-              receiptId,
+              receiptId!,
               templateKey,
             );
 
@@ -148,15 +145,15 @@ export async function handler(
               body: pdfBuffer.toString("base64"),
               isBase64Encoded: true,
             };
+          } else {
+            const receipt = await receiptUseCases.getReceipt(
+              pathValidationResult.data.id,
+            );
+            return {
+              statusCode: HTTP_OK,
+              body: JSON.stringify(receipt),
+            };
           }
-          return {
-            statusCode: HTTP_BAD_REQUEST,
-            headers: { "Content-Type": "text/json" },
-
-            body: JSON.stringify({
-              message: "Invalid query params",
-            }),
-          };
         } else {
           const receipts = await receiptUseCases.findAllReceipts();
           return {
