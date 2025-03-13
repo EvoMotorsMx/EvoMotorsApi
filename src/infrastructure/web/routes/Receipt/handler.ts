@@ -154,7 +154,7 @@ export async function handler(
             headers: { "Content-Type": "text/json" },
 
             body: JSON.stringify({
-              message: "Invalid download params",
+              message: "Invalid query params",
             }),
           };
         } else {
