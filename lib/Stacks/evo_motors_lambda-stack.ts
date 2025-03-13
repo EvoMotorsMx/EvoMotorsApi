@@ -4,23 +4,16 @@ import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Construct } from "constructs";
 import { join } from "path";
-import * as s3 from "aws-cdk-lib/aws-s3";
 
 interface LambdaStackProps extends StackProps {
   lambdaDirectory: string;
   envVariables: { [key: string]: string };
-  bucket?: s3.Bucket;
 }
 
 export class LambdaStack extends Stack {
   public readonly lambdaIntegration: HttpLambdaIntegration;
-
   constructor(scope: Construct, id: string, props: LambdaStackProps) {
     super(scope, id, props);
-
-    const environment = {
-      ...props.envVariables,
-    };
 
     const lambda = new NodejsFunction(this, "lambdaIntegration", {
       runtime: Runtime.NODEJS_20_X,
@@ -36,7 +29,7 @@ export class LambdaStack extends Stack {
         `${props.lambdaDirectory}`,
         "handler.ts",
       ),
-      environment,
+      environment: props.envVariables,
       bundling: {
         externalModules: ["@aws-sdk/core/client", "@aws-sdk/core"],
         nodeModules: ["@smithy/core"],
