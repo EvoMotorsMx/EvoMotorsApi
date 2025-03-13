@@ -44,13 +44,8 @@ export class LambdaStack extends Stack {
       ),
       environment,
       bundling: {
-        externalModules: [
-          "aws-sdk",
-          "@aws-sdk/core/client",
-          "@smithy/core",
-          "@aws-sdk/core",
-          "@smithy/core/protocols",
-        ],
+        externalModules: ["@aws-sdk/core/client", "@aws-sdk/core"],
+        nodeModules: ["@smithy/core"],
       },
     });
 

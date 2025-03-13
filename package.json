@@ -37,6 +37,7 @@
     "@aws-sdk/client-cognito-identity-provider": "^3.699.0",
     "@aws-sdk/client-lambda": "^3.750.0",
     "@aws-sdk/client-s3": "^3.750.0",
+    "@smithy/core": "^3.1.5",
     "aws-cdk-lib": "^2.178.1",
     "awscdk-resources-mongodbatlas": "^3.1.2",
     "constructs": "^10.4.2",

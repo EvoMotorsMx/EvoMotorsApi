@@ -153,16 +153,6 @@ export class PipelineStage extends Stage {
       envVariables: lambdaVariables,
     });
 
-    // Read PDF Lambda
-    const readPdfLambdaIntegration = new LambdaStack(this, "readPdfLambda", {
-      lambdaDirectory: "S3Read", // Directory for the new Lambda function
-      envVariables: {
-        ...lambdaVariables,
-        BUCKET_NAME: s3Stack.sportDriveTemplates.bucketName,
-      },
-      bucket: s3Stack.sportDriveTemplates,
-    });
-
     //Customer Lambda
     const receiptLambdaIntegration = new LambdaStack(this, "receiptLambda", {
       lambdaDirectory: "Receipt",
@@ -192,7 +182,6 @@ export class PipelineStage extends Stage {
       productCompatibilityLambdaIntegration:
         productCompatibilityLambdaIntegration.lambdaIntegration,
       customerLambdaIntegration: customerLambdaIntegration.lambdaIntegration,
-      readPdfLambdaIntegration: readPdfLambdaIntegration.lambdaIntegration,
       receiptLambdaIntegration: receiptLambdaIntegration.lambdaIntegration,
     });
   }
