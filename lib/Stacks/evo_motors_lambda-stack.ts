@@ -52,7 +52,7 @@ export class LambdaStack extends Stack {
     lambda.addToRolePolicy(
       new iam.PolicyStatement({
         actions: ["s3:GetObject"],
-        resources: [`${process.env.BUCKET_NAME}/*`],
+        resources: [`${process.env.BUCKET_NAME}/object/*`],
       }),
     );
 
