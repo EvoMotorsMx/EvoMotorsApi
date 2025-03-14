@@ -107,13 +107,15 @@ export async function handler(
   const receiptService = new ReceiptService(receiptRepository);
 
   const receiptUseCases = new ReceiptUseCases(receiptService);
-
+  console.log("Event: ", JSON.stringify(event));
+  console.log("Context: ", JSON.stringify(context));
   try {
     switch (event.requestContext.http.method) {
       case GET:
         const receiptId = event.pathParameters?.receiptId;
         const download = event.queryStringParameters?.download;
         if (event.pathParameters) {
+          console.log("Path parameters: ", event.pathParameters);
           const pathValidationResult = getReceiptBody.safeParse({
             id: event.pathParameters.receiptId,
           });
@@ -146,16 +148,20 @@ export async function handler(
               isBase64Encoded: true,
             };
           } else {
+            console.log("Fetching receipt...");
             const receipt = await receiptUseCases.getReceipt(
               pathValidationResult.data.id,
             );
+            console.log("Receipt fetched successfully.");
             return {
               statusCode: HTTP_OK,
               body: JSON.stringify(receipt),
             };
           }
         } else {
+          console.log("Fetching receipts...");
           const receipts = await receiptUseCases.findAllReceipts();
+          console.log("Receipts fetched successfully.");
           return {
             statusCode: HTTP_OK,
             body: JSON.stringify(receipts),
