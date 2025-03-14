@@ -4,6 +4,7 @@ import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Construct } from "constructs";
 import { join } from "path";
+import * as iam from "aws-cdk-lib/aws-iam";
 
 interface LambdaStackProps extends StackProps {
   lambdaDirectory: string;
@@ -36,6 +37,16 @@ export class LambdaStack extends Stack {
       },
       timeout: Duration.seconds(10),
     });
+
+    // Agregar permisos para cognito-idp:ListUsers
+    lambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["cognito-idp:ListUsers"],
+        resources: [
+          `arn:aws:cognito-idp:${this.region}:${this.account}:userpool/${process.env.AWS_COGNITO_ID}`,
+        ],
+      }),
+    );
 
     this.lambdaIntegration = new HttpLambdaIntegration(
       "httpLambdaIntegration",
