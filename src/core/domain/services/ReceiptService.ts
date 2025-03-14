@@ -14,15 +14,19 @@ export class ReceiptService implements IReceiptService {
   private receiptRepository: IReceiptRepository;
 
   constructor(receiptRepository: IReceiptRepository) {
-    this.s3 = new S3Client({});
+    console.log("Receipt service init...");
+    this.s3 = new S3Client({ region: process.env.AWS_REGION_COGNITO });
     this.receiptRepository = receiptRepository;
+    console.log("Receipt constructor finished init..");
   }
 
   async getReceiptById(id: string): Promise<Receipt | null> {
+    console.log("calling findById...");
     return this.receiptRepository.findById(id);
   }
 
   async getAllReceipts(): Promise<Receipt[]> {
+    console.log("calling findAll...");
     return this.receiptRepository.findAll();
   }
 

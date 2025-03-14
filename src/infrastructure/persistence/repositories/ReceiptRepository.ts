@@ -38,6 +38,7 @@ export class ReceiptRepository implements IReceiptRepository {
   }
 
   async findById(id: string): Promise<Receipt | null> {
+    console.log("findById Receipt");
     const receiptDoc = await ReceiptModel.findById(id)
       .populate({
         path: "witnesses",
@@ -73,6 +74,7 @@ export class ReceiptRepository implements IReceiptRepository {
   }
 
   async findAll(carId?: string): Promise<Receipt[]> {
+    console.log("findAll Receipt");
     const query = carId ? { carId } : {};
     const receiptDocs = await ReceiptModel.find(query)
       .populate({
