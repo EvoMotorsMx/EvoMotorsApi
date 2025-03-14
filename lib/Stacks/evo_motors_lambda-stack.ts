@@ -48,6 +48,14 @@ export class LambdaStack extends Stack {
       }),
     );
 
+    // Agregar permisos para s3:GetObject
+    lambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["s3:GetObject"],
+        resources: [`${process.env.BUCKET_NAME}/*`],
+      }),
+    );
+
     this.lambdaIntegration = new HttpLambdaIntegration(
       "httpLambdaIntegration",
       lambda,
