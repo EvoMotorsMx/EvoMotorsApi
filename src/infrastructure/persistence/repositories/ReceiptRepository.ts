@@ -98,17 +98,19 @@ export class ReceiptRepository implements IReceiptRepository {
       })
       .exec();
     if (!receiptDocs.length) return [];
+    console.log({ receiptDocs });
 
     const receipts = await Promise.all(
       receiptDocs.map(async (doc) => {
         const user = await this.userRepository.findById(doc.cognitoId);
         if (!user) {
+          console.log("no user");
           throw new Error(`User not found for receipt: ${doc._id}`);
         }
         return this.docToEntity(doc, user);
       }),
     );
-
+    console.log({ receipts });
     return receipts;
   }
 
