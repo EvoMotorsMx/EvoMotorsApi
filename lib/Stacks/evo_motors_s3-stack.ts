@@ -25,6 +25,12 @@ export class EvoMotorsS3Stack extends cdk.Stack {
       },
     );
 
+    const lambdaRole = new iam.Role(this, "AdditionalRole", {
+      assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com", {
+        region: this.region,
+      }),
+    });
+
     // Create the Access Point for the S3 bucket
     this.sportDriveTemplatesAccessPoint = new s3.CfnAccessPoint(
       this,
@@ -37,7 +43,9 @@ export class EvoMotorsS3Stack extends cdk.Stack {
           Statement: [
             {
               Effect: "Allow",
-              Principal: { AWS: `arn:aws:iam::${this.account}:root` }, // Restrict to this account only or specify roles
+              Principal: {
+                AWS: [`arn:aws:iam::${this.account}:root`, lambdaRole.roleArn],
+              }, // Restrict to this account only or specify roles
               Action: "s3:GetObject",
               Resource: `arn:aws:s3:${region}:${this.account}:accesspoint/sport-drive-templates-access-point/object/*`,
             },
