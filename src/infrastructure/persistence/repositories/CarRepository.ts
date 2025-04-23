@@ -132,6 +132,8 @@ export class CarRepository implements ICarRepository {
       doc.plates,
       carModel,
       customer,
+      doc.year,
+      doc.transmissionType,
       undefined,
       undefined,
       doc.id?.toString(),

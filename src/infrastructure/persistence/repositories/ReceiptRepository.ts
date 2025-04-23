@@ -38,6 +38,7 @@ export class ReceiptRepository implements IReceiptRepository {
   }
 
   async findById(id: string): Promise<Receipt | null> {
+    console.log("findById Receipt");
     const receiptDoc = await ReceiptModel.findById(id)
       .populate({
         path: "witnesses",
@@ -46,19 +47,19 @@ export class ReceiptRepository implements IReceiptRepository {
       .populate({
         path: "carId",
         model: CarModel,
-        populate: { path: "customerId", model: CustomerModel },
-      })
-      .populate({
-        path: "productInstalled",
-        model: ProductCompatibility,
         populate: [
-          { path: "product", model: Product },
+          { path: "customerId", model: CustomerModel },
           {
-            path: "carModel",
+            path: "carModelId",
             model: CarModelModel,
             populate: { path: "brandId", model: BrandModel },
           },
         ],
+      })
+      .populate({
+        path: "productInstalled",
+        model: ProductCompatibility,
+        populate: [{ path: "product", model: Product }],
       })
       .exec();
     if (!receiptDoc) return null;
@@ -73,6 +74,7 @@ export class ReceiptRepository implements IReceiptRepository {
   }
 
   async findAll(carId?: string): Promise<Receipt[]> {
+    console.log("findAll Receipt");
     const query = carId ? { carId } : {};
     const receiptDocs = await ReceiptModel.find(query)
       .populate({
@@ -82,33 +84,35 @@ export class ReceiptRepository implements IReceiptRepository {
       .populate({
         path: "carId",
         model: CarModel,
-        populate: { path: "customerId", model: CustomerModel },
-      })
-      .populate({
-        path: "productInstalled",
-        model: ProductCompatibility,
         populate: [
-          { path: "product", model: Product },
+          { path: "customerId", model: CustomerModel },
           {
-            path: "carModel",
+            path: "carModelId",
             model: CarModelModel,
             populate: { path: "brandId", model: BrandModel },
           },
         ],
       })
+      .populate({
+        path: "productInstalled",
+        model: ProductCompatibility,
+        populate: [{ path: "product", model: Product }],
+      })
       .exec();
     if (!receiptDocs.length) return [];
+    console.log({ receiptDocs });
 
     const receipts = await Promise.all(
       receiptDocs.map(async (doc) => {
         const user = await this.userRepository.findById(doc.cognitoId);
         if (!user) {
+          console.log("no user");
           throw new Error(`User not found for receipt: ${doc._id}`);
         }
         return this.docToEntity(doc, user);
       }),
     );
-
+    console.log({ receipts });
     return receipts;
   }
 
@@ -124,19 +128,19 @@ export class ReceiptRepository implements IReceiptRepository {
       .populate({
         path: "carId",
         model: CarModel,
-        populate: { path: "customerId", model: CustomerModel },
-      })
-      .populate({
-        path: "productInstalled",
-        model: ProductCompatibility,
         populate: [
-          { path: "product", model: Product },
+          { path: "customerId", model: CustomerModel },
           {
-            path: "carModel",
+            path: "carModelId",
             model: CarModelModel,
             populate: { path: "brandId", model: BrandModel },
           },
         ],
+      })
+      .populate({
+        path: "productInstalled",
+        model: ProductCompatibility,
+        populate: [{ path: "product", model: Product }],
       })
       .exec();
 
@@ -164,19 +168,19 @@ export class ReceiptRepository implements IReceiptRepository {
       .populate({
         path: "carId",
         model: CarModel,
-        populate: { path: "customerId", model: CustomerModel },
-      })
-      .populate({
-        path: "productInstalled",
-        model: ProductCompatibility,
         populate: [
-          { path: "product", model: Product },
+          { path: "customerId", model: CustomerModel },
           {
-            path: "carModel",
+            path: "carModelId",
             model: CarModelModel,
             populate: { path: "brandId", model: BrandModel },
           },
         ],
+      })
+      .populate({
+        path: "productInstalled",
+        model: ProductCompatibility,
+        populate: [{ path: "product", model: Product }],
       })
       .exec();
 
@@ -207,25 +211,25 @@ export class ReceiptRepository implements IReceiptRepository {
         ),
     );
 
+    const brand = new Brand(
+      doc.carId.carModelId.brandId.name,
+      doc.carId.carModelId.brandId.description,
+      doc.carId.carModelId.brandId._id?.toString(),
+    );
+
+    const carModel = new CarModelEntity(
+      doc.carId.carModelId.name,
+      brand,
+      doc.carId.carModelId.year,
+      doc.carId.carModelId.engineSize,
+      doc.carId.carModelId.cylinder,
+      doc.carId.carModelId.combustion,
+      doc.carId.carModelId.engineType,
+      doc.carId.carModelId.files,
+      doc.carId._id?.toString(),
+    );
+
     const productsInstalled = doc.productInstalled.map((productInstalled) => {
-      const brand = new Brand(
-        productInstalled.carModel.brandId.name,
-        productInstalled.carModel.brandId.description,
-        productInstalled.carModel.brandId._id?.toString(),
-      );
-
-      const carModel = new CarModelEntity(
-        productInstalled.carModel.name,
-        brand,
-        productInstalled.carModel.year,
-        productInstalled.carModel.engineSize,
-        productInstalled.carModel.cylinder,
-        productInstalled.carModel.combustion,
-        productInstalled.carModel.engineType,
-        productInstalled.carModel.files,
-        productInstalled._id?.toString(),
-      );
-
       const product = new ProductEntity(
         productInstalled.product.name,
         productInstalled.product.description,
@@ -259,8 +263,10 @@ export class ReceiptRepository implements IReceiptRepository {
     const car = new Car(
       doc.carId.vin,
       doc.carId.plates,
-      doc.carId.carModelId,
+      carModel,
       customer,
+      doc.carId.year,
+      doc.carId.transmissionType,
       undefined,
       undefined,
       doc.carId._id?.toString(),
@@ -281,6 +287,7 @@ export class ReceiptRepository implements IReceiptRepository {
       witnesses,
       productsInstalled,
       doc._id?.toString(),
+      doc.createdAt,
     );
 
     return receipt;

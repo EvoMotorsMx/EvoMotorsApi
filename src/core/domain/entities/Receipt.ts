@@ -16,6 +16,7 @@ export class Receipt {
     public witnesses?: Witness[],
     public productInstalled?: ProductCompatibility[],
     public _id?: string,
+    public createdAt?: Date,
   ) {}
 
   setId(id: string) {

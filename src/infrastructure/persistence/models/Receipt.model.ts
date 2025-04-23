@@ -2,11 +2,9 @@ import mongoose, { Schema, Document } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
 import { isBase64 } from "validator";
 import {
-  ErrorCode,
   Witness,
   Car,
   ProductCompatibility,
-  User,
 } from "../../../core/domain/entities";
 
 export interface ReceiptDocument extends Document {
@@ -24,6 +22,8 @@ export interface ReceiptDocument extends Document {
   witnesses: Witness[];
   productInstalled: ProductCompatibility[];
   cognitoId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const receiptSchema = new Schema<ReceiptDocument>(

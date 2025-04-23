@@ -19,7 +19,8 @@ export class PipelineStage extends Stage {
     const envVariables: { [key: string]: string | undefined } = {
       DATABASE_URL: process.env.DATABASE_URL,
       AWS_REGION_COGNITO: process.env.AWS_REGION_COGNITO,
-      AWS_POOL_ID: process.env.AWS_POOL_ID,
+      AWS_COGNITO_ID: process.env.AWS_COGNITO_ID,
+      BUCKET_NAME: process.env.BUCKET_NAME,
     };
 
     const lambdaVariables = _.omitBy(envVariables, _.isUndefined) as {
@@ -153,14 +154,10 @@ export class PipelineStage extends Stage {
       envVariables: lambdaVariables,
     });
 
-    // Read PDF Lambda
-    const readPdfLambdaIntegration = new LambdaStack(this, "readPdfLambda", {
-      lambdaDirectory: "S3Read", // Directory for the new Lambda function
-      envVariables: {
-        ...lambdaVariables,
-        BUCKET_NAME: s3Stack.sportDriveTemplates.bucketName,
-      },
-      bucket: s3Stack.sportDriveTemplates,
+    //Receipt Lambda
+    const receiptLambdaIntegration = new LambdaStack(this, "receiptLambda", {
+      lambdaDirectory: "Receipt",
+      envVariables: lambdaVariables,
     });
 
     new EvoMotorsApiStack(this, "EvoMotorsApiStack", {
@@ -186,7 +183,7 @@ export class PipelineStage extends Stage {
       productCompatibilityLambdaIntegration:
         productCompatibilityLambdaIntegration.lambdaIntegration,
       customerLambdaIntegration: customerLambdaIntegration.lambdaIntegration,
-      readPdfLambdaIntegration: readPdfLambdaIntegration.lambdaIntegration,
+      receiptLambdaIntegration: receiptLambdaIntegration.lambdaIntegration,
     });
   }
 }

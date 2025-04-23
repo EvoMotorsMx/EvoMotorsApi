@@ -16,9 +16,13 @@ export interface CarModelDocument extends Document {
   cylinder: number;
   combustion: CombustionType;
   engineType: EngineType;
+  originalHp: number;
+  originalTorque: number;
+  topSpeed: number;
   files?: File[];
   products?: ProductCompatibility[];
   toolCompatibility?: ToolCompatibility[];
+  isActive?: boolean;
 }
 
 const carModelSchema: Schema<CarModelDocument> = new Schema<CarModelDocument>(
@@ -67,6 +71,17 @@ const carModelSchema: Schema<CarModelDocument> = new Schema<CarModelDocument>(
       required: true,
       enum: Object.values(CombustionType),
     },
+    originalHp: {
+      type: Number,
+      required: true,
+    },
+    originalTorque: {
+      type: Number,
+      required: true,
+    },
+    topSpeed: {
+      type: Number,
+    },
     engineType: {
       type: String,
       required: true,
@@ -84,6 +99,11 @@ const carModelSchema: Schema<CarModelDocument> = new Schema<CarModelDocument>(
         ref: "ToolCompatibility",
       },
     ],
+    isActive: {
+      type: Boolean,
+      default: true,
+      required: true,
+    },
   },
   {
     timestamps: true,

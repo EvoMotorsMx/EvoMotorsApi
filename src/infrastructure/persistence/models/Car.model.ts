@@ -6,6 +6,7 @@ import {
   Customer,
   File,
 } from "../../../core/domain/entities";
+import { TransmissionType } from "../../../shared/enums";
 
 export interface CarDocument extends Document {
   vin: string;
@@ -13,6 +14,8 @@ export interface CarDocument extends Document {
   carModelId: CarModel;
   customerId: Customer;
   certificateId: Certificate;
+  year: number;
+  transmissionType: TransmissionType;
   oriFile?: File;
   modFile?: File;
 }
@@ -42,6 +45,17 @@ const carSchema = new Schema<CarDocument>(
       type: String,
       ref: "Customer",
       required: true,
+    },
+    year: {
+      type: Number,
+      required: true,
+      min: 1886,
+      max: new Date().getFullYear() + 1,
+    },
+    transmissionType: {
+      type: String,
+      required: true,
+      enum: Object.values(TransmissionType),
     },
     oriFile: {
       type: String,

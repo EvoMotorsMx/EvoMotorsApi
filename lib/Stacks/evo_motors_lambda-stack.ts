@@ -1,32 +1,20 @@
-import { Stack, StackProps } from "aws-cdk-lib";
+import { Duration, Stack, StackProps } from "aws-cdk-lib";
 import { HttpLambdaIntegration } from "aws-cdk-lib/aws-apigatewayv2-integrations";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Construct } from "constructs";
 import { join } from "path";
-import * as s3 from "aws-cdk-lib/aws-s3";
 import * as iam from "aws-cdk-lib/aws-iam";
 
 interface LambdaStackProps extends StackProps {
   lambdaDirectory: string;
   envVariables: { [key: string]: string };
-  bucket?: s3.Bucket;
-  readPdfLambdaName?: string;
 }
 
 export class LambdaStack extends Stack {
   public readonly lambdaIntegration: HttpLambdaIntegration;
-
   constructor(scope: Construct, id: string, props: LambdaStackProps) {
     super(scope, id, props);
-
-    const environment = {
-      ...props.envVariables,
-      ...(props.bucket && { BUCKET_NAME: props.bucket.bucketName }),
-      ...(props.readPdfLambdaName && {
-        READ_PDF_LAMBDA_NAME: props.readPdfLambdaName,
-      }),
-    };
 
     const lambda = new NodejsFunction(this, "lambdaIntegration", {
       runtime: Runtime.NODEJS_20_X,
@@ -42,34 +30,34 @@ export class LambdaStack extends Stack {
         `${props.lambdaDirectory}`,
         "handler.ts",
       ),
-      environment,
+      environment: props.envVariables,
       bundling: {
-        externalModules: [
-          "aws-sdk",
-          "@aws-sdk/core/client",
-          "@smithy/core",
-          "@aws-sdk/core",
-          "@smithy/core/protocols",
-        ],
+        externalModules: ["@aws-sdk/core/client", "@aws-sdk/core"],
+        nodeModules: ["@smithy/core"],
       },
+      timeout: Duration.seconds(10),
     });
 
-    // Otorgar permisos de lectura al bucket S3 si se proporciona
-    if (props.bucket) {
-      props.bucket.grantRead(lambda);
-    }
+    // Agregar permisos para cognito-idp:ListUsers
+    lambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["cognito-idp:ListUsers"],
+        resources: [
+          `arn:aws:cognito-idp:${this.region}:${this.account}:userpool/${process.env.AWS_COGNITO_ID}`,
+        ],
+      }),
+    );
 
-    // Otorgar permisos para invocar la función Lambda de lectura de PDF
-    if (props.readPdfLambdaName) {
-      lambda.addToRolePolicy(
-        new iam.PolicyStatement({
-          actions: ["lambda:InvokeFunction"],
-          resources: [
-            `arn:aws:lambda:${this.region}:${this.account}:function:${props.readPdfLambdaName}`,
-          ],
-        }),
-      );
-    }
+    // Agregar permisos para s3:GetObject
+    lambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["s3:GetObject"],
+        resources: [
+          `${process.env.BUCKET_NAME}/object/*`,
+          `${process.env.BUCKET_ARN}/object/*`, // Agregar esta línea
+        ],
+      }),
+    );
 
     this.lambdaIntegration = new HttpLambdaIntegration(
       "httpLambdaIntegration",
