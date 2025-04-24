@@ -33,7 +33,6 @@
     "typescript": "~5.3.3"
   },
   "dependencies": {
-    "@aws-cdk/aws-amplify-alpha": "^2.126.0-alpha.0",
     "@aws-sdk/client-cognito-identity-provider": "^3.699.0",
     "@aws-sdk/client-lambda": "^3.750.0",
     "@aws-sdk/client-s3": "^3.750.0",

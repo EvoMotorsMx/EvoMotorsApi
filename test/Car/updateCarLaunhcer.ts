@@ -3,7 +3,7 @@ import { handler } from "../../src/infrastructure/web/routes/Car/handler";
 handler(
   {
     pathParameters: {
-      carModelId: "",
+      carId: "50be6810-1064-4cef-964b-ce2c99398829",
     },
     headers: {
       idtoken: process.env.ID_TOKEN,
@@ -15,7 +15,8 @@ handler(
       },
     },
     body: JSON.stringify({
-      cars: ["78121081-67d9-4b2f-885d-44f9606f9828"],
+      year: 2024,
+      transmissionType: "Auto",
     }),
   } as any,
   {} as any,

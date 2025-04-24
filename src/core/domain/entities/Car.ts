@@ -1,3 +1,4 @@
+import { TransmissionType } from "../../../shared/enums";
 import { CarModel, Certificate, Customer, Remission } from "./index";
 
 export class Car {
@@ -6,6 +7,8 @@ export class Car {
     public plates: string,
     public carModelId: CarModel,
     public customerId: Customer,
+    public year: number,
+    public transmissionType: TransmissionType,
     public oriFile?: File,
     public modFile?: File,
     public _id?: string,
