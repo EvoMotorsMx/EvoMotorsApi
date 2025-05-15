@@ -108,7 +108,11 @@ export class CarRepository implements ICarRepository {
       doc.carModelId.cylinder,
       doc.carModelId.combustion,
       doc.carModelId.engineType,
+      doc.carModelId.originalHp,
+      doc.carModelId.originalTorque,
+      doc.carModelId.topSpeed,
       [], //TODO: Add Files and CarModel entities
+      doc.carModelId.isActive,
       doc.carModelId._id,
     );
 
