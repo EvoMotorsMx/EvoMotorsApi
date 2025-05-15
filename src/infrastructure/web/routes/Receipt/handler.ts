@@ -23,42 +23,61 @@ import { CUSTOMER_ROLE } from "../../../../shared/constants/roles";
 import { IIdToken } from "../../../security/Auth";
 import { ReceiptService } from "../../../../core/domain/services";
 import { ReceiptUseCases } from "../../../../core/application/use_cases";
+import { S3Service } from "../../../storage/s3.service";
+import {
+  CreateReceiptDTO,
+  UpdateReceiptDTO,
+} from "../../../../core/application/dtos";
+import { processFormData } from "../../../../shared/utils/formDataProcessor";
+import { generateHash } from "../../../../shared/utils/generateHash";
 
 const createReceiptBodySchema = z.object({
-  installationEndDate: z.date().optional(),
-  signImage: z.string(),
+  installationEndDate: z.string().optional(),
   installationStatus: z.enum(["pending", "completed"]),
   tankStatus: z.number().min(0).max(100),
   mileage: z.number().min(0),
-  damageImages: z.array(z.string()),
-  damageStatusDescription: z.string().optional(),
+  damageImage: z.object({
+    s3Url: z.string(),
+    timestamp: z.date(),
+    hash: z.string(),
+  }),
   scannerDescriptionImages: z.array(z.string()),
-  scannerDescription: z.string().optional(),
-  errorCodes: z.array(z.string()).optional(),
-  carId: z.string(),
   cognitoId: z.string(),
+  carId: z.string(),
   witnesses: z.array(z.string()).optional(),
   productInstalled: z.array(z.string()),
+  signatureData: z.object({
+    s3Url: z.string(),
+    timestamp: z.date(),
+    hash: z.string(),
+  }),
 });
-
 const updateReceiptBodySchema = z.object({
   id: z.string(),
-  installationEndDate: z.date().optional(),
-  signImage: z.string().optional(),
+  installationEndDate: z.string().optional(),
   installationStatus: z.enum(["pending", "completed"]).optional(),
   tankStatus: z.number().min(0).max(100).optional(),
   mileage: z.number().min(0).optional(),
-  damageImages: z.array(z.string()).optional(),
-  damageStatusDescription: z.string().optional(),
+  damageImage: z
+    .object({
+      s3Url: z.string(),
+      timestamp: z.date(),
+      hash: z.string(),
+    })
+    .optional(),
   scannerDescriptionImages: z.array(z.string()).optional(),
-  scannerDescription: z.string().optional(),
-  errorCodes: z.array(z.string()).optional(),
-  carId: z.string().optional(),
   cognitoId: z.string().optional(),
+  carId: z.string().optional(),
   witnesses: z.array(z.string()).optional(),
   productInstalled: z.array(z.string()).optional(),
+  signatureData: z
+    .object({
+      s3Url: z.string().optional(),
+      timestamp: z.date().optional(),
+      hash: z.string().optional(),
+    })
+    .optional(),
 });
-
 const removeReceiptBody = z.object({
   id: z.string(),
 });
@@ -105,10 +124,8 @@ export async function handler(
   await connectToDatabase();
   const receiptRepository = new ReceiptRepository();
   const receiptService = new ReceiptService(receiptRepository);
-
   const receiptUseCases = new ReceiptUseCases(receiptService);
-  console.log("Event: ", JSON.stringify(event));
-  console.log("Context: ", JSON.stringify(context));
+
   try {
     switch (event.requestContext.http.method) {
       case GET:
@@ -169,29 +186,86 @@ export async function handler(
         }
 
       case POST: {
-        const payload = JSON.parse(event.body ?? "{}");
-
-        if (payload.installationEndDate) {
-          payload.installationEndDate = new Date(payload.installationEndDate);
-        } else {
-          delete payload.installationEndDate;
+        if (
+          event.requestContext.http.method === "POST" &&
+          event.requestContext.http.path === "/receipt"
+        ) {
+          if (!event.isBase64Encoded) {
+            return {
+              statusCode: HTTP_BAD_REQUEST,
+              body: JSON.stringify({
+                message: "Request body must be Base64 encoded",
+              }),
+            };
+          }
         }
 
-        const validationResult = createReceiptBodySchema.safeParse(payload);
-        let newReceipt;
-        if (validationResult.success) {
-          newReceipt = await receiptUseCases.createReceipt(payload);
-        } else {
+        const { fields, files } = await processFormData(event);
+
+        // Subir archivos a S3
+        const uploadedFiles = await Promise.all(
+          files.map(async (file) => {
+            const s3Url = await S3Service.uploadImage(
+              file.buffer,
+              "uploads",
+              file.filename,
+              file.contentType,
+            );
+
+            const hash = generateHash(file.buffer);
+
+            return {
+              fieldname: file.fieldname,
+              s3Url,
+              timestamp: new Date(),
+              hash,
+            };
+          }),
+        );
+
+        // Asociar URLs de S3 con los datos de entrada
+        const receiptData: CreateReceiptDTO = {
+          installationStatus: fields.installationStatus as
+            | "pending"
+            | "completed",
+          tankStatus: Number(fields.tankStatus),
+          mileage: Number(fields.mileage),
+          scannerDescriptionImages: fields.scannerDescriptionImages
+            ? JSON.parse(fields.scannerDescriptionImages)
+            : [],
+          cognitoId: fields.cognitoId,
+          carId: fields.carId,
+          productInstalled: fields.productInstalled
+            ? JSON.parse(fields.productInstalled)
+            : [],
+          damageImage: uploadedFiles.find(
+            (file) => file.fieldname === "damageImage",
+          ) || { s3Url: "", timestamp: new Date(), hash: "" },
+          signatureData: uploadedFiles.find(
+            (file) => file.fieldname === "signatureData",
+          ) || { s3Url: "", timestamp: new Date(), hash: "" },
+          witnesses: fields.witnesses
+            ? JSON.parse(fields.witnesses)
+            : undefined,
+          installationEndDate: fields.installationEndDate
+            ? new Date(fields.installationEndDate)
+            : undefined,
+        };
+
+        // Validar los datos
+        const validationResult = createReceiptBodySchema.safeParse(receiptData);
+        if (!validationResult.success) {
           return {
             statusCode: HTTP_BAD_REQUEST,
-            headers: { "Content-Type": "text/json" },
-
             body: JSON.stringify({
               message: "Invalid input data",
               errors: validationResult.error.issues,
             }),
           };
         }
+
+        // Guardar el recibo
+        const newReceipt = await receiptUseCases.createReceipt(receiptData);
 
         return {
           statusCode: HTTP_CREATED,
@@ -200,45 +274,79 @@ export async function handler(
       }
 
       case PATCH: {
-        const payload = JSON.parse(event.body ?? "{}");
-        let updatedReceipt;
-
-        if (!event.pathParameters || !event.pathParameters.receiptId) {
+        const receiptId = event.pathParameters?.receiptId;
+        if (!receiptId) {
           return {
             statusCode: HTTP_BAD_REQUEST,
-            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               message: "Receipt ID is required in the path",
             }),
           };
         }
 
-        if (payload.installationEndDate) {
-          payload.installationEndDate = new Date(payload.installationEndDate);
-        } else {
-          delete payload.installationEndDate;
+        if (
+          event.requestContext.http.method === "PATCH" &&
+          event.requestContext.http.path === "/receipt"
+        ) {
+          if (!event.isBase64Encoded) {
+            return {
+              statusCode: HTTP_BAD_REQUEST,
+              body: JSON.stringify({
+                message: "Request body must be Base64 encoded",
+              }),
+            };
+          }
         }
 
+        const { fields, files } = await processFormData(event);
+
+        // Subir archivos a S3
+        const uploadedFiles = await Promise.all(
+          files.map(async (file) => {
+            const s3Url = await S3Service.uploadImage(
+              file.buffer,
+              "uploads",
+              file.filename,
+              file.contentType,
+            );
+
+            const hash = generateHash(file.buffer);
+
+            return {
+              fieldname: file.fieldname,
+              s3Url,
+              timestamp: new Date(),
+              hash,
+            };
+          }),
+        );
+
+        // Combinar los datos existentes con los nuevos
+        const updatedData = {
+          ...fields, // Solo sobrescribe los campos proporcionados
+        };
+
+        // Validar los datos combinados
         const validationResult = updateReceiptBodySchema.safeParse({
-          ...payload,
-          id: event.pathParameters.receiptId,
+          ...updatedData,
+          id: receiptId,
         });
 
-        if (validationResult.success) {
-          updatedReceipt = await receiptUseCases.updateReceipt(
-            event.pathParameters.receiptId,
-            payload,
-          );
-        } else {
+        if (!validationResult.success) {
           return {
             statusCode: HTTP_BAD_REQUEST,
-            headers: { "Content-Type": "text/json" },
             body: JSON.stringify({
               message: "Invalid input data",
-              errors: validationResult.error,
+              errors: validationResult.error.issues,
             }),
           };
         }
+
+        // Actualizar el recibo
+        const updatedReceipt = await receiptUseCases.updateReceipt(
+          receiptId,
+          updatedData,
+        );
 
         return {
           statusCode: HTTP_OK,
