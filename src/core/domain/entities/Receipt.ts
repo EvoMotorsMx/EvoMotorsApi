@@ -1,14 +1,22 @@
-import { Car, ErrorCode, ProductCompatibility, User, Witness } from "./";
+import { Car, ProductCompatibility, User, Witness } from "./";
+
+export class SignatureData {
+  constructor(
+    public s3Url: string,
+    public timestamp: Date,
+    public hash?: string,
+  ) {}
+}
 
 export class Receipt {
   constructor(
-    public signImage: string,
     public installationStatus: "pending" | "completed",
     public tankStatus: number,
     public mileage: number,
-    public damageImages: string[],
+    public damageImage: SignatureData, // Updated to use SignatureData
     public scannerDescriptionImages: string[],
     public cognitoId: User,
+    public signatureData: SignatureData, // Added signatureData
     public carId?: Car,
     public installationEndDate?: Date,
     public damageStatusDescription?: string,
@@ -17,6 +25,7 @@ export class Receipt {
     public productInstalled?: ProductCompatibility[],
     public _id?: string,
     public createdAt?: Date,
+    public updatedAt?: Date, // Added updatedAt to match the schema
   ) {}
 
   setId(id: string) {

@@ -9,6 +9,10 @@ export class EvoMotorsS3Stack extends cdk.Stack {
   public readonly sportDriveTemplates: s3.Bucket;
   public readonly sportDriveTemplatesAccessPoint: s3.CfnAccessPoint;
 
+  public readonly signImagesBucket: s3.Bucket;
+
+  public readonly damageImagesBucket: s3.Bucket;
+
   constructor(scope: Construct, id: string, props?: EvoMotorsS3StackProps) {
     super(scope, id, props);
 
@@ -25,11 +29,36 @@ export class EvoMotorsS3Stack extends cdk.Stack {
       },
     );
 
+    // Bucket for sign images
+    this.signImagesBucket = new s3.Bucket(this, "SignImagesBucket", {
+      versioned: true,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL, // Ensure the bucket is private
+    });
+
+    // Bucket for damage images
+    this.damageImagesBucket = new s3.Bucket(this, "DamageImagesBucket", {
+      versioned: true,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL, // Ensure the bucket is private
+    });
+
     const lambdaRole = new iam.Role(this, "AdditionalRole", {
       assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com", {
         region: this.region,
       }),
     });
+
+    // Permisos para Lambda sobre los buckets
+    lambdaRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
+        resources: [
+          this.signImagesBucket.bucketArn + "/*",
+          this.damageImagesBucket.bucketArn + "/*",
+        ],
+      }),
+    );
 
     // Create the Access Point for the S3 bucket
     this.sportDriveTemplatesAccessPoint = new s3.CfnAccessPoint(

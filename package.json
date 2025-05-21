@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.134",
+    "@types/busboy": "^1.5.4",
     "@types/jest": "^29.5.11",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/lodash": "^4.14.202",
@@ -40,8 +41,10 @@
     "aws-cdk-lib": "^2.178.1",
     "aws-sdk": "^2.1692.0",
     "awscdk-resources-mongodbatlas": "^3.1.2",
+    "busboy": "^1.6.0",
     "constructs": "^10.4.2",
     "dotenv": "^16.4.2",
+    "form-data": "^4.0.2",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "mongoose": "^8.5.2",

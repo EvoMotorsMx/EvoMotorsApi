@@ -1,27 +1,32 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
-import { isBase64 } from "validator";
 import {
   Witness,
   Car,
   ProductCompatibility,
 } from "../../../core/domain/entities";
 
+export interface SignatureData {
+  s3Url: string;
+  timestamp: Date;
+  hash: string;
+}
+
 export interface ReceiptDocument extends Document {
   installationEndDate: Date;
-  signImage: string;
   installationStatus: "pending" | "completed";
   tankStatus: number;
   mileage: number;
-  damageImages: string[];
+  damageImage: SignatureData;
   damageStatusDescription?: string;
-  scannerDescriptionImages: string[];
+  scannerDescriptionImages: string;
   scannerDescription?: string;
   //errorCodes: ErrorCode[]; implementar url autel
   carId: Car;
   witnesses: Witness[];
   productInstalled: ProductCompatibility[];
   cognitoId: string;
+  signatureData: SignatureData;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -35,16 +40,6 @@ const receiptSchema = new Schema<ReceiptDocument>(
     installationEndDate: {
       type: Date,
     },
-    signImage: {
-      type: String,
-      required: true,
-      validate: {
-        validator: function (value) {
-          return isBase64(value);
-        },
-        message: (props) => `${props.value} is not a valid base64 string!`,
-      },
-    },
     installationStatus: {
       type: String,
       required: true,
@@ -54,45 +49,37 @@ const receiptSchema = new Schema<ReceiptDocument>(
       type: Number,
       required: true,
       validate: {
-        validator: function (value) {
+        validator: function (value: number) {
           return value >= 0 && value <= 100;
         },
-        message: (props) => `${props.value} is not a valid tank status!`,
+        message: (props:any) => `${props.value} is not a valid tank status!`,
       },
     },
     mileage: {
       type: Number,
       required: true,
       validate: {
-        validator: function (value) {
+        validator: function (value: number) {
           return value >= 0;
         },
-        message: (props) => `${props.value} is not a valid mileage!`,
+        message: (props: any) => `${props.value} is not a valid mileage!`,
       },
     },
-    damageImages: [
-      //base64 images
-      {
-        type: String,
-        required: true,
-        validate: {
-          validator: function (value) {
-            return isBase64(value);
-          },
-          message: (props) => `${props.value} is not a valid base64 string!`,
-        },
-      },
-    ],
+    damageImage: {
+      s3Url: { type: String, required: true },
+      timestamp: { type: Date, required: true },
+      hash: { type: String, required: true },
+    },
     damageStatusDescription: {
       type: String,
     },
-    scannerDescriptionImages: [
+    scannerDescriptionImages:
       //url
       {
         type: String,
         required: true,
       },
-    ],
+
     scannerDescription: {
       type: String,
     },
@@ -117,6 +104,11 @@ const receiptSchema = new Schema<ReceiptDocument>(
         ref: "ProductCompatibility",
       },
     ],
+    signatureData: {
+      s3Url: { type: String, required: true },
+      timestamp: { type: Date, required: true },
+      hash: { type: String, required: true },
+    },
   },
   {
     timestamps: true,
