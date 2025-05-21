@@ -1,11 +1,12 @@
+import { SignatureData } from "../../../domain/entities/Receipt";
+
 export interface UpdateReceiptDTO {
   installationInitDate?: Date;
   installationEndDate?: Date;
-  signImage?: string;
   installationStatus?: "pending" | "completed";
   tankStatus?: number;
   mileage?: number;
-  damageImages?: string[];
+  damageImage?: SignatureData; // Updated to use SignatureData
   damageStatusDescription?: string;
   scannerDescriptionImages?: string[];
   scannerDescription?: string;
@@ -13,4 +14,5 @@ export interface UpdateReceiptDTO {
   carId?: string;
   witnesses?: string[];
   productId?: string[];
+  signatureData?: SignatureData; // Added signatureData
 }
