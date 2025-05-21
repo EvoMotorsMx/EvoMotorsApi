@@ -31,12 +31,20 @@ export class LambdaStack extends Stack {
         "handler.ts",
       ),
       environment: props.envVariables,
-      bundling: {
-        externalModules: ["@aws-sdk/core/client", "@aws-sdk/core"],
-        nodeModules: ["@smithy/core"],
-      },
       timeout: Duration.seconds(10),
+      bundling: {
+        externalModules: [
+          "@aws-sdk/credential-provider-node",
+          "@aws-sdk/credential-provider-ini",
+          "@aws-sdk/credential-providers",
+          "@aws-sdk/nested-clients/sts",
+          "@aws-sdk/nested-clients/sso-oidc",
+          "@smithy/core",
+          "aws-sdk", // si lo tienes instalado, inclúyelo para excluirlo también
+        ],
+      },
     });
+
 
     // Agregar permisos para cognito-idp:ListUsers
     lambda.addToRolePolicy(
