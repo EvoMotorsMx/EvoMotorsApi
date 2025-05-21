@@ -1,6 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
-import { isBase64 } from "validator";
 import {
   Witness,
   Car,
@@ -50,20 +49,20 @@ const receiptSchema = new Schema<ReceiptDocument>(
       type: Number,
       required: true,
       validate: {
-        validator: function (value) {
+        validator: function (value: number) {
           return value >= 0 && value <= 100;
         },
-        message: (props) => `${props.value} is not a valid tank status!`,
+        message: (props:any) => `${props.value} is not a valid tank status!`,
       },
     },
     mileage: {
       type: Number,
       required: true,
       validate: {
-        validator: function (value) {
+        validator: function (value: number) {
           return value >= 0;
         },
-        message: (props) => `${props.value} is not a valid mileage!`,
+        message: (props: any) => `${props.value} is not a valid mileage!`,
       },
     },
     damageImage: {
