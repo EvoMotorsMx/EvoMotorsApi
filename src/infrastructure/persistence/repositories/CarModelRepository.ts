@@ -49,6 +49,10 @@ export class CarModelRepository implements ICarModelRepository {
     await CarModelModel.findByIdAndDelete(id).exec();
   }
 
+  getQuery() {
+    return CarModelModel.find().populate({ path: "brandId", model: BrandModel });
+  }
+
   private docToEntity(doc: CarModelDoc): CarModel {
     const brand = new Brand(
       doc.brandId.name,
@@ -68,7 +72,11 @@ export class CarModelRepository implements ICarModelRepository {
       doc.cylinder,
       doc.combustion,
       doc.engineType,
+      doc.originalHp,
+      doc.originalTorque,
+      doc.topSpeed,
       files,
+      doc.isActive,
       doc._id?.toString(),
     );
 
