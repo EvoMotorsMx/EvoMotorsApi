@@ -1,9 +1,20 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
+import {
+  ProductSystemType,
+  ProductType,
+} from "../../../shared/enums/productModel";
 
 export interface ProductDocument extends Document {
   name: string;
   description?: string;
+  sku?: string;
+  type: ProductType;
+  productGroupId?: string; // FK → ProductGroup
+  productBrandId?: string; // FK → ProductBrand
+  systemType?: ProductSystemType; // para anulaciones
+  stock?: number; // solo si es producto físico
+  price?: number;
 }
 
 const productSchema = new Schema<ProductDocument>(
@@ -19,6 +30,32 @@ const productSchema = new Schema<ProductDocument>(
     description: {
       type: String,
     },
+    sku: {
+      type: String,
+    },
+    type: {
+      type: String,
+      enum: Object.values(ProductType),
+      required: true,
+    },
+    productGroupId: {
+      type: String,
+      ref: "ProductGroup",
+    },
+    productBrandId: {
+      type: String,
+      ref: "ProductBrand",
+    },
+    systemType: {
+      type: String,
+      enum: Object.values(ProductSystemType),
+    },
+    stock: {
+      type: Number,
+    },
+    price: {
+      type: Number,
+    },
   },
   {
     timestamps: true,
@@ -27,7 +64,7 @@ const productSchema = new Schema<ProductDocument>(
 
 productSchema.pre("save", function (next) {
   if (this.name) {
-    this.name = this.name.toUpperCase();
+    this.name = this.name.toUpperCase().trim();
   }
   next();
 });
