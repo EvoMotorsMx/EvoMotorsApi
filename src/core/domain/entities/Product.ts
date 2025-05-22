@@ -1,7 +1,16 @@
+import { ProductType, ProductSystemType } from "../../../shared/enums";
+
 export class Product {
   constructor(
     public name: string,
+    public type: ProductType,
     public description?: string,
+    public sku?: string,
+    public productGroupId?: string,
+    public productBrandId?: string,
+    public systemType?: ProductSystemType,
+    public stock?: number,
+    public price?: number,
     public _id?: string,
   ) {}
 
