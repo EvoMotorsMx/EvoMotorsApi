@@ -1,4 +1,5 @@
-import * as Busboy from "busboy";
+import Busboy from "busboy";
+
 import { APIGatewayProxyEventV2 } from "aws-lambda";
 
 export async function processFormData(event: APIGatewayProxyEventV2) {
