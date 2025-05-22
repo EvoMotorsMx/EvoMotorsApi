@@ -86,7 +86,11 @@ export class FileRepository implements IFileRepository {
         doc.carModelId.cylinder,
         doc.carModelId.combustion,
         doc.carModelId.engineType,
+        doc.carModelId.originalHp,
+        doc.carModelId.originalTorque,
+        doc.carModelId.topSpeed,
         carModelFiles,
+        doc.carModelId.isActive,
         doc.carModelId._id?.toString() as string,
       );
 

@@ -115,14 +115,25 @@ export class ProductCompatibilityRepository
       doc.carModel.cylinder,
       doc.carModel.combustion,
       doc.carModel.engineType,
+      doc.carModel.originalHp,
+      doc.carModel.originalTorque,
+      doc.carModel.topSpeed,
       files,
+      doc.carModel.isActive,
       doc.carModel._id?.toString(),
     );
 
     const product = new Product(
       doc.product.name,
+      doc.product.type,
       doc.product?.description,
-      doc._id?.toString(),
+      doc.product?.sku,
+      undefined, //Product Group Id
+      undefined, //Product Brand Id
+      doc.product?.systemType,
+      doc.product?.stock,
+      doc.product?.price,
+      doc.product?._id?.toString()
     );
 
     const productCompatibility = new ProductCompatibility(
