@@ -12,11 +12,10 @@ handler(
       Authorization: process.env.AUTHORIZATION,
     },
     body: JSON.stringify({
-      name: "Test Product",
-      type: "Type1",
+      name: "TopBoost",
+      type: "GENERAL",
       description: "Test Description",
       sku: "SKU123",
-      systemType: "SystemType1",
       stock: 100,
       price: 50,
     }),
