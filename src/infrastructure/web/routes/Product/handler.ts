@@ -32,7 +32,9 @@ const createProductBodySchema = z.object({
   sku: z.string().optional(),
   productGroupId: z.string().optional(),
   productBrandId: z.string().optional(),
-  systemType: z.enum(Object.values(ProductType) as [string, ...string[]]),
+  systemType: z
+    .enum(Object.values(ProductType) as [string, ...string[]])
+    .optional(),
   stock: z.number().optional(),
   price: z.number().optional(),
 });
