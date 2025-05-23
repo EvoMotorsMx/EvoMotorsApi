@@ -40,8 +40,23 @@ export class ProductRepository implements IProductRepository {
     await ProductModel.findByIdAndDelete(id).exec();
   }
 
+  getQuery() {
+    return ProductModel.find();
+  }
+
   private docToEntity(doc: ProductDoc): Product {
-    const product = new Product(doc.name, doc.description, doc._id?.toString());
+    const product = new Product(
+      doc.name,
+      doc.type,
+      doc.description,
+      doc.sku,
+      undefined, //Product Group Id
+      undefined, //Product Brand Id
+      doc.systemType,
+      doc.stock,
+      doc.price,
+      doc._id?.toString(), // Convertir ObjectId a string
+    );
     return product;
   }
 }

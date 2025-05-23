@@ -50,16 +50,11 @@ export class ReceiptService implements IReceiptService {
     if (dto.signImage && !dto.signImage.startsWith("data:image")) {
       dto.signImage = convertToBase64(dto.signImage);
     }
-    if (dto.damageImages) {
-      dto.damageImages = dto.damageImages.map((image: string) =>
-        image.startsWith("data:image") ? image : convertToBase64(image),
-      );
+    if (dto.damageImage) {
+      dto.damageImage = convertToBase64(dto.damageImage);
     }
     if (dto.scannerDescriptionImages) {
-      dto.scannerDescriptionImages = dto.scannerDescriptionImages.map(
-        (image: string) =>
-          image.startsWith("data:image") ? image : convertToBase64(image),
-      );
+      dto.scannerDescriptionImages;
     }
 
     return this.receiptRepository.save(dto);
@@ -73,10 +68,8 @@ export class ReceiptService implements IReceiptService {
     if (dto.signImage && !dto.signImage.startsWith("data:image")) {
       dto.signImage = convertToBase64(dto.signImage);
     }
-    if (dto.damageImages) {
-      dto.damageImages = dto.damageImages.map((image: string) =>
-        image.startsWith("data:image") ? image : convertToBase64(image),
-      );
+    if (dto.damageImage) {
+      dto.damageImage = convertToBase64(dto.damageImage);
     }
     if (dto.scannerDescriptionImages) {
       dto.scannerDescriptionImages = dto.scannerDescriptionImages.map(

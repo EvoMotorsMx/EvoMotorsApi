@@ -90,16 +90,6 @@ export class PipelineStage extends Stage {
       envVariables: lambdaVariables,
     });
 
-    //Product Price Lambda
-    const productPriceLambdaIntegration = new LambdaStack(
-      this,
-      "ProductPriceLambda",
-      {
-        lambdaDirectory: "ProductPrice",
-        envVariables: lambdaVariables,
-      },
-    );
-
     //Error Code Lambda
     const errorCodeLambdaIntegration = new LambdaStack(
       this,
@@ -172,8 +162,6 @@ export class PipelineStage extends Stage {
       certificateLambdaIntegration:
         certificateLambdaIntegration.lambdaIntegration,
       companyLambdaIntegration: companyLambdaIntegration.lambdaIntegration,
-      productPriceLambdaIntegration:
-        productPriceLambdaIntegration.lambdaIntegration,
       errorCodeLambdaIntegration: errorCodeLambdaIntegration.lambdaIntegration,
       carLambdaIntegration: carLambdaIntegration.lambdaIntegration,
       toolLambdaIntegration: toolLambdaIntegration.lambdaIntegration,

@@ -11,7 +11,14 @@ handler(
       idtoken: process.env.ID_TOKEN,
       Authorization: process.env.AUTHORIZATION,
     },
-    body: JSON.stringify({}),
+    body: JSON.stringify({
+      name: "TopBoost",
+      type: "GENERAL",
+      description: "Test Description",
+      sku: "SKU123",
+      stock: 100,
+      price: 50,
+    }),
   } as any,
   {} as any,
 );
