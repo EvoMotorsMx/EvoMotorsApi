@@ -10,5 +10,6 @@ export type CreateProductDTO = {
   systemType?: ProductSystemType;
   stock?: number;
   price?: number;
-  complementId?: string | null; // FK → Product, puede ser nulo si no es un complemento
+  isComplement?: boolean; // indica si es un complemento
+  complementId?: string | null; // FK → Product, puede ser nulo si no tiene complemento
 };
