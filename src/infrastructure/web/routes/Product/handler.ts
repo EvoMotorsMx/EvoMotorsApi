@@ -37,6 +37,8 @@ const createProductBodySchema = z.object({
     .optional(),
   stock: z.number().optional(),
   price: z.number().optional(),
+  isComplement: z.boolean().optional(), // indica si es un complemento
+  complementId: z.string().optional(), // FK → Product, puede ser nulo si no tiene complemento
 });
 
 const updateProductBodySchema = z.object({
@@ -52,6 +54,8 @@ const updateProductBodySchema = z.object({
     .optional(),
   stock: z.number().optional(),
   price: z.number().optional(),
+  isComplement: z.boolean().optional(), // indica si es un complemento
+  complementId: z.string().optional(), // FK → Product, puede ser nulo si no tiene complemento
 });
 
 const removeProductBody = z.object({

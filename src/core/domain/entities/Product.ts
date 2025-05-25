@@ -11,6 +11,8 @@ export class Product {
     public systemType?: ProductSystemType,
     public stock?: number,
     public price?: number,
+    public isComplement?: boolean, // indica si es un complemento
+    public complementId?: string | null, // FK → Product, puede ser nulo si no es un complemento
     public _id?: string,
   ) {}
 
