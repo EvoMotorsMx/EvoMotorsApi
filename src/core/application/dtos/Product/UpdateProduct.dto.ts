@@ -6,7 +6,6 @@ export type UpdateProductDTO = {
   description?: string;
   sku?: string;
   productGroupId?: string;
-  productBrandId?: string;
   systemType?: ProductSystemType;
   stock?: number;
   price?: number;

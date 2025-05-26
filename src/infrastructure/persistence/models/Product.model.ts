@@ -4,14 +4,14 @@ import {
   ProductSystemType,
   ProductType,
 } from "../../../shared/enums/productModel";
+import { ProductGroup } from "../../../core/domain/entities";
 
 export interface ProductDocument extends Document {
   name: string;
   description?: string;
   sku?: string;
   type: ProductType;
-  productGroupId?: string; // FK → ProductGroup
-  productBrandId?: string; // FK → ProductBrand
+  productGroupId?: ProductGroup; // FK → ProductGroup
   systemType?: ProductSystemType; // para anulaciones
   stock?: number; // solo si es producto físico
   price?: number;
@@ -43,10 +43,6 @@ const productSchema = new Schema<ProductDocument>(
     productGroupId: {
       type: String,
       ref: "ProductGroup",
-    },
-    productBrandId: {
-      type: String,
-      ref: "ProductBrand",
     },
     systemType: {
       type: String,

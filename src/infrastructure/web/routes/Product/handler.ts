@@ -31,7 +31,6 @@ const createProductBodySchema = z.object({
   description: z.string().optional(),
   sku: z.string().optional(),
   productGroupId: z.string().optional(),
-  productBrandId: z.string().optional(),
   systemType: z
     .enum(Object.values(ProductType) as [string, ...string[]])
     .optional(),
@@ -48,7 +47,6 @@ const updateProductBodySchema = z.object({
   description: z.string().optional(),
   sku: z.string().optional(),
   productGroupId: z.string().optional(),
-  productBrandId: z.string().optional(),
   systemType: z
     .enum(Object.values(ProductType) as [string, ...string[]])
     .optional(),

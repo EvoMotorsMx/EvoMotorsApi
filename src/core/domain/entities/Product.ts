@@ -7,7 +7,6 @@ export class Product {
     public description?: string,
     public sku?: string,
     public productGroupId?: string,
-    public productBrandId?: string,
     public systemType?: ProductSystemType,
     public stock?: number,
     public price?: number,
