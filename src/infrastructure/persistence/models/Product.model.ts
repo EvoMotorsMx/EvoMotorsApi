@@ -4,7 +4,10 @@ import {
   ProductSystemType,
   ProductType,
 } from "../../../shared/enums/productModel";
-import { ProductGroup } from "../../../core/domain/entities";
+import {
+  Product as ProductEntity,
+  ProductGroup,
+} from "../../../core/domain/entities";
 
 export interface ProductDocument extends Document {
   name: string;
@@ -16,7 +19,7 @@ export interface ProductDocument extends Document {
   stock?: number; // solo si es producto físico
   price?: number;
   isComplement?: boolean; // indica si es un complemento
-  complementId?: string | null; // FK → Product, puede ser nulo si no tiene complemento
+  complementId?: ProductEntity | null; // FK → Product, puede ser nulo si no tiene complemento
 }
 
 const productSchema = new Schema<ProductDocument>(
