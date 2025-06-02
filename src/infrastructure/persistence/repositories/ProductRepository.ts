@@ -1,7 +1,7 @@
 import { Document } from "mongoose";
 import ProductModel, { ProductDocument } from "../models/Product.model";
 import { IProductRepository } from "../../../core/application/interfaces/Product/IProductRepository";
-import { Product } from "../../../core/domain/entities";
+import { Product, ProductGroup } from "../../../core/domain/entities";
 import {
   CreateProductDTO,
   UpdateProductDTO,
@@ -45,16 +45,43 @@ export class ProductRepository implements IProductRepository {
   }
 
   private docToEntity(doc: ProductDoc): Product {
+    let productComplement: Product | null = null;
+    if (doc.complementId?._id?.toString()) {
+      if (doc.complementId.productGroupId) {
+        if (doc.complementId.productGroupId.productBrandId) {
+          const productBrandId = doc.complementId.productGroupId;
+        }
+        /*         const complementProductGroup = new ProductGroup(
+          doc.complementId?.productGroupId?.name,
+          undefined,
+          doc.complementId?.productGroupId?.description,
+          doc.complementId.productGroupId?.image,
+          doc.complementId.productGroupId?.productBrandId?._id?.toString(),
+        ); */
+      }
+
+      const productComplement = new Product(
+        doc.complementId?.name,
+        doc.complementId?.type,
+        doc.complementId?.description,
+        doc.complementId?.sku,
+        doc.complementId?.productGroupId,
+        doc.complementId?.systemType,
+        doc.complementId?.stock, // Convertir ObjectId a string
+      );
+    }
+
     const product = new Product(
       doc.name,
       doc.type,
       doc.description,
       doc.sku,
       undefined, //Product Group Id
-      undefined, //Product Brand Id
       doc.systemType,
       doc.stock,
       doc.price,
+      doc.isComplement,
+      productComplement ?? null,
       doc._id?.toString(), // Convertir ObjectId a string
     );
     return product;
