@@ -3,12 +3,11 @@ import { v4 as uuidV4 } from "uuid";
 
 export interface ProductBrandDocument extends Document {
   name: string;
-  productBrandId: string; // FK → ProductBrand
+  logo?: string;
   description?: string;
-  image?: string;
 }
 
-const productSchema = new Schema<ProductBrandDocument>(
+const productBrandSchema = new Schema<ProductBrandDocument>(
   {
     _id: {
       type: String,
@@ -18,15 +17,10 @@ const productSchema = new Schema<ProductBrandDocument>(
       type: String,
       required: true,
     },
-    productBrandId: {
+    logo: {
       type: String,
-      ref: "ProductBrand",
-      required: true,
     },
     description: {
-      type: String,
-    },
-    image: {
       type: String,
     },
   },
@@ -35,7 +29,7 @@ const productSchema = new Schema<ProductBrandDocument>(
   },
 );
 
-productSchema.pre("save", function (next) {
+productBrandSchema.pre("save", function (next) {
   if (this.name) {
     this.name = this.name.toUpperCase().trim();
   }
@@ -44,7 +38,7 @@ productSchema.pre("save", function (next) {
 
 const ProductBrand = mongoose.model<ProductBrandDocument>(
   "ProductBrand",
-  productSchema,
+  productBrandSchema,
 );
 
 export default ProductBrand;
