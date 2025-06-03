@@ -45,32 +45,6 @@ export class ProductRepository implements IProductRepository {
   }
 
   private docToEntity(doc: ProductDoc): Product {
-    let productComplement: Product | null = null;
-    if (doc.complementId?._id?.toString()) {
-      if (doc.complementId.productGroupId) {
-        if (doc.complementId.productGroupId.productBrandId) {
-          const productBrandId = doc.complementId.productGroupId;
-        }
-        /*         const complementProductGroup = new ProductGroup(
-          doc.complementId?.productGroupId?.name,
-          undefined,
-          doc.complementId?.productGroupId?.description,
-          doc.complementId.productGroupId?.image,
-          doc.complementId.productGroupId?.productBrandId?._id?.toString(),
-        ); */
-      }
-
-      const productComplement = new Product(
-        doc.complementId?.name,
-        doc.complementId?.type,
-        doc.complementId?.description,
-        doc.complementId?.sku,
-        doc.complementId?.productGroupId,
-        doc.complementId?.systemType,
-        doc.complementId?.stock, // Convertir ObjectId a string
-      );
-    }
-
     const product = new Product(
       doc.name,
       doc.type,
@@ -81,7 +55,6 @@ export class ProductRepository implements IProductRepository {
       doc.stock,
       doc.price,
       doc.isComplement,
-      productComplement ?? null,
       doc._id?.toString(), // Convertir ObjectId a string
     );
     return product;

@@ -19,7 +19,6 @@ export interface ProductDocument extends Document {
   stock?: number; // solo si es producto físico
   price?: number;
   isComplement?: boolean; // indica si es un complemento
-  complementId?: ProductEntity | null; // FK → Product, puede ser nulo si no tiene complemento
 }
 
 const productSchema = new Schema<ProductDocument>(
@@ -60,11 +59,6 @@ const productSchema = new Schema<ProductDocument>(
     isComplement: {
       type: Boolean,
       default: false,
-    },
-    complementId: {
-      type: String,
-      ref: "Product",
-      default: null, // Permite que sea nulo si no tiene complemento
     },
   },
   {
