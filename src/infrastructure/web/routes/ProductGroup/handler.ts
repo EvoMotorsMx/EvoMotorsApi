@@ -23,8 +23,7 @@ import { IIdToken } from "../../../security/Auth";
 import { ProductGroupRepository } from "../../../persistence/repositories";
 import { ProductGroupService } from "../../../../core/domain/services";
 import { ProductGroupUseCases } from "../../../../core/application/use_cases";
-import { ProductGroupType } from "../../../../shared/enums";
-import ProductGroup from "../../../persistence/models/ProductGroup.model";
+import PoductBrandModel from "../../../persistence/models/ProductBrand.model";
 
 const createProductGroupBodySchema = z.object({
   name: z.string(),
@@ -155,7 +154,10 @@ export async function handler(
 
           // Paginación
           const offset = (page - 1) * limit;
-          const docs = await queryWithFilters.limit(limit).skip(offset);
+          const docs = await queryWithFilters
+            .limit(limit)
+            .skip(offset)
+            .populate({ path: "productBrandId", model: PoductBrandModel });
           const data = docs.map((doc: any) =>
             productRepository["docToEntity"](doc),
           );
