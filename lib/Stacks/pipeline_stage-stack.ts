@@ -160,6 +160,16 @@ export class PipelineStage extends Stage {
       },
     );
 
+    //ProductGroup Lambda
+    const productGroupLambdaIntegration = new LambdaStack(
+      this,
+      "productGroupLambda",
+      {
+        lambdaDirectory: "ProductGroup",
+        envVariables: lambdaVariables,
+      },
+    );
+
     new EvoMotorsApiStack(this, "EvoMotorsApiStack", {
       stageName: props.stageName,
       userPool: evoMotorsAuthStack.getUserPool(),
@@ -184,6 +194,8 @@ export class PipelineStage extends Stage {
       receiptLambdaIntegration: receiptLambdaIntegration.lambdaIntegration,
       productBrandLambdaIntegration:
         productBrandLambdaIntegration.lambdaIntegration,
+      productGroupLambdaIntegration:
+        productGroupLambdaIntegration.lambdaIntegration,
     });
   }
 }
