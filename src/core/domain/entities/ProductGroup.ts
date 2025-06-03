@@ -1,9 +1,9 @@
-import { ProductType, ProductSystemType } from "../../../shared/enums";
+import { ProductBrand } from "./ProductBrand";
 
 export class ProductGroup {
   constructor(
     public name: string,
-    public productBrandId: string, // FK → ProductBrand
+    public productBrandId: ProductBrand, // FK → ProductBrand
     public description?: string,
     public image?: string,
     public _id?: string,
