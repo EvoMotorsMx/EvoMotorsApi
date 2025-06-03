@@ -14,3 +14,4 @@ export * from "./ProductCompatibilityService";
 export * from "./CustomerService";
 export * from "./ReceiptService";
 export * from "./ProductBrandService";
+export * from "./ProductGroupService";
