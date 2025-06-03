@@ -1,7 +1,11 @@
 import { Document } from "mongoose";
 import ProductModel, { ProductDocument } from "../models/Product.model";
 import { IProductRepository } from "../../../core/application/interfaces/Product/IProductRepository";
-import { Product, ProductGroup } from "../../../core/domain/entities";
+import {
+  Product,
+  ProductBrand,
+  ProductGroup,
+} from "../../../core/domain/entities";
 import {
   CreateProductDTO,
   UpdateProductDTO,
@@ -45,12 +49,27 @@ export class ProductRepository implements IProductRepository {
   }
 
   private docToEntity(doc: ProductDoc): Product {
+    const productBrand = new ProductBrand(
+      doc.productGroupId?.productBrandId?.name ?? "",
+      doc.productGroupId?.productBrandId?.logo,
+      doc.productGroupId?.productBrandId?.description,
+      doc.productGroupId?.productBrandId?._id?.toString(),
+    );
+
+    const productGroup = new ProductGroup(
+      doc.productGroupId?.name ?? "",
+      productBrand,
+      doc.productGroupId?.description,
+      doc.productGroupId?.image,
+      doc.productGroupId?._id?.toString(),
+    );
+
     const product = new Product(
       doc.name,
       doc.type,
       doc.description,
       doc.sku,
-      undefined, //Product Group Id
+      productGroup,
       doc.systemType,
       doc.stock,
       doc.price,
