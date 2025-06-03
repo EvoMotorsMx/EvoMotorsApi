@@ -129,11 +129,12 @@ export class ProductCompatibilityRepository
       doc.product?.description,
       doc.product?.sku,
       undefined, //Product Group Id
-      undefined, //Product Brand Id
       doc.product?.systemType,
       doc.product?.stock,
       doc.product?.price,
-      doc.product?._id?.toString()
+      doc.product?.isComplement,
+      undefined,
+      doc.product?._id?.toString(),
     );
 
     const productCompatibility = new ProductCompatibility(
