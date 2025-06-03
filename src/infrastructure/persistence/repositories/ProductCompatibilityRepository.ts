@@ -10,6 +10,8 @@ import {
   Product,
   ProductCompatibility,
   File,
+  ProductBrand,
+  ProductGroup,
 } from "../../../core/domain/entities";
 import {
   CreateProductCompatibilityDTO,
@@ -123,17 +125,31 @@ export class ProductCompatibilityRepository
       doc.carModel._id?.toString(),
     );
 
+    const productBrand = new ProductBrand(
+      doc.product.productGroupId?.productBrandId?.name ?? "",
+      doc.product.productGroupId?.productBrandId?.logo,
+      doc.product.productGroupId?.productBrandId?.description,
+      doc.product.productGroupId?.productBrandId?._id?.toString(),
+    );
+
+    const productGroup = new ProductGroup(
+      doc.product.productGroupId?.name ?? "",
+      productBrand,
+      doc.product.productGroupId?.description,
+      doc.product.productGroupId?.image,
+      doc.product.productGroupId?._id?.toString(),
+    );
+
     const product = new Product(
       doc.product.name,
       doc.product.type,
       doc.product?.description,
       doc.product?.sku,
-      undefined, //Product Group Id
+      productGroup,
       doc.product?.systemType,
       doc.product?.stock,
       doc.product?.price,
       doc.product?.isComplement,
-      undefined,
       doc.product?._id?.toString(),
     );
 
