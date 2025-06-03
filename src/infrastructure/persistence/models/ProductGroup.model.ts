@@ -1,9 +1,10 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
+import { ProductBrand } from "../../../core/domain/entities";
 
 export interface ProductGroupDocument extends Document {
   name: string;
-  productBrandId: string; // FK → ProductBrand
+  productBrandId: ProductBrand; // FK → ProductBrand
   description?: string;
   image?: string;
 }
