@@ -30,11 +30,10 @@ const createProductBodySchema = z.object({
   type: z.enum(Object.values(ProductType) as [string, ...string[]]),
   description: z.string().optional(),
   sku: z.string().optional(),
-  productGroupId: z.string().optional(),
+  productGroupId: z.string(),
   systemType: z
     .enum(Object.values(ProductType) as [string, ...string[]])
     .optional(),
-  stock: z.number().optional(),
   price: z.number().optional(),
   isComplement: z.boolean().optional(), // indica si es un complemento
 });
@@ -49,7 +48,6 @@ const updateProductBodySchema = z.object({
   systemType: z
     .enum(Object.values(ProductType) as [string, ...string[]])
     .optional(),
-  stock: z.number().optional(),
   price: z.number().optional(),
   isComplement: z.boolean().optional(), // indica si es un complemento
 });
