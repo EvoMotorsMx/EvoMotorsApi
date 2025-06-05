@@ -12,8 +12,8 @@ handler(
       Authorization: process.env.AUTHORIZATION,
     },
     body: JSON.stringify({
-      name: "TOPBOOST PRO",
-      productBrandId: "66e3340e-327e-4235-b04b-a5877506fafc",
+      name: "RACECHIP CHIP TUNING",
+      productBrandId: "c5ec2731-1a32-47c4-a691-3e50ea5fc817",
     }),
   } as any,
   {} as any,

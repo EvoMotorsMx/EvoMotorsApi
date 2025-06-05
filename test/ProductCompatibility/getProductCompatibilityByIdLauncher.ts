@@ -1,4 +1,4 @@
-import { handler } from "../../src/infrastructure/web/routes/Tool/handler";
+import { handler } from "../../src/infrastructure/web/routes/ProductCompatibility/handler";
 
 handler(
   {
