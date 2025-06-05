@@ -5,11 +5,10 @@ export class Product {
   constructor(
     public name: string,
     public type: ProductType,
+    public productGroupId: ProductGroup,
     public description?: string,
     public sku?: string,
-    public productGroupId?: ProductGroup,
     public systemType?: ProductSystemType,
-    public stock?: number,
     public price?: number,
     public isComplement?: boolean, // indica si es un complemento
     public _id?: string,
