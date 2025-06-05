@@ -90,16 +90,6 @@ export class PipelineStage extends Stage {
       envVariables: lambdaVariables,
     });
 
-    //Product Price Lambda
-    const productPriceLambdaIntegration = new LambdaStack(
-      this,
-      "ProductPriceLambda",
-      {
-        lambdaDirectory: "ProductPrice",
-        envVariables: lambdaVariables,
-      },
-    );
-
     //Error Code Lambda
     const errorCodeLambdaIntegration = new LambdaStack(
       this,
@@ -160,6 +150,26 @@ export class PipelineStage extends Stage {
       envVariables: lambdaVariables,
     });
 
+    //ProductBrand Lambda
+    const productBrandLambdaIntegration = new LambdaStack(
+      this,
+      "productBrandLambda",
+      {
+        lambdaDirectory: "ProductBrand",
+        envVariables: lambdaVariables,
+      },
+    );
+
+    //ProductGroup Lambda
+    const productGroupLambdaIntegration = new LambdaStack(
+      this,
+      "productGroupLambda",
+      {
+        lambdaDirectory: "ProductGroup",
+        envVariables: lambdaVariables,
+      },
+    );
+
     new EvoMotorsApiStack(this, "EvoMotorsApiStack", {
       stageName: props.stageName,
       userPool: evoMotorsAuthStack.getUserPool(),
@@ -172,8 +182,6 @@ export class PipelineStage extends Stage {
       certificateLambdaIntegration:
         certificateLambdaIntegration.lambdaIntegration,
       companyLambdaIntegration: companyLambdaIntegration.lambdaIntegration,
-      productPriceLambdaIntegration:
-        productPriceLambdaIntegration.lambdaIntegration,
       errorCodeLambdaIntegration: errorCodeLambdaIntegration.lambdaIntegration,
       carLambdaIntegration: carLambdaIntegration.lambdaIntegration,
       toolLambdaIntegration: toolLambdaIntegration.lambdaIntegration,
@@ -184,6 +192,10 @@ export class PipelineStage extends Stage {
         productCompatibilityLambdaIntegration.lambdaIntegration,
       customerLambdaIntegration: customerLambdaIntegration.lambdaIntegration,
       receiptLambdaIntegration: receiptLambdaIntegration.lambdaIntegration,
+      productBrandLambdaIntegration:
+        productBrandLambdaIntegration.lambdaIntegration,
+      productGroupLambdaIntegration:
+        productGroupLambdaIntegration.lambdaIntegration,
     });
   }
 }

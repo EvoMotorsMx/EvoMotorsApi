@@ -7,7 +7,7 @@ import {
 export interface IProductCompatibilityService {
   createProductCompatibility(
     dto: CreateProductCompatibilityDTO,
-  ): Promise<ProductCompatibility>;
+  ): Promise<ProductCompatibility | null>;
   getProductCompatibilityById(id: string): Promise<ProductCompatibility | null>;
   getAllProductCompatibilities(): Promise<ProductCompatibility[]>;
   updateProductCompatibility(

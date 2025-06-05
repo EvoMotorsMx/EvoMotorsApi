@@ -20,32 +20,31 @@ import {
 import { decodeToken } from "../../../../shared/utils/userDecoder";
 import { CUSTOMER_ROLE } from "../../../../shared/constants/roles";
 import { IIdToken } from "../../../security/Auth";
-import { ProductPriceRepository } from "../../../persistence/repositories";
-import { ProductPriceService } from "../../../../core/domain/services";
-import { ProductPriceUseCases } from "../../../../core/application/use_cases";
+import { ProductGroupRepository } from "../../../persistence/repositories";
+import { ProductGroupService } from "../../../../core/domain/services";
+import { ProductGroupUseCases } from "../../../../core/application/use_cases";
+import PoductBrandModel from "../../../persistence/models/ProductBrand.model";
 
-const createProductPricePriceBodySchema = z.object({
-  carModelId: z.string(),
-  productId: z.string(),
-  price: z.number(),
-  hpIncrement: z.number(),
-  torqueIncrement: z.number(),
+const createProductGroupBodySchema = z.object({
+  name: z.string(),
+  productBrandId: z.string(), // FK → ProductBrand
+  description: z.string().optional(),
+  image: z.string().optional(),
 });
 
-const updateProductPricePriceBodySchema = z.object({
+const updateProductGroupBodySchema = z.object({
   id: z.string(),
-  carModelId: z.string().optional(),
-  productId: z.string().optional(),
-  price: z.string().optional(),
-  hpIncrement: z.number(),
-  torqueIncrement: z.number(),
+  name: z.string().optional(),
+  productBrandId: z.string().optional(), // FK → ProductBrand
+  description: z.string().optional(),
+  image: z.string().optional(),
 });
 
-const removeProductPricePriceBody = z.object({
+const removeProductGroupBody = z.object({
   id: z.string(),
 });
 
-const getProductPricePriceBody = z.object({
+const getProductGroupBody = z.object({
   id: z.string(),
 });
 
@@ -85,16 +84,16 @@ export async function handler(
   }
 
   await connectToDatabase();
-  const productPriceRepository = new ProductPriceRepository();
-  const productPriceService = new ProductPriceService(productPriceRepository);
-  const productService = new ProductPriceUseCases(productPriceService);
+  const productRepository = new ProductGroupRepository();
+  const productService = new ProductGroupService(productRepository);
+  const productUseCases = new ProductGroupUseCases(productService);
 
   try {
     switch (event.requestContext.http.method) {
       case GET:
         if (event.pathParameters) {
-          const pathValidationResult = getProductPricePriceBody.safeParse({
-            id: event.pathParameters.productPricePriceId,
+          const pathValidationResult = getProductGroupBody.safeParse({
+            id: event.pathParameters.productId,
           });
           if (!pathValidationResult.success) {
             return {
@@ -107,30 +106,75 @@ export async function handler(
             };
           }
 
-          const productPricePrices = await productService.getProductPrice(
+          const products = await productUseCases.getProductGroup(
             pathValidationResult.data.id,
           );
           return {
             statusCode: HTTP_OK,
-            body: JSON.stringify(productPricePrices),
+            body: JSON.stringify(products),
           };
         } else {
-          const productPricePrices =
-            await productService.findAllProductPrices();
+          // --- NUEVO: paginación, filtros y sort ---
+          const query = event.queryStringParameters || {};
+          const page = parseInt(query.page || "1", 10);
+          const limit = parseInt(query.limit || "10", 10);
+
+          // Extrae filtros (puedes personalizar los campos permitidos)
+          const { sortBy, sortOrder, ...filters } = query;
+          delete filters.page;
+          delete filters.limit;
+
+          // Obtén la consulta base desde el repositorio (debe ser un query de Mongoose)
+          const baseQuery = productRepository.getQuery(); // Implementa este método en tu repo
+
+          // Aplica filtros y paginación
+          let queryWithFilters = baseQuery;
+          Object.keys(filters).forEach((key) => {
+            if (filters[key] !== undefined) {
+              // Si el filtro es string, usa regex para coincidencia parcial (case-insensitive)
+              if (typeof filters[key] === "string") {
+                queryWithFilters = queryWithFilters.where(key, {
+                  $regex: filters[key],
+                  $options: "i",
+                });
+              } else {
+                queryWithFilters = queryWithFilters.where(key, filters[key]);
+              }
+            }
+          });
+
+          // Aplica sort si se especifica
+          if (sortBy) {
+            const order = sortOrder === "desc" ? -1 : 1;
+            queryWithFilters = queryWithFilters.sort({ [sortBy]: order });
+          }
+
+          // Total antes de paginar
+          const total = await queryWithFilters.clone().countDocuments();
+
+          // Paginación
+          const offset = (page - 1) * limit;
+          const docs = await queryWithFilters
+            .limit(limit)
+            .skip(offset)
+            .populate({ path: "productBrandId", model: PoductBrandModel });
+          const data = docs.map((doc: any) =>
+            productRepository["docToEntity"](doc),
+          );
+
           return {
             statusCode: HTTP_OK,
-            body: JSON.stringify(productPricePrices),
+            body: JSON.stringify({ data, total, page, limit }),
           };
         }
 
       case POST: {
         const payload = JSON.parse(event.body ?? "{}");
         const validationResult =
-          createProductPricePriceBodySchema.safeParse(payload);
-        let newProductPricePrice;
+          createProductGroupBodySchema.safeParse(payload);
+        let newProductGroup;
         if (validationResult.success) {
-          newProductPricePrice =
-            await productService.createProductPrice(payload);
+          newProductGroup = await productUseCases.createProductGroup(payload);
         } else {
           return {
             statusCode: HTTP_BAD_REQUEST,
@@ -145,35 +189,32 @@ export async function handler(
 
         return {
           statusCode: HTTP_CREATED,
-          body: JSON.stringify(newProductPricePrice),
+          body: JSON.stringify(newProductGroup),
         };
       }
 
       case PATCH: {
         const payload = JSON.parse(event.body ?? "{}");
-        let updatedProductPricePrice;
+        let updatedProductGroup;
 
-        if (
-          !event.pathParameters ||
-          !event.pathParameters.productPricePriceId
-        ) {
+        if (!event.pathParameters || !event.pathParameters.productId) {
           return {
             statusCode: HTTP_BAD_REQUEST,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              message: "Product Price ID is required in the path",
+              message: "ProductGroup ID is required in the path",
             }),
           };
         }
 
-        const validationResult = updateProductPricePriceBodySchema.safeParse({
+        const validationResult = updateProductGroupBodySchema.safeParse({
           ...payload,
-          id: event.pathParameters.productPricePriceId,
+          id: event.pathParameters.productId,
         });
 
         if (validationResult.success) {
-          updatedProductPricePrice = await productService.updateProductPrice(
-            event.pathParameters.productPricePriceId,
+          updatedProductGroup = await productUseCases.updateProductGroup(
+            event.pathParameters.productId,
             payload,
           );
         } else {
@@ -189,26 +230,23 @@ export async function handler(
 
         return {
           statusCode: HTTP_OK,
-          body: JSON.stringify(updatedProductPricePrice),
+          body: JSON.stringify(updatedProductGroup),
         };
       }
 
       case DELETE: {
-        if (
-          !event.pathParameters ||
-          !event.pathParameters.productPricePriceId
-        ) {
+        if (!event.pathParameters || !event.pathParameters.productId) {
           return {
             statusCode: HTTP_BAD_REQUEST,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              message: "Product Price ID is required in the path",
+              message: "ProductGroup ID is required in the path",
             }),
           };
         }
 
-        const pathValidationResult = removeProductPricePriceBody.safeParse({
-          id: event.pathParameters.productPricePriceId,
+        const pathValidationResult = removeProductGroupBody.safeParse({
+          id: event.pathParameters.productId,
         });
 
         if (!pathValidationResult.success) {
@@ -216,28 +254,28 @@ export async function handler(
             statusCode: HTTP_BAD_REQUEST,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              message: "Invalid or missing Product Price ID",
+              message: "Invalid or missing ProductGroup ID",
               errors: pathValidationResult.error.issues,
             }),
           };
         }
 
-        const productPricePriceId = pathValidationResult.data.id;
+        const productId = pathValidationResult.data.id;
 
         try {
-          await productService.removeProductPrice(productPricePriceId);
+          await productUseCases.removeProductGroup(productId);
           return {
             statusCode: HTTP_OK,
             body: JSON.stringify({
-              id: productPricePriceId,
-              message: "Product Price removed successfully",
+              id: productId,
+              message: "ProductGroup removed successfully",
             }),
           };
         } catch (error) {
           return {
             statusCode: HTTP_INTERNAL_SERVER_ERROR,
             body: JSON.stringify({
-              message: "An error occurred while removing the product price",
+              message: "An error occurred while removing the product",
             }),
           };
         }

@@ -1,7 +1,11 @@
 import { Document } from "mongoose";
 import ProductModel, { ProductDocument } from "../models/Product.model";
 import { IProductRepository } from "../../../core/application/interfaces/Product/IProductRepository";
-import { Product } from "../../../core/domain/entities";
+import {
+  Product,
+  ProductBrand,
+  ProductGroup,
+} from "../../../core/domain/entities";
 import {
   CreateProductDTO,
   UpdateProductDTO,
@@ -40,8 +44,37 @@ export class ProductRepository implements IProductRepository {
     await ProductModel.findByIdAndDelete(id).exec();
   }
 
+  getQuery() {
+    return ProductModel.find();
+  }
+
   private docToEntity(doc: ProductDoc): Product {
-    const product = new Product(doc.name, doc.description, doc._id?.toString());
+    const productBrand = new ProductBrand(
+      doc.productGroupId?.productBrandId?.name ?? "",
+      doc.productGroupId?.productBrandId?.logo,
+      doc.productGroupId?.productBrandId?.description,
+      doc.productGroupId?.productBrandId?._id?.toString(),
+    );
+
+    const productGroup = new ProductGroup(
+      doc.productGroupId?.name ?? "",
+      productBrand,
+      doc.productGroupId?.description,
+      doc.productGroupId?.image,
+      doc.productGroupId?._id?.toString(),
+    );
+
+    const product = new Product(
+      doc.name,
+      doc.type,
+      productGroup,
+      doc.description,
+      doc.sku,
+      doc.systemType,
+      doc.price,
+      doc.isComplement,
+      doc._id?.toString(), // Convertir ObjectId a string
+    );
     return product;
   }
 }

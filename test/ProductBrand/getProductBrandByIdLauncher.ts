@@ -1,9 +1,9 @@
-import { handler } from "../../src/infrastructure/web/routes/ProductPrice/handler";
+import { handler } from "../../src/infrastructure/web/routes/ProductBrand/handler";
 
 handler(
   {
     pathParameters: {
-      carModelId: "",
+      productBrandId: "4f05e458-2476-4bb2-addc-fae54f22299e",
     },
     headers: {
       idtoken: process.env.ID_TOKEN,

@@ -74,7 +74,11 @@ export class CertificateRepository implements ICertificateRepository {
       doc.carId.carModelId.cylinder,
       doc.carId.carModelId.combustion,
       doc.carId.carModelId.engineType,
+      doc.carId.carModelId.originalHp,
+      doc.carId.carModelId.originalTorque,
+      doc.carId.carModelId.topSpeed,
       files,
+      doc.carId.carModelId.isActive,
       doc.carId.carModelId._id,
     );
 
@@ -83,8 +87,10 @@ export class CertificateRepository implements ICertificateRepository {
       doc.carId.plates,
       carModel,
       doc.carId.customerId,
-      undefined,
-      undefined,
+      doc.carId.year,
+      doc.carId.transmissionType,
+      doc.carId.oriFile,
+      doc.carId.modFile,
       doc.id?.toString(),
     );
 

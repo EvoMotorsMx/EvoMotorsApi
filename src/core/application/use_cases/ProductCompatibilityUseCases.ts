@@ -23,7 +23,7 @@ export class ProductCompatibilityUseCases
 
   async createProductCompatibility(
     dto: CreateProductCompatibilityDTO,
-  ): Promise<ProductCompatibility> {
+  ): Promise<ProductCompatibility | null> {
     return this.productCompatibilityService.createProductCompatibility(dto);
   }
 

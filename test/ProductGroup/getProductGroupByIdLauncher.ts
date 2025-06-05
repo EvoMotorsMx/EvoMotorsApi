@@ -1,9 +1,9 @@
-import { handler } from "../../src/infrastructure/web/routes/ProductPrice/handler";
+import { handler } from "../../src/infrastructure/web/routes/ProductGroup/handler";
 
 handler(
   {
     pathParameters: {
-      carModelId: "",
+      productGroupId: "4f05e458-2476-4bb2-addc-fae54f22299e",
     },
     headers: {
       idtoken: process.env.ID_TOKEN,
@@ -11,10 +11,9 @@ handler(
     },
     requestContext: {
       http: {
-        method: "PATCH",
+        method: "GET",
       },
     },
-    body: JSON.stringify({}),
   } as any,
   {} as any,
 );

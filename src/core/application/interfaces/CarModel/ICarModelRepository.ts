@@ -7,4 +7,5 @@ export interface ICarModelRepository {
   save(dto: CreateCarModelDTO): Promise<CarModel>;
   update(id: string, dto: UpdateCarModelDTO): Promise<CarModel>;
   deleteById(id: string): Promise<void>;
+  getQuery():any
 }

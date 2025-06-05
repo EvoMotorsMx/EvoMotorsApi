@@ -23,16 +23,37 @@ import { IIdToken } from "../../../security/Auth";
 import { ProductCompatibilityRepository } from "../../../persistence/repositories";
 import { ProductCompatibilityService } from "../../../../core/domain/services";
 import { ProductCompatibilityUseCases } from "../../../../core/application/use_cases";
+import ProductModel from "../../../persistence/models/Product.model";
+import CarModelModel from "../../../persistence/models/CarModel.model";
+import ProductGroupModel from "../../../persistence/models/ProductGroup.model";
+import ProductBrandModel from "../../../persistence/models/ProductBrand.model";
+import BrandModel from "../../../persistence/models/Brand.model";
 
 const createProductCompatibilityBodySchema = z.object({
   productId: z.string(),
   carModelId: z.string(),
+  endHp: z.number().optional(), // Optional field for end horsepower
+  endTorque: z.number().optional(), // Optional field for end torque
+  vMax: z.string().optional(), // Optional field for maximum speed
+  priceOverride: z.number().optional(), // Optional field for price override
+  priceAdditional: z.number().optional(), // Optional field for additional price
+  notes: z.string().optional(), // Optional field for notes
+  description: z.string().optional(), // Optional field for description
+  complementId: z.string().optional(), // Optional field for complement product ID
 });
 
 const updateProductCompatibilityBodySchema = z.object({
   id: z.string(),
   productId: z.string(),
   carModelId: z.string(),
+  endHp: z.number().optional(), // Optional field for end horsepower
+  endTorque: z.number().optional(), // Optional field for end torque
+  vMax: z.string().optional(), // Optional field for maximum speed
+  priceOverride: z.number().optional(), // Optional field for price override
+  priceAdditional: z.number().optional(), // Optional field for additional price
+  notes: z.string().optional(), // Optional field for notes
+  description: z.string().optional(), // Optional field for description
+  complementId: z.string().optional(), // Optional field for complement product ID
 });
 
 const removeProductCompatibilityBody = z.object({
@@ -114,11 +135,79 @@ export async function handler(
             body: JSON.stringify(productCompatibilities),
           };
         } else {
-          const productCompatibilities =
-            await productCompatibilityUseCases.findAllProductCompatibilities();
+          // --- NUEVO: paginación, filtros y sort ---
+          const query = event.queryStringParameters || {};
+          const page = parseInt(query.page || "1", 10);
+          const limit = parseInt(query.limit || "10", 10);
+
+          // Extrae filtros (puedes personalizar los campos permitidos)
+          const { sortBy, sortOrder, ...filters } = query;
+          delete filters.page;
+          delete filters.limit;
+
+          // Obtén la consulta base desde el repositorio (debe ser un query de Mongoose)
+          const baseQuery = productCompatibilityRepository.getQuery(); // Implementa este método en tu repo
+
+          // Aplica filtros y paginación
+          let queryWithFilters = baseQuery;
+          Object.keys(filters).forEach((key) => {
+            if (filters[key] !== undefined) {
+              // Si el filtro es string, usa regex para coincidencia parcial (case-insensitive)
+              if (typeof filters[key] === "string") {
+                queryWithFilters = queryWithFilters.where(key, {
+                  $regex: filters[key],
+                  $options: "i",
+                });
+              } else {
+                queryWithFilters = queryWithFilters.where(key, filters[key]);
+              }
+            }
+          });
+
+          // Aplica sort si se especifica
+          if (sortBy) {
+            const order = sortOrder === "desc" ? -1 : 1;
+            queryWithFilters = queryWithFilters.sort({ [sortBy]: order });
+          }
+
+          // Total antes de paginar
+          const total = await queryWithFilters.clone().countDocuments();
+
+          // Paginación
+          const offset = (page - 1) * limit;
+          const docs = await queryWithFilters
+            .limit(limit)
+            .skip(offset)
+            .populate({
+              path: "product",
+              model: ProductModel,
+              populate: {
+                path: "productGroupId",
+                model: ProductGroupModel,
+                populate: { path: "productBrandId", model: ProductBrandModel },
+              },
+            })
+            .populate({
+              path: "carModel",
+              model: CarModelModel,
+              populate: { path: "brandId", model: BrandModel },
+            })
+            .populate({
+              path: "complementId",
+              model: ProductModel,
+              populate: {
+                path: "productGroupId",
+                model: ProductGroupModel,
+                populate: { path: "productBrandId", model: ProductBrandModel },
+              },
+            });
+          const data = docs.map((doc: any) =>
+            productCompatibilityRepository["docToEntity"](doc),
+          );
+
           return {
             statusCode: HTTP_OK,
-            body: JSON.stringify(productCompatibilities),
+            body: JSON.stringify({ data, total, page, limit }),
           };
         }
 

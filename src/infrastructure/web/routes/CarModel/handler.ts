@@ -128,10 +128,49 @@ export async function handler(
             body: JSON.stringify(carModel),
           };
         } else {
-          const carModels = await carModelUseCases.findAllCarModels();
+           // --- NUEVO: paginación, filtros y sort ---
+          const query = event.queryStringParameters || {};
+          const page = parseInt(query.page || "1", 10);
+          const limit = parseInt(query.limit || "10", 10);
+
+          // Extrae filtros (puedes personalizar los campos permitidos)
+          const { sortBy, sortOrder, ...filters } = query;
+          delete filters.page;
+          delete filters.limit;
+
+          // Obtén la consulta base desde el repositorio (debe ser un query de Mongoose)
+          const baseQuery = carModelRepository.getQuery(); // Implementa este método en tu repo
+
+          // Aplica filtros y paginación
+          let queryWithFilters = baseQuery;
+          Object.keys(filters).forEach((key) => {
+            if (filters[key] !== undefined) {
+              // Si el filtro es string, usa regex para coincidencia parcial (case-insensitive)
+              if (typeof filters[key] === "string") {
+                queryWithFilters = queryWithFilters.where(key, { $regex: filters[key], $options: "i" });
+              } else {
+                queryWithFilters = queryWithFilters.where(key, filters[key]);
+              }
+            }
+          });
+
+          // Aplica sort si se especifica
+          if (sortBy) {
+            const order = sortOrder === "desc" ? -1 : 1;
+            queryWithFilters = queryWithFilters.sort({ [sortBy]: order });
+          }
+
+          // Total antes de paginar
+          const total = await queryWithFilters.clone().countDocuments();
+
+          // Paginación
+          const offset = (page - 1) * limit;
+          const docs = await queryWithFilters.limit(limit).skip(offset);
+          const data = docs.map((doc:any)=> carModelRepository["docToEntity"](doc));
+
           return {
             statusCode: HTTP_OK,
-            body: JSON.stringify(carModels),
+            body: JSON.stringify({ data, total, page, limit }),
           };
         }
 
