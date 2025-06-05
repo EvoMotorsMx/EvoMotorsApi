@@ -7,7 +7,6 @@ export type UpdateProductDTO = {
   sku?: string;
   productGroupId?: string;
   systemType?: ProductSystemType;
-  stock?: number;
   price?: number;
   isComplement?: boolean; // indica si es un complemento
 };
