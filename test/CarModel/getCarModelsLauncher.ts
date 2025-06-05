@@ -1,11 +1,10 @@
-import { sortBy } from "lodash";
 import { handler } from "../../src/infrastructure/web/routes/CarModel/handler";
 
 const queryStringParameters = {
   page: "1",
   limit: "10",
   name: "A1",
-  engineSize:"2",
+  engineSize: "2",
   sortBy: "name",
   sortOrder: "asc",
 };
@@ -22,7 +21,7 @@ handler(
         method: "GET",
       },
     },
-    queryStringParameters
+    queryStringParameters,
   } as any,
   {} as any,
 );

@@ -14,3 +14,5 @@ export * from "./ToolCompatibility";
 export * from "./ProductCompatibility";
 export * from "./Customer";
 export * from "./Receipt";
+export * from "./ProductGroup";
+export * from "./ProductBrand";

@@ -10,12 +10,15 @@ import {
   Product,
   ProductCompatibility,
   File,
+  ProductBrand,
+  ProductGroup,
 } from "../../../core/domain/entities";
 import {
   CreateProductCompatibilityDTO,
   UpdateProductCompatibilityDTO,
 } from "../../../core/application/dtos";
 import { IProductCompatibilityRepository } from "../../../core/application/interfaces";
+import { ProductType } from "../../../shared/enums";
 
 interface ProductCompatibilityDoc
   extends Document,
@@ -26,8 +29,29 @@ export class ProductCompatibilityRepository
 {
   async findById(id: string): Promise<ProductCompatibility | null> {
     const productCompatibilityDoc = await ProductCompatibilityModel.findById(id)
-      .populate({ path: "product", model: ProductModel })
-      .populate({ path: "carModel", model: CarModelModel })
+      .populate({
+        path: "product",
+        model: ProductModel,
+        populate: {
+          path: "productGroupId",
+          model: "ProductGroup",
+          populate: { path: "productBrandId", model: "ProductBrand" },
+        },
+      })
+      .populate({
+        path: "carModel",
+        model: CarModelModel,
+        populate: { path: "brandId", model: "Brand" },
+      })
+      .populate({
+        path: "complementId",
+        model: ProductModel,
+        populate: {
+          path: "productGroupId",
+          model: "ProductGroup",
+          populate: { path: "productBrandId", model: "ProductBrand" },
+        },
+      })
       .exec();
     if (!productCompatibilityDoc) return null;
     return this.docToEntity(productCompatibilityDoc);
@@ -35,8 +59,29 @@ export class ProductCompatibilityRepository
 
   async findAll(): Promise<ProductCompatibility[]> {
     const productCompatibilityDocs = await ProductCompatibilityModel.find()
-      .populate({ path: "product", model: ProductModel })
-      .populate({ path: "carModel", model: CarModelModel })
+      .populate({
+        path: "product",
+        model: ProductModel,
+        populate: {
+          path: "productGroupId",
+          model: "ProductGroup",
+          populate: { path: "productBrandId", model: "ProductBrand" },
+        },
+      })
+      .populate({
+        path: "carModel",
+        model: CarModelModel,
+        populate: { path: "brandId", model: "Brand" },
+      })
+      .populate({
+        path: "complementId",
+        model: ProductModel,
+        populate: {
+          path: "productGroupId",
+          model: "ProductGroup",
+          populate: { path: "productBrandId", model: "ProductBrand" },
+        },
+      })
       .exec();
     if (!productCompatibilityDocs.length) return [];
     return productCompatibilityDocs.map((doc) => this.docToEntity(doc));
@@ -44,21 +89,43 @@ export class ProductCompatibilityRepository
 
   async save(
     dto: CreateProductCompatibilityDTO,
-  ): Promise<ProductCompatibility> {
-    const productCompatibilityDoc = new ProductCompatibilityModel({
-      product: dto.productId,
-      carModel: dto.carModelId,
-    });
-    await productCompatibilityDoc.populate({
-      path: "product",
-      model: ProductModel,
-    });
-    await productCompatibilityDoc.populate({
-      path: "carModel",
-      model: CarModelModel,
-    });
+  ): Promise<ProductCompatibility | null> {
+    const productCompatibilityDoc = new ProductCompatibilityModel(dto);
+
     const savedProductCompatibilityDoc = await productCompatibilityDoc.save();
-    return this.docToEntity(savedProductCompatibilityDoc);
+
+    const populatedProductCompatibilityDoc =
+      await ProductCompatibilityModel.findById(savedProductCompatibilityDoc._id)
+        .populate({
+          path: "productId",
+          model: ProductModel,
+          populate: {
+            path: "productGroupId",
+            model: "ProductGroup",
+            populate: { path: "productBrandId", model: "ProductBrand" },
+          },
+        })
+        .populate({
+          path: "carModelId",
+          model: CarModelModel,
+          populate: { path: "brandId", model: "Brand" },
+        })
+        .populate({
+          path: "complementId",
+          model: ProductModel,
+          populate: {
+            path: "productGroupId",
+            model: "ProductGroup",
+            populate: { path: "productBrandId", model: "ProductBrand" },
+          },
+        })
+        .exec();
+
+    if (!populatedProductCompatibilityDoc) {
+      return null;
+    }
+
+    return this.docToEntity(populatedProductCompatibilityDoc);
   }
 
   async update(
@@ -66,20 +133,35 @@ export class ProductCompatibilityRepository
     dto: UpdateProductCompatibilityDTO,
   ): Promise<ProductCompatibility> {
     const updateData: { [key: string]: any } = {};
-    if (dto.productId !== undefined) {
-      updateData["product"] = dto.productId;
-    }
-    if (dto.carModelId !== undefined) {
-      updateData["carModel"] = dto.carModelId;
-    }
 
     if (Object.keys(updateData).length > 0) {
       const updatedProductCompatibilityDoc =
         await ProductCompatibilityModel.findByIdAndUpdate(id, updateData, {
           new: true,
         })
-          .populate({ path: "product", model: ProductModel })
-          .populate({ path: "carModel", model: CarModelModel })
+          .populate({
+            path: "product",
+            model: ProductModel,
+            populate: {
+              path: "productGroupId",
+              model: "ProductGroup",
+              populate: { path: "productBrandId", model: "ProductBrand" },
+            },
+          })
+          .populate({
+            path: "carModel",
+            model: CarModelModel,
+            populate: { path: "brandId", model: "Brand" },
+          })
+          .populate({
+            path: "complementId",
+            model: ProductModel,
+            populate: {
+              path: "productGroupId",
+              model: "ProductGroup",
+              populate: { path: "productBrandId", model: "ProductBrand" },
+            },
+          })
           .exec();
 
       if (!updatedProductCompatibilityDoc)
@@ -95,50 +177,109 @@ export class ProductCompatibilityRepository
     await ProductCompatibilityModel.findByIdAndDelete(id).exec();
   }
 
+  getQuery() {
+    return ProductCompatibilityModel.find();
+  }
+
   private docToEntity(doc: ProductCompatibilityDoc): ProductCompatibility {
     const brand = new Brand(
-      doc.carModel.brandId.name,
-      doc.carModel.brandId.description,
-      doc.carModel.brandId._id?.toString(),
+      doc.carModelId.brandId.name,
+      doc.carModelId.brandId.description,
+      doc.carModelId.brandId._id?.toString(),
     );
 
     const files =
-      (doc.carModel.files as File[]).map(
+      (doc.carModelId.files as File[]).map(
         (file) => new File(file.fileUrl, file.type, file._id!),
       ) ?? [];
 
     const carModel = new CarModel(
-      doc.carModel.name,
+      doc.carModelId.name,
       brand,
-      doc.carModel.year,
-      doc.carModel.engineSize,
-      doc.carModel.cylinder,
-      doc.carModel.combustion,
-      doc.carModel.engineType,
-      doc.carModel.originalHp,
-      doc.carModel.originalTorque,
-      doc.carModel.topSpeed,
+      doc.carModelId.year,
+      doc.carModelId.engineSize,
+      doc.carModelId.cylinder,
+      doc.carModelId.combustion,
+      doc.carModelId.engineType,
+      doc.carModelId.originalHp,
+      doc.carModelId.originalTorque,
+      doc.carModelId.topSpeed,
       files,
-      doc.carModel.isActive,
-      doc.carModel._id?.toString(),
+      doc.carModelId.isActive,
+      doc.carModelId._id?.toString(),
+    );
+
+    const productBrand = new ProductBrand(
+      doc.productId.productGroupId?.productBrandId?.name ?? "",
+      doc.productId.productGroupId?.productBrandId?.logo,
+      doc.productId.productGroupId?.productBrandId?.description,
+      doc.productId.productGroupId?.productBrandId?._id?.toString(),
+    );
+
+    const productGroup = new ProductGroup(
+      doc.productId.productGroupId?.name ?? "",
+      productBrand,
+      doc.productId.productGroupId?.description,
+      doc.productId.productGroupId?.image,
+      doc.productId.productGroupId?._id?.toString(),
     );
 
     const product = new Product(
-      doc.product.name,
-      doc.product.type,
-      doc.product?.description,
-      doc.product?.sku,
-      undefined, //Product Group Id
-      undefined, //Product Brand Id
-      doc.product?.systemType,
-      doc.product?.stock,
-      doc.product?.price,
-      doc.product?._id?.toString()
+      doc.productId.name,
+      doc.productId.type,
+      productGroup,
+      doc.productId?.description,
+      doc.productId?.sku,
+      doc.productId?.systemType,
+      doc.productId?.price,
+      doc.productId?.isComplement,
+      doc.productId?._id?.toString(),
     );
+
+    //complement
+    let complement: Product | undefined = undefined;
+    let groupComplement: ProductGroup | undefined = undefined;
+    let brandComplement: ProductBrand | undefined = undefined;
+    if (doc.complementId) {
+      brandComplement = new ProductBrand(
+        doc.complementId?.productGroupId?.productBrandId?.name ?? "",
+        doc.complementId?.productGroupId?.productBrandId?.logo,
+        doc.complementId?.productGroupId?.productBrandId?.description,
+        doc.complementId?.productGroupId?.productBrandId?._id?.toString(),
+      );
+
+      groupComplement = new ProductGroup(
+        doc.complementId?.productGroupId?.name ?? "",
+        brandComplement,
+        doc.complementId?.productGroupId?.description,
+        doc.complementId?.productGroupId?.image,
+        doc.complementId?.productGroupId?._id?.toString(),
+      );
+
+      complement = new Product(
+        doc.complementId?.name ?? "",
+        doc.complementId?.type ?? ProductType.CABLE,
+        groupComplement,
+        doc.complementId?.description,
+        doc.complementId?.sku,
+        doc.complementId?.systemType,
+        doc.complementId?.price,
+        doc.complementId?.isComplement,
+        doc.complementId?._id?.toString(),
+      );
+    }
 
     const productCompatibility = new ProductCompatibility(
       product,
       carModel,
+      doc.endHp,
+      doc.endTorque,
+      doc.vMax,
+      doc.priceOverride,
+      doc.priceAdditional,
+      doc.notes,
+      doc.description,
+      complement,
       doc._id?.toString(),
     );
 

@@ -12,3 +12,5 @@ export * from "./UserRepository";
 export * from "./ToolAssignmentRepository";
 export * from "./ProductCompatibilityRepository";
 export * from "./CustomerRepository";
+export * from "./ProductBrandRepository";
+export * from "./ProductGroupRepository";

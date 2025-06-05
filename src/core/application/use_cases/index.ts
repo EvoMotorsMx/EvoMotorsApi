@@ -13,3 +13,5 @@ export * from "./ToolAssignmentUseCases";
 export * from "./ProductCompatibilityUseCases";
 export * from "./CustomerUseCases";
 export * from "./ReceiptUseCases";
+export * from "./ProductBrandUseCases";
+export * from "./ProductGroupUseCases";

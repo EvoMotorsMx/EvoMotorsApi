@@ -27,7 +27,7 @@ export class ProductCompatibilityService
 
   async createProductCompatibility(
     dto: CreateProductCompatibilityDTO,
-  ): Promise<ProductCompatibility> {
+  ): Promise<ProductCompatibility | null> {
     return this.productCompatibilityRepository.save(dto);
   }
 

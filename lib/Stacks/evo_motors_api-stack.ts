@@ -25,6 +25,8 @@ interface EvoMotorsApiStackProps extends cdk.StackProps {
   productCompatibilityLambdaIntegration: HttpLambdaIntegration;
   customerLambdaIntegration: HttpLambdaIntegration;
   receiptLambdaIntegration: HttpLambdaIntegration;
+  productBrandLambdaIntegration: HttpLambdaIntegration;
+  productGroupLambdaIntegration: HttpLambdaIntegration;
 }
 
 export class EvoMotorsApiStack extends cdk.Stack {
@@ -285,6 +287,36 @@ export class EvoMotorsApiStack extends cdk.Stack {
       path: "/receipt/{receiptId}",
       methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
       integration: props.receiptLambdaIntegration,
+      authorizer,
+    });
+
+    //ProductBrand routes
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/productBrand",
+      methods: [HttpMethod.GET, HttpMethod.POST],
+      integration: props.productBrandLambdaIntegration,
+      authorizer,
+    });
+
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/productBrand/{productBrandId}",
+      methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
+      integration: props.productBrandLambdaIntegration,
+      authorizer,
+    });
+
+    //ProductGroup routes
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/productGroup",
+      methods: [HttpMethod.GET, HttpMethod.POST],
+      integration: props.productGroupLambdaIntegration,
+      authorizer,
+    });
+
+    evoMotorsAdminHttpApi.addRoutes({
+      path: "/productGroup/{productGroupId}",
+      methods: [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE],
+      integration: props.productGroupLambdaIntegration,
       authorizer,
     });
   }

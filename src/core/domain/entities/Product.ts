@@ -1,16 +1,16 @@
 import { ProductType, ProductSystemType } from "../../../shared/enums";
+import { ProductGroup } from "./ProductGroup";
 
 export class Product {
   constructor(
     public name: string,
     public type: ProductType,
+    public productGroupId: ProductGroup,
     public description?: string,
     public sku?: string,
-    public productGroupId?: string,
-    public productBrandId?: string,
     public systemType?: ProductSystemType,
-    public stock?: number,
     public price?: number,
+    public isComplement?: boolean, // indica si es un complemento
     public _id?: string,
   ) {}
 

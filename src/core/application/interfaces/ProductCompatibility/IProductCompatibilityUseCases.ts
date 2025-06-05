@@ -7,7 +7,7 @@ import {
 export interface IProductCompatibilityUseCases {
   createProductCompatibility(
     dto: CreateProductCompatibilityDTO,
-  ): Promise<ProductCompatibility>;
+  ): Promise<ProductCompatibility | null>;
   updateProductCompatibility(
     id: string,
     dto: UpdateProductCompatibilityDTO,
