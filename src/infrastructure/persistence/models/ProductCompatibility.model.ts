@@ -3,8 +3,16 @@ import { v4 as uuidV4 } from "uuid";
 import { CarModel, Product } from "../../../core/domain/entities";
 
 export interface ProductCompatibilityDocument extends Document {
-  product: Product;
-  carModel: CarModel;
+  productId: Product; // FK → Product
+  carModelId: CarModel; // FK → CarModel
+  endHp?: number; // Optional field for end horsepower
+  endTorque?: number;
+  vMax?: string;
+  priceOverride?: number;
+  priceAdditional?: number;
+  notes?: string;
+  description?: string;
+  complementId?: Product; // FK → Product
 }
 
 const ProductCompatibilitySchema = new Schema<ProductCompatibilityDocument>(
@@ -13,16 +21,48 @@ const ProductCompatibilitySchema = new Schema<ProductCompatibilityDocument>(
       type: String,
       default: () => uuidV4(),
     },
-    product: {
+    productId: {
       type: String,
       required: true,
       ref: "Product",
-      unique: true,
     },
-    carModel: {
+    carModelId: {
       type: String,
       required: true,
       ref: "CarModel",
+    },
+    endHp: {
+      type: Number,
+      required: false,
+    },
+    endTorque: {
+      type: Number,
+      required: false,
+    },
+    vMax: {
+      type: String,
+      required: false,
+    },
+    priceOverride: {
+      type: Number,
+      required: false,
+    },
+    priceAdditional: {
+      type: Number,
+      required: false,
+    },
+    notes: {
+      type: String,
+      required: false,
+    },
+    description: {
+      type: String,
+      required: false,
+    },
+    complementId: {
+      type: String,
+      required: false,
+      ref: "Product",
     },
   },
   {
