@@ -67,11 +67,10 @@ export class ProductRepository implements IProductRepository {
     const product = new Product(
       doc.name,
       doc.type,
+      productGroup,
       doc.description,
       doc.sku,
-      productGroup,
       doc.systemType,
-      doc.stock,
       doc.price,
       doc.isComplement,
       doc._id?.toString(), // Convertir ObjectId a string
