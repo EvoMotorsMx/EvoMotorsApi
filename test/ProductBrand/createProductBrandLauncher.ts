@@ -12,7 +12,7 @@ handler(
       Authorization: process.env.AUTHORIZATION,
     },
     body: JSON.stringify({
-      name: "SPORTDRIVE",
+      name: "RACECHIP",
     }),
   } as any,
   {} as any,
