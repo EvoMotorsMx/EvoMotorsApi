@@ -93,7 +93,7 @@ export async function handler(
       case GET:
         if (event.pathParameters) {
           const pathValidationResult = getProductGroupBody.safeParse({
-            id: event.pathParameters.productId,
+            id: event.pathParameters.productGroupId,
           });
           if (!pathValidationResult.success) {
             return {
