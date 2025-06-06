@@ -10,32 +10,65 @@ import {
   CreateProductDTO,
   UpdateProductDTO,
 } from "../../../core/application/dtos";
+import ProductGroupModel from "../models/ProductGroup.model";
+import ProductBrandModel from "../models/ProductBrand.model";
 
 interface ProductDoc extends Document, ProductDocument {}
 
 export class ProductRepository implements IProductRepository {
   async findById(id: string): Promise<Product | null> {
-    const productDoc = await ProductModel.findById(id).exec();
+    const productDoc = await ProductModel.findById(id)
+      .populate({
+        path: "productGroupId",
+        model: ProductGroupModel,
+        populate: [{ path: "productBrandId", model: ProductBrandModel }],
+      })
+      .exec();
     if (!productDoc) return null;
     return this.docToEntity(productDoc);
   }
 
   async findAll(): Promise<Product[]> {
-    const productDocs = await ProductModel.find().exec();
+    const productDocs = await ProductModel.find()
+      .populate({
+        path: "productGroupId",
+        model: ProductGroupModel,
+        populate: [{ path: "productBrandId", model: ProductBrandModel }],
+      })
+      .exec();
     if (!productDocs.length) return [];
     return productDocs.map((doc) => this.docToEntity(doc)); // Convertir cada documento a una entidad Product
   }
 
-  async save(dto: CreateProductDTO): Promise<Product> {
+  async save(dto: CreateProductDTO): Promise<Product | null> {
     const productDoc = new ProductModel(dto);
     const savedProductDoc = await productDoc.save();
-    return this.docToEntity(savedProductDoc);
+
+    const populatedProductDoc = await ProductModel.findById(savedProductDoc._id)
+      .populate({
+        path: "productGroupId",
+        model: ProductGroupModel,
+        populate: [{ path: "productBrandId", model: ProductBrandModel }],
+      })
+      .exec();
+
+    if (!populatedProductDoc) {
+      return null;
+    }
+
+    return this.docToEntity(populatedProductDoc);
   }
 
   async update(id: string, dto: UpdateProductDTO): Promise<Product> {
     const updatedProductDoc = await ProductModel.findByIdAndUpdate(id, dto, {
       new: true,
-    }).exec();
+    })
+      .populate({
+        path: "productGroupId",
+        model: ProductGroupModel,
+        populate: [{ path: "productBrandId", model: ProductBrandModel }],
+      })
+      .exec();
     if (!updatedProductDoc) throw new Error("Product not found");
     return this.docToEntity(updatedProductDoc);
   }
