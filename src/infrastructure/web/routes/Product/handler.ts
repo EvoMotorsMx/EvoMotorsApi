@@ -23,7 +23,7 @@ import { IIdToken } from "../../../security/Auth";
 import { ProductRepository } from "../../../persistence/repositories";
 import { ProductService } from "../../../../core/domain/services";
 import { ProductUseCases } from "../../../../core/application/use_cases";
-import { ProductType } from "../../../../shared/enums";
+import { ProductSystemType, ProductType } from "../../../../shared/enums";
 
 const createProductBodySchema = z.object({
   name: z.string(),
@@ -32,7 +32,7 @@ const createProductBodySchema = z.object({
   sku: z.string().optional(),
   productGroupId: z.string(),
   systemType: z
-    .enum(Object.values(ProductType) as [string, ...string[]])
+    .enum(Object.values(ProductSystemType) as [string, ...string[]])
     .optional(),
   price: z.number().optional(),
   isComplement: z.boolean().optional(), // indica si es un complemento
@@ -46,7 +46,7 @@ const updateProductBodySchema = z.object({
   sku: z.string().optional(),
   productGroupId: z.string().optional(),
   systemType: z
-    .enum(Object.values(ProductType) as [string, ...string[]])
+    .enum(Object.values(ProductSystemType) as [string, ...string[]])
     .optional(),
   price: z.number().optional(),
   isComplement: z.boolean().optional(), // indica si es un complemento
