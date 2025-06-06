@@ -16,7 +16,7 @@ export class ProductService implements IProductService {
     return this.productRepository.findAll();
   }
 
-  async createProduct(dto: CreateProductDTO): Promise<Product> {
+  async createProduct(dto: CreateProductDTO): Promise<Product | null> {
     return this.productRepository.save(dto);
   }
 
