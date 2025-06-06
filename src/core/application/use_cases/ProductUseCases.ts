@@ -13,7 +13,7 @@ export class ProductUseCases implements IProductUseCases {
     return this.productService.getAllProducts();
   }
 
-  async createProduct(dto: CreateProductDTO): Promise<Product> {
+  async createProduct(dto: CreateProductDTO): Promise<Product | null> {
     return this.productService.createProduct(dto);
   }
 
