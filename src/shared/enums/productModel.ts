@@ -1,9 +1,10 @@
 export enum ProductType {
   GENERAL = "GENERAL",
-  COMPATIBLE = "COMPATIBLE",
   BUNDLE = "BUNDLE",
   MODULE = "MODULE",
   CABLE = "CABLE",
+  FLASH = "FLASH",
+  DELETE = "DELETE",
 }
 
 export enum ProductSystemType {
