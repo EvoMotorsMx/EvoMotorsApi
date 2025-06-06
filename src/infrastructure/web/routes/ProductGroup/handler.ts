@@ -197,7 +197,7 @@ export async function handler(
         const payload = JSON.parse(event.body ?? "{}");
         let updatedProductGroup;
 
-        if (!event.pathParameters || !event.pathParameters.productId) {
+        if (!event.pathParameters || !event.pathParameters.productGroupId) {
           return {
             statusCode: HTTP_BAD_REQUEST,
             headers: { "Content-Type": "application/json" },
@@ -209,12 +209,12 @@ export async function handler(
 
         const validationResult = updateProductGroupBodySchema.safeParse({
           ...payload,
-          id: event.pathParameters.productId,
+          id: event.pathParameters.productGroupId,
         });
 
         if (validationResult.success) {
           updatedProductGroup = await productUseCases.updateProductGroup(
-            event.pathParameters.productId,
+            event.pathParameters.productGroupId,
             payload,
           );
         } else {
@@ -235,7 +235,7 @@ export async function handler(
       }
 
       case DELETE: {
-        if (!event.pathParameters || !event.pathParameters.productId) {
+        if (!event.pathParameters || !event.pathParameters.productGroupId) {
           return {
             statusCode: HTTP_BAD_REQUEST,
             headers: { "Content-Type": "application/json" },
@@ -246,7 +246,7 @@ export async function handler(
         }
 
         const pathValidationResult = removeProductGroupBody.safeParse({
-          id: event.pathParameters.productId,
+          id: event.pathParameters.productGroupId,
         });
 
         if (!pathValidationResult.success) {
@@ -260,14 +260,14 @@ export async function handler(
           };
         }
 
-        const productId = pathValidationResult.data.id;
+        const productGroupId = pathValidationResult.data.id;
 
         try {
-          await productUseCases.removeProductGroup(productId);
+          await productUseCases.removeProductGroup(productGroupId);
           return {
             statusCode: HTTP_OK,
             body: JSON.stringify({
-              id: productId,
+              id: productGroupId,
               message: "ProductGroup removed successfully",
             }),
           };
@@ -275,7 +275,7 @@ export async function handler(
           return {
             statusCode: HTTP_INTERNAL_SERVER_ERROR,
             body: JSON.stringify({
-              message: "An error occurred while removing the product",
+              message: "An error occurred while removing the product group",
             }),
           };
         }
