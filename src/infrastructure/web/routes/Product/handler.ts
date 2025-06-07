@@ -24,6 +24,8 @@ import { ProductRepository } from "../../../persistence/repositories";
 import { ProductService } from "../../../../core/domain/services";
 import { ProductUseCases } from "../../../../core/application/use_cases";
 import { ProductSystemType, ProductType } from "../../../../shared/enums";
+import ProductGroupModel from "../../../persistence/models/ProductGroup.model";
+import ProductBrandModel from "../../../persistence/models/ProductBrand.model";
 
 const createProductBodySchema = z.object({
   name: z.string(),
@@ -166,7 +168,14 @@ export async function handler(
 
           // Paginación
           const offset = (page - 1) * limit;
-          const docs = await queryWithFilters.limit(limit).skip(offset);
+          const docs = await queryWithFilters
+            .limit(limit)
+            .skip(offset)
+            .populate({
+              path: "productGroupId",
+              model: ProductGroupModel,
+              populate: [{ path: "productBrandId", model: ProductBrandModel }],
+            });
           const data = docs.map((doc: any) =>
             productRepository["docToEntity"](doc),
           );
